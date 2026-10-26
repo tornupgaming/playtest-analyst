@@ -61,10 +61,20 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	mkdirSync(join(dir, "analysis"), { recursive: true });
 	const prompt = await Bun.file(config.prompt).text();
 
-	const [fileId, turns] = await Promise.all([
+	const [uploadedId, transcript] = await Promise.all([
 		uploadVideo(dir, config.video_audio),
-		config.include_transcript && meta.capture.audio !== null ? transcribe(dir, meta.duration) : [],
+		config.include_transcript && meta.capture.audio !== null
+			? transcribe(dir, meta.duration).catch((err: Error) => {
+					console.error(`ASR failed, so the video goes with its audio track instead (DECISIONS.md §4): ${err.message}`);
+					return null;
+				})
+			: [],
 	]);
+	// ASR failed: send the mic as the video's audio track. Speech timing is looser, but the words get through.
+	const asrFailed = transcript === null;
+	if (asrFailed) config = { ...config, include_transcript: false, video_audio: true };
+	const fileId = asrFailed ? await uploadVideo(dir, true) : uploadedId;
+	const turns = transcript ?? [];
 
 	const usage = { input_tokens: 0, cached_tokens: 0, output_tokens: 0, cost_usd: 0, latency_s: 0 };
 	let found: ModelFinding[] | undefined;

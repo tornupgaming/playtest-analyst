@@ -5,15 +5,20 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const tmp = mkdtempSync(join(tmpdir(), "analyse-"));
-const seen = { asr: [] as unknown[], responses: [] as unknown[] };
+const seen = { asr: [] as unknown[], responses: [] as unknown[], uploads: [] as string[] };
 let replies: unknown[] = [];
+let asrStatus = 200;
 
 const server = Bun.serve({
 	port: 0,
 	async fetch(req) {
 		const path = new URL(req.url).pathname;
-		if (path === "/v1/files") return Response.json({ id: "file-123", object: "file", bytes: 1, created_at: 0, filename: "upload.mp4", purpose: "user_data" });
+		if (path === "/v1/files") {
+			seen.uploads.push(((await req.formData()).get("file") as File).name);
+			return Response.json({ id: "file-123", object: "file", bytes: 1, created_at: 0, filename: "upload.mp4", purpose: "user_data" });
+		}
 		if (path === "/v1/asr/transcribe") {
+			if (asrStatus !== 200) return new Response("rate limited", { status: asrStatus });
 			seen.asr.push(JSON.parse(await ((await req.formData()).get("request") as Blob).text()));
 			return Response.json({
 				transcript: "where do I go go.",
@@ -81,6 +86,8 @@ beforeEach(() => {
 	cpSync(raw, dir, { recursive: true });
 	seen.asr = [];
 	seen.responses = [];
+	seen.uploads = [];
+	asrStatus = 200;
 });
 
 test("writes report.json with findings in time order, ids, and the call's cost", async () => {
@@ -116,4 +123,16 @@ test("invalid output twice fails without writing a report", async () => {
 	await expect(analyse(dir, config)).rejects.toThrow("invalid twice");
 	expect(seen.responses).toHaveLength(2);
 	expect(existsSync(join(dir, "report.json"))).toBe(false);
+});
+
+test("when ASR fails, the video is sent with its audio track and no transcript", async () => {
+	replies = [VALID];
+	asrStatus = 429;
+	await analyse(dir, config);
+
+	expect(seen.uploads).toEqual(["upload.mp4", "video.mp4"]);
+	const sent = JSON.stringify(seen.responses[0]);
+	expect(sent).not.toContain("Think-aloud transcript");
+	expect(sent).toContain("[1.5s] input_idle duration=1");
+	expect((await Bun.file(join(dir, "report.json")).json()).findings).toHaveLength(2);
 });

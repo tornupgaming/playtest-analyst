@@ -72,7 +72,7 @@ export async function finalize(dir: string): Promise<void> {
 	}
 
 	const graph = [
-		`[0:v]${alignVideo(videoStart)},scale=-2:'min(720,ih)',format=yuv420p[v]`,
+		`[0:v]${alignVideo(videoStart)},scale=-2:'trunc(min(720,ih)/2)*2',format=yuv420p[v]`,
 		`${audio},aresample=48000,apad,atrim=end=${duration},asplit=2[a1][a2]`,
 	].join(";");
 	const video = join(dir, "video.tmp.mp4");
