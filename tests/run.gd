@@ -5,6 +5,7 @@ extends SceneTree
 
 const SUITES: Array[Script] = [
 	preload("res://tests/telemetry_test.gd"),
+	preload("res://tests/patches_test.gd"),
 ]
 
 
@@ -21,8 +22,10 @@ func _run() -> void:
 				continue
 			var suite: Node = script.new()
 			root.add_child(suite)
-			var error: String = await suite.call(method.name)
+			var result: Variant = await suite.call(method.name)
 			suite.free()
+			# A test stopped by a script error returns null, which is not a pass.
+			var error: String = result if result is String else "stopped with a script error (see above)"
 			if error.is_empty():
 				passed += 1
 				print("ok    %s" % method.name)
