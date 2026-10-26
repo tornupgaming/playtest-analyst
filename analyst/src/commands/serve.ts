@@ -26,6 +26,8 @@ export async function run(argv: string[]) {
 		hostname: "localhost",
 		port: Number(values.port),
 		development: false,
+		// Fail if the port is taken, rather than share it with a stale viewer.
+		reusePort: false,
 		routes: {
 			"/": viewer,
 			"/api/session": Response.json({ meta, events, report }),
