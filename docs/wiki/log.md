@@ -31,3 +31,6 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 
 ## [2026-10-26] ingest | tools/make_synthetic.sh (TUG-120 synthetic runs)
 - synthetic-sessions.md: new page. SubViewport capture speed at 720p30, headless vs rendered determinism, Piper on Python 3.14 and its output rate and onset lag. index.md: added the page.
+
+## [2026-10-26] ingest | spikes/tug-104 (check.sh, results/run.txt)
+- sam-3-1.md: added the key-frames-from-video run (matches as on PNG, except "the exit sign"; 4 calls in flight). Extended the JPEG open question.

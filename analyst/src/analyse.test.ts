@@ -5,8 +5,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const tmp = mkdtempSync(join(tmpdir(), "analyse-"));
-const seen = { asr: [] as unknown[], responses: [] as unknown[], uploads: [] as string[] };
+const seen = { asr: [] as unknown[], responses: [] as unknown[], sam: [] as unknown[], uploads: [] as string[] };
 let replies: unknown[] = [];
+/** Real sam-3.1 replies from the TUG-118 probe: one 66×55 px match at (607, 328) on a 1280×720 frame, and no match. */
+const SAM_MATCH = await Bun.file(join(import.meta.dir, "../fixtures/sam/match.json")).json();
+const SAM_EMPTY = await Bun.file(join(import.meta.dir, "../fixtures/sam/empty.json")).json();
+let samReply: unknown = SAM_EMPTY;
 let asrStatus = 200;
 
 const server = Bun.serve({
@@ -29,7 +33,12 @@ const server = Bun.serve({
 			});
 		}
 		if (path === "/v1/responses") {
-			seen.responses.push(await req.json());
+			const body = (await req.json()) as { model: string };
+			if (body.model === "sam-3.1") {
+				seen.sam.push(body);
+				return Response.json(samReply);
+			}
+			seen.responses.push(body);
 			return Response.json(replies.shift());
 		}
 		return new Response("not found", { status: 404 });
@@ -69,7 +78,7 @@ let dir: string;
 
 beforeAll(async () => {
 	mkdirSync(raw);
-	await run(["ffmpeg", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=s=160x120:r=10:d=3", "-c:v", "libx264", join(raw, "screen.mkv")]);
+	await run(["ffmpeg", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=s=1280x720:r=10:d=3", "-c:v", "libx264", join(raw, "screen.mkv")]);
 	await run(["ffmpeg", "-loglevel", "error", "-f", "lavfi", "-i", "sine=f=440:d=3", join(raw, "mic.wav")]);
 	await Bun.write(join(raw, "session.json"), JSON.stringify({
 		schema: 1, id: "fake", started_at: "2026-10-26T00:00:00Z", t0_unix: 0, duration: 3, game: "Test", build: null, tester: null, profile: null,
@@ -86,8 +95,10 @@ beforeEach(() => {
 	cpSync(raw, dir, { recursive: true });
 	seen.asr = [];
 	seen.responses = [];
+	seen.sam = [];
 	seen.uploads = [];
 	asrStatus = 200;
+	samReply = SAM_EMPTY;
 });
 
 test("writes report.json with findings in time order, ids, and the call's cost", async () => {
@@ -135,4 +146,66 @@ test("when ASR fails, the video is sent with its audio track and no transcript",
 	expect(sent).not.toContain("Think-aloud transcript");
 	expect(sent).toContain("[1.5s] input_idle duration=1");
 	expect((await Bun.file(join(dir, "report.json")).json()).findings).toHaveLength(2);
+});
+
+/** Mean brightness (0–255) of the region [x0, x1) × [y0, y1) of a 1280-wide rgb24 frame. */
+/** Pixels in the box that are the overlay's yellow in `drawn` but weren't in `plain`. */
+function newYellow(drawn: Uint8Array, plain: Uint8Array, x0: number, y0: number, x1: number, y1: number): number {
+	const yellow = (rgb: Uint8Array, i: number) => rgb[i]! > 200 && rgb[i + 1]! > 170 && rgb[i + 2]! < 90;
+	let n = 0;
+	for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+		const i = (y * 1280 + x) * 3;
+		if (yellow(drawn, i) && !yellow(plain, i)) n++;
+	}
+	return n;
+}
+
+function brightness(rgb: Uint8Array, x0: number, y0: number, x1: number, y1: number): number {
+	let sum = 0;
+	for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) for (let c = 0; c < 3; c++) sum += rgb[(y * 1280 + x) * 3 + c]!;
+	return sum / ((x1 - x0) * (y1 - y0) * 3);
+}
+
+/** The PNG and the plain video frame at `t`, as rgb24. */
+async function frames(png: string, t: number) {
+	const rgb = async (args: string[], out: string) => {
+		await run(["ffmpeg", "-y", "-loglevel", "error", ...args, "-frames:v", "1", "-f", "rawvideo", "-pix_fmt", "rgb24", out]);
+		return Bun.file(out).bytes();
+	};
+	const [drawn, plain] = await Promise.all([rgb(["-i", png], join(tmp, "drawn.rgb")), rgb(["-ss", String(t), "-i", join(dir, "video.mp4")], join(tmp, "plain.rgb"))]);
+	return { drawn, plain };
+}
+
+test("a finding with a highlight gets an annotated key frame drawn around SAM's match", async () => {
+	replies = [VALID];
+	samReply = SAM_MATCH;
+	await analyse(dir, config);
+
+	const report = await Bun.file(join(dir, "report.json")).json();
+	expect(report.findings).toEqual([{ id: "f1", ...EARLY }, { id: "f2", ...LATE, annotated_frame: "analysis/frames/test/f2.png" }]);
+	// SAM got the highlight's phrase and the key frame, once: f1 has no highlight.
+	expect(seen.sam).toHaveLength(1);
+	const sent = JSON.stringify(seen.sam[0]);
+	expect(sent).toContain('{"type":"input_text","text":"the exit door"}');
+	expect(sent).toContain('"image_url":"data:image/png;base64,');
+	// A 1280×720 frame, darkened away from the match's box (607–673, 328–383) but not over it.
+	const { drawn, plain } = await frames(join(dir, "analysis/frames/test/f2.png"), 2.0);
+	expect(drawn.length).toBe(1280 * 720 * 3);
+	expect(brightness(drawn, 0, 0, 300, 720) / brightness(plain, 0, 0, 300, 720)).toBeLessThan(0.6);
+	expect(brightness(drawn, 607, 328, 673, 383) / brightness(plain, 607, 328, 673, 383)).toBeGreaterThan(0.95);
+	// The outline: yellow drawn around the match that wasn't in the frame.
+	expect(newYellow(drawn, plain, 597, 318, 683, 393)).toBeGreaterThan(200);
+});
+
+test("when SAM finds nothing, the finding has no annotated frame, the reason is logged, and the report is still written", async () => {
+	replies = [VALID];
+	const logged: string[] = [];
+	const consoleError = console.error;
+	console.error = (line: string) => logged.push(line);
+	await analyse(dir, config).finally(() => (console.error = consoleError));
+
+	const report = await Bun.file(join(dir, "report.json")).json();
+	expect(report.findings).toEqual([{ id: "f1", ...EARLY }, { id: "f2", ...LATE }]);
+	expect(existsSync(join(dir, "analysis/frames/test/f2.png"))).toBe(false);
+	expect(logged).toEqual(['f2: no annotated frame: SAM found no match for "the exit door".']);
 });

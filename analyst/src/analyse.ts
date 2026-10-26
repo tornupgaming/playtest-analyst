@@ -1,9 +1,10 @@
-// `playtest analyse`: session bundle → Muse Wonder → report.json (DECISIONS.md §4).
+// `playtest analyse`: session bundle → Muse Wonder → SAM → report.json (DECISIONS.md §4, §5).
 // Upload and ASR run in parallel, then one /v1/responses call. Invalid output is retried
-// once with the validation error appended.
+// once with the validation error appended. Last, each finding's highlight is drawn on its key frame.
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
+import { annotate } from "./annotate.ts";
 import { readSession } from "./bundle.ts";
 import type { AnalysisConfig } from "./config.ts";
 import { finalize, finalized, run } from "./finalize.ts";
@@ -98,7 +99,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	}
 	if (!found) throw new Error(`The model's output was invalid twice. Last error:\n${error}`);
 
-	const report: Report = {
+	const report = await annotate(dir, {
 		schema: 1,
 		session_id: meta.id,
 		created_at: new Date().toISOString(),
@@ -106,7 +107,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 		config: config.name,
 		findings: found.toSorted((a, b) => a.t_start - b.t_start).map((f, i) => ({ id: `f${i + 1}`, ...f })),
 		usage: { ...usage, cost_usd: Math.round(usage.cost_usd * 1e6) / 1e6, latency_s: Math.round(usage.latency_s * 10) / 10 },
-	};
+	});
 	await Bun.write(out, JSON.stringify(report, null, 2) + "\n");
 	return report;
 }

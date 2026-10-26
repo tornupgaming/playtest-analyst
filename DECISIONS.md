@@ -10,6 +10,7 @@ What we decided, why, and what we fall back to. The evidence lives in the [wiki]
 |---|---|
 | `playtest finalize <session>` | Puts the raw capture on the session clock: writes `video.mp4` and `mic16k.wav` (§2) |
 | `playtest analyse <session>` | Bundle → Muse Wonder (+ ASR, SAM) → `report.json` |
+| `playtest annotate <session>` | Redraws the SAM key frames for an existing `report.json` (§5) |
 | `playtest eval <sessions…>` | Scores reports against `eval/ground_truth.json` |
 | `playtest serve <session>` | Serves the report viewer (`Bun.serve`) |
 
@@ -34,7 +35,8 @@ sessions/<id>/
   mic16k.wav     # 16 kHz mono s16. t=0 is session t=0. What ASR wants.
   # written by `playtest analyse`:
   report.json
-  analysis/      # intermediate files: transcript.json, upload.mp4, request/response dumps
+  analysis/      # intermediate files: transcript.json, upload.mp4, request/response dumps,
+                 # frames/<config>/<finding id>.png (annotated key frames, §5)
 ```
 
 **One clock.** `t` everywhere is seconds since the recorder started, read from `Time.get_ticks_usec()` in Godot. `session.json` anchors each raw stream to that clock (`video_start`, `audio_start`: the session time of the file's first frame or sample, or omitted to derive from the file's wall-clock pts minus `t0_unix`). `finalize` applies the offsets once, so nothing after it handles offsets again.
@@ -66,7 +68,7 @@ One `POST /v1/responses` call to `muse-wonder-1.0` with:
 
 ## 5. SAM 3.1 (TUG-94, pending)
 
-Muse Wonder's report names, for each finding, a key-frame time and a short noun phrase to highlight (`highlight` in the report schema), so no extra call is needed to choose it. `sam-3.1` segments that phrase on the extracted frame and we draw the outline.
+Muse Wonder's report names, for each finding, a key-frame time and a short noun phrase to highlight (`highlight` in the report schema), so no extra call is needed to choose it. `sam-3.1` segments that phrase on the extracted frame and we draw the top match by confidence: a yellow outline and light fill, with the rest of the frame dimmed outside a soft circle around it (TUG-104).
 
 The probe (TUG-118, [wiki](docs/wiki/sam-3-1.md)) matched distinct objects named by how they look ("the star", "the mushroom", "the arrow sign"). It missed names based on game role ("the beacon", "the enemy"), large flat surfaces (ledges, paths) and spatial phrases ("the gap between…"). So `highlight.prompt` must describe the element as a concrete object, by its appearance. One call is about 1 s and $0.0025.
 
