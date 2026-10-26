@@ -28,3 +28,8 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 - muse-wonder-video.md: added three 40-second `playtest analyse` runs (tokens, cost, latency) and that the strict schema with `anyOf` null and `max_output_tokens` 32000 are accepted. Added an open question on the output-token spread.
 - meta-asr.md: added the TTS-on-real-mic ASR run (−0.22, −0.28 s, repeated words).
 - capture-sync.md: added post-finalize alignment on the real-mic run and the `adelay` fractional-seconds behaviour.
+
+## [2026-10-26] ingest | spikes/tug-107/README.md (first `playtest patch` run), Spark docs pages, git-apply man page
+- Created muse-spark.md.
+- Created git-apply.md.
+- index.md: added both, and a Tools section.
