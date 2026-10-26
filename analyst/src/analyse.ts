@@ -2,7 +2,7 @@
 // Upload and ASR run in parallel, then one /v1/responses call. Invalid output is retried
 // once with the validation error appended.
 import { mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { z } from "zod";
 import { readSession } from "./bundle.ts";
 import type { AnalysisConfig } from "./config.ts";
@@ -55,12 +55,12 @@ function findings(response: Responded["response"]): ModelFinding[] {
 	return parsed.data.findings;
 }
 
-/** Intermediate files go in `analysis/` next to `out`, so analyses of one session with
- * different outs don't overwrite each other's. */
+/** Intermediate files go next to `out`: in `analysis/` for report.json, `<name>.analysis/` for any
+ * other name, so two reports written to one folder never share an upload or ASR chunks. */
 export async function analyse(dir: string, config: AnalysisConfig, out = join(dir, "report.json")): Promise<Report> {
 	if (!finalized(dir)) await finalize(dir);
 	const { meta, events } = await readSession(dir);
-	const work = join(dirname(out), "analysis");
+	const work = join(dirname(out), basename(out) === "report.json" ? "analysis" : `${basename(out, ".json")}.analysis`);
 	mkdirSync(work, { recursive: true });
 	const prompt = await Bun.file(config.prompt).text();
 

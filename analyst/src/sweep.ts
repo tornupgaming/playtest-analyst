@@ -1,7 +1,7 @@
 // `playtest sweep`: every config × every session through analyse(), each report scored by
 // the eval harness, and one README per sweep so runs can be diffed (TUG-121, DECISIONS.md §6).
 import { existsSync } from "node:fs";
-import { basename, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { analyse } from "./analyse.ts";
 import { readSession, type Session } from "./bundle.ts";
 import type { AnalysisConfig } from "./config.ts";
@@ -22,31 +22,49 @@ export type Run = {
  * path is reused, so a sweep can be resumed or extended. A failed run is recorded, not fatal. */
 export async function sweep(configs: AnalysisConfig[], dirs: string[], out: string, gt: GroundTruth, concurrency: number): Promise<Run[]> {
 	const sessions: Session[] = [];
-	for (const dir of dirs) {
-		if (!finalized(dir)) await finalize(dir);
-		sessions.push(await readSession(dir));
-	}
-	const queue = configs.flatMap((config) => sessions.map((session) => ({ config, session })));
 	const runs: Run[] = [];
+	for (const dir of dirs) {
+		try {
+			if (!finalized(dir)) await finalize(dir);
+			sessions.push(await readSession(dir));
+		} catch (err) {
+			// A session that can't be prepared fails its own runs; the rest still go ahead.
+			const error = `preparing ${dir}: ${(err as Error).message.split("\n")[0]!.slice(0, 300)}`;
+			console.error(error);
+			const meta = { id: basename(dir), profile: null, duration: 0 } as Session["meta"];
+			for (const config of configs) runs.push({ config: config.name, session: { dir, meta, events: [] }, result: { error } });
+		}
+	}
+	// Runs are filed by session id, so two bundles with the same folder name can't share a report.
+	const ids = sessions.map((s) => s.meta.id);
+	const dupe = ids.find((id, i) => ids.indexOf(id) !== i);
+	if (dupe) throw new Error(`Two sessions share the id ${dupe}; a sweep needs distinct session ids.`);
+	const queue = configs.flatMap((config) => sessions.map((session) => ({ config, session })));
 	const worker = async () => {
 		for (let job = queue.shift(); job; job = queue.shift()) {
 			const { config, session } = job;
-			const path = join(out, config.name, basename(session.dir), "report.json");
+			const path = join(out, config.name, session.meta.id, "report.json");
 			let result: Run["result"];
 			try {
-				const report = existsSync(path) ? Report.parse(await Bun.file(path).json()) : await analyse(session.dir, config, path);
+				// Reuse a report only if it came from this exact config and prompt.
+				const stamp = JSON.stringify({ ...config, prompt_text: await Bun.file(config.prompt).text() });
+				const stampPath = join(dirname(path), "config.json");
+				const cached = existsSync(path) && existsSync(stampPath) && (await Bun.file(stampPath).text()) === stamp;
+				const report = cached ? Report.parse(await Bun.file(path).json()) : await analyse(session.dir, config, path);
+				if (!cached) await Bun.write(stampPath, stamp);
 				const opts = { padS: PAD_S, profile: session.meta.profile, endT: session.meta.duration };
 				result = { report, strict: score(report, gt, session.events, { ...opts, strict: "category" }), any: score(report, gt, session.events, { ...opts, strict: "any" }) };
-				console.error(`${config.name} × ${basename(session.dir)}: ${report.findings.length} findings, $${report.usage.cost_usd.toFixed(3)}`);
+				console.error(`${config.name} × ${session.meta.id}: ${report.findings.length} findings, $${report.usage.cost_usd.toFixed(3)}`);
 			} catch (err) {
 				result = { error: (err as Error).message.split("\n")[0]!.slice(0, 300) };
-				console.error(`${config.name} × ${basename(session.dir)} failed: ${result.error}`);
+				console.error(`${config.name} × ${session.meta.id} failed: ${result.error}`);
 			}
 			runs.push({ config: config.name, session, result });
 		}
 	};
 	await Promise.all(Array.from({ length: concurrency }, worker));
-	const order = (r: Run) => configs.findIndex((c) => c.name === r.config) * sessions.length + sessions.indexOf(r.session);
+	const all = [...new Set(runs.map((r) => r.session))];
+	const order = (r: Run) => configs.findIndex((c) => c.name === r.config) * all.length + all.indexOf(r.session);
 	return runs.sort((a, b) => order(a) - order(b));
 }
 
