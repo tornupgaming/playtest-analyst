@@ -6,7 +6,7 @@
 script = ExtResource("1_tuning")
 ledge_gap_width = 6.6
 ledge_bypass_deaths = 5
-marker_color = Color(0.62, 0.42, 0.34, 1)
+marker_color = Color(0.816, 0.486, 0.337, 1)
 marker_emission = 0.0
 switch_prompt_text = "Find a way through."
 enemy_aggro_delay = 0.0

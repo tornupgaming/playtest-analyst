@@ -7,6 +7,9 @@ var _start_ms: int
 
 
 func _ready() -> void:
+	# Scripted runs (tools/*.sh) pass this so they don't leave sessions behind.
+	if "--no-telemetry" in OS.get_cmdline_user_args():
+		return
 	var dir := "user://sessions/%s" % Time.get_datetime_string_from_system().replace(":", "-")
 	DirAccess.make_dir_recursive_absolute(dir)
 	_file = FileAccess.open(dir.path_join("telemetry.jsonl"), FileAccess.WRITE)
@@ -14,6 +17,8 @@ func _ready() -> void:
 
 
 func event(type: String, data: Dictionary = {}) -> void:
+	if _file == null:
+		return
 	var player := get_tree().get_first_node_in_group(&"player") as Node3D
 	var pos: Variant = null
 	if player:

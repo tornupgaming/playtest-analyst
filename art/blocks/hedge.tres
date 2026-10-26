@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://art/blocks/block.gdshader" id="1"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/top_color = Color(0.310, 0.749, 0.514, 1)
+shader_parameter/top_color_alt = Color(0.310, 0.749, 0.514, 1)
+shader_parameter/side_top = Color(0.247, 0.682, 0.482, 1)
+shader_parameter/side_bottom = Color(0.106, 0.518, 0.412, 1)
+shader_parameter/checker_size = 0.0
+shader_parameter/band_depth = 0.0
+shader_parameter/bevel = 0.35
+shader_parameter/gradient_depth = 4.0
+shader_parameter/leaves = 0.35

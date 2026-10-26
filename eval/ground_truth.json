@@ -31,7 +31,7 @@
         "voice": "'Where am I going?', 'what beacon?'"
       },
       "tunable": [
-        { "path": "marker_color", "planted": "Color(0.62, 0.42, 0.34, 1)", "fixed": "Color(1, 0.78, 0.1, 1)" },
+        { "path": "marker_color", "planted": "Color(0.816, 0.486, 0.337, 1)", "fixed": "Color(1, 0.78, 0.1, 1)" },
         { "path": "marker_emission", "planted": 0.0, "fixed": 1.5 }
       ]
     },

@@ -3,27 +3,43 @@
 [ext_resource type="Script" path="res://level/level.gd" id="1_level"]
 [ext_resource type="Resource" path="res://level/tuning.tres" id="2_tuning"]
 [ext_resource type="PackedScene" uid="uid://c0q5hsswj8dqf" path="res://demo/player/player.tscn" id="3_player"]
-[ext_resource type="Shader" uid="uid://bromrf0kc05o8" path="res://demo/stage/skybox.gdshader" id="4_sky"]
-[ext_resource type="CompressedCubemap" uid="uid://bnqdokul6s4pt" path="res://demo/stage/skybox.webp" id="5_sky"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
-shader = ExtResource("4_sky")
-shader_parameter/source_panorama = ExtResource("5_sky")
-shader_parameter/exposure = 1.0
+[sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_main"]
+sky_top_color = Color(0.29, 0.56, 0.96, 1)
+sky_horizon_color = Color(0.74, 0.88, 1, 1)
+sky_curve = 0.12
+ground_bottom_color = Color(0.74, 0.88, 1, 1)
+ground_horizon_color = Color(0.74, 0.88, 1, 1)
+sun_angle_max = 20.0
 
 [sub_resource type="Sky" id="Sky_main"]
-sky_material = SubResource("ShaderMaterial_sky")
+sky_material = SubResource("SkyMaterial_main")
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 2
 sky = SubResource("Sky_main")
-ambient_light_source = 2
-ambient_light_color = Color(0.6, 0.6, 0.6, 1)
-ambient_light_sky_contribution = 0.0
-tonemap_mode = 4
+ambient_light_source = 3
+ambient_light_color = Color(1, 0.97, 0.92, 1)
+ambient_light_sky_contribution = 0.45
+ambient_light_energy = 0.6
+tonemap_mode = 0
+tonemap_white = 5.0
+tonemap_exposure = 0.8
+ssao_enabled = true
+ssao_radius = 1.5
+ssao_intensity = 1.6
+glow_enabled = true
+glow_intensity = 0.6
+glow_bloom = 0.05
+glow_hdr_threshold = 1.2
 fog_enabled = true
-fog_density = 0.0015
+fog_light_color = Color(0.8, 0.9, 1, 1)
+fog_density = 0.0012
 fog_sky_affect = 0.0
+fog_height = -6.0
+fog_height_density = 0.08
+adjustment_enabled = true
+adjustment_saturation = 1.25
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_level")
@@ -34,12 +50,13 @@ environment = SubResource("Environment_main")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.965926, -0.166366, 0.198267, 1.42109e-14, 0.766044, 0.642788, -0.258819, 0.620886, -0.739941, 0, 0, 0)
+light_color = Color(1, 0.96, 0.88, 1)
+light_energy = 1.3
 shadow_enabled = true
-shadow_bias = 0.02
+shadow_bias = 0.03
 shadow_blur = 1.5
-directional_shadow_mode = 0
-directional_shadow_fade_start = 1.0
-directional_shadow_max_distance = 55.0
+directional_shadow_fade_start = 0.9
+directional_shadow_max_distance = 90.0
 
 [node name="Built" type="Node3D" parent="."]
 
@@ -53,7 +70,7 @@ offset_left = 20.0
 offset_top = 16.0
 offset_right = 900.0
 offset_bottom = 56.0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.24, 0.24, 0.29, 1)
 theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 26
 
@@ -66,10 +83,10 @@ offset_top = -44.0
 offset_right = 600.0
 offset_bottom = -16.0
 grow_vertical = 0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.24, 0.24, 0.29, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 18
-text = "WASD / arrows: move    Space: jump    Left click / Ctrl: shoot"
+text = "WASD / arrows: move    Space: jump    Mouse: look"
 
 [node name="Banner" type="Label" parent="HUD"]
 visible = false
@@ -84,7 +101,7 @@ offset_right = 400.0
 offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.24, 0.24, 0.29, 1)
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 48
 horizontal_alignment = 1

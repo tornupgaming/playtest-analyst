@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://art/blocks/block.gdshader" id="1"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/top_color = Color(0.992, 0.894, 0.780, 1)
+shader_parameter/top_color_alt = Color(0.969, 0.839, 0.682, 1)
+shader_parameter/side_top = Color(0.945, 0.592, 0.424, 1)
+shader_parameter/side_bottom = Color(0.690, 0.376, 0.255, 1)
+shader_parameter/lip_color = Color(0.992, 0.894, 0.780, 1)
+shader_parameter/lip_depth = 0.22

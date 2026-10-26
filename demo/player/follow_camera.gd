@@ -1,91 +1,77 @@
+class_name FollowCamera
 extends Camera3D
+## Trails the player at a fixed distance, a little above them and looking
+## slightly down. Walking sideways swings it round; the mouse (click to
+## capture, Esc to release) or the right stick orbits it and raises or lowers
+## it. Walls pull it in towards the player.
 
+const DISTANCE := 7.5
+const HEIGHT := 2.8
+const MIN_HEIGHT := 0.4
+const MAX_HEIGHT := 6.5
+## It looks at this point above the player's target, so the horizon stays in view.
+const LOOK_UP := 1.0
+const MOUSE_SENSITIVITY := 0.004
+const STICK_SPEED := 2.5
+const WALL_MARGIN := 0.4
 
-const MAX_HEIGHT = 2.0
-const MIN_HEIGHT = 0.0
+var _orbit := 0.0
+var _height := HEIGHT
+var _exclude: Array[RID] = []
 
-var collision_exception: Array[RID] = []
-
-@export var min_distance: float = 0.5
-@export var max_distance: float = 3.5
-@export var angle_v_adjust: float = 0.0
-@export var autoturn_ray_aperture: float = 25.0
-@export var autoturn_speed: float = 50.0
+@onready var _target := get_parent() as Node3D
 
 
 func _ready() -> void:
-	# Find collision exceptions for ray.
-	# This is done to prevent the player and enemies from colliding
-	# with the camera.
-	var node: Node = self
-	while is_instance_valid(node):
-		if node is RigidBody3D or node is CharacterBody3D:
-			collision_exception.append(node.get_rid())
-			break
-		else:
-			node = node.get_parent()
-
-	# This detaches the camera transform from the parent spatial node.
+	_exclude.append((_target.get_parent() as CollisionObject3D).get_rid())
 	set_as_top_level(true)
 
 
+## Jump straight to the resting spot behind the player, facing `yaw`.
+func snap(yaw: float) -> void:
+	_height = HEIGHT
+	_place(_target.global_position + Vector3(0, 0, DISTANCE).rotated(Vector3.UP, yaw))
+	reset_physics_interpolation()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed \
+			and (event as InputEventMouseButton).button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	elif event.is_action_pressed(&"ui_cancel"):
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	elif event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		var motion := (event as InputEventMouseMotion).relative
+		_orbit -= motion.x * MOUSE_SENSITIVITY
+		_height = clampf(_height + motion.y * MOUSE_SENSITIVITY * 4.0, MIN_HEIGHT, MAX_HEIGHT)
+
+
 func _physics_process(delta: float) -> void:
-	var target := (get_parent() as Node3D).get_global_transform().origin
-	var pos := get_global_transform().origin
+	var stick := Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+	if absf(stick) > 0.2:
+		_orbit -= stick * STICK_SPEED * delta
+	var stick_y := Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+	if absf(stick_y) > 0.2:
+		_height = clampf(_height + stick_y * STICK_SPEED * 2.0 * delta, MIN_HEIGHT, MAX_HEIGHT)
+	var offset := global_position - _target.global_position
+	offset.y = 0.0
+	offset = offset.rotated(Vector3.UP, _orbit)
+	_orbit = 0.0
+	_place(_target.global_position + offset)
 
-	var difference := pos - target
 
-	# Regular delta follow.
-
-	# Check ranges.
-	if difference.length() < min_distance:
-		difference = difference.normalized() * min_distance
-	elif  difference.length() > max_distance:
-		difference = difference.normalized() * max_distance
-
-	# Check upper and lower height.
-	difference.y = clamp(difference.y, MIN_HEIGHT, MAX_HEIGHT)
-
-	# Check autoturn.
-	var ds := PhysicsServer3D.space_get_direct_state(get_world_3d().get_space())
-
-	var col_left := ds.intersect_ray(PhysicsRayQueryParameters3D.create(
-			target,
-			target + Basis(Vector3.UP, deg_to_rad(autoturn_ray_aperture)) * (difference),
-			0xffffffff,
-			collision_exception
-		))
-	var col := ds.intersect_ray(PhysicsRayQueryParameters3D.create(
-			target,
-			target + difference,
-			0xffffffff,
-			collision_exception
-		))
-	var col_right := ds.intersect_ray(PhysicsRayQueryParameters3D.create(
-			target,
-			target + Basis(Vector3.UP, deg_to_rad(-autoturn_ray_aperture)) * (difference),
-			0xffffffff,
-			collision_exception
-		))
-
-	if not col.is_empty():
-		# If main ray was occluded, get camera closer, this is the worst case scenario.
-		difference = col.position - target
-	elif not col_left.is_empty() and col_right.is_empty():
-		# If only left ray is occluded, turn the camera around to the right.
-		difference = Basis(Vector3.UP, deg_to_rad(-delta * (autoturn_speed))) * difference
-	elif col_left.is_empty() and not col_right.is_empty():
-		# If only right ray is occluded, turn the camera around to the left.
-		difference = Basis(Vector3.UP, deg_to_rad(delta * autoturn_speed)) * difference
-	# Do nothing otherwise, left and right are occluded but center is not, so do not autoturn.
-
-	# Apply lookat.
-	if difference.is_zero_approx():
-		difference = (pos - target).normalized() * 0.0001
-
-	pos = target + difference
-
-	look_at_from_position(pos, target, Vector3.UP)
-
-	# Turn a little up or down.
-	rotate_object_local(Vector3.RIGHT, deg_to_rad(angle_v_adjust))
+## Rest DISTANCE behind and _height above the target, on the line from it to
+## `from`, pulled in if a wall is in the way.
+func _place(from: Vector3) -> void:
+	var target := _target.global_position
+	var flat := from - target
+	flat.y = 0.0
+	if flat.length() < 0.01:
+		flat = Vector3.BACK
+	var wanted := target + flat.normalized() * DISTANCE + Vector3.UP * _height
+	var hit := get_world_3d().direct_space_state.intersect_ray(
+			PhysicsRayQueryParameters3D.create(target, wanted, 0xffffffff, _exclude))
+	if hit:
+		var at: Vector3 = hit.position
+		wanted = at + (target - at).normalized() * WALL_MARGIN
+	look_at_from_position(wanted, target + Vector3.UP * LOOK_UP, Vector3.UP)

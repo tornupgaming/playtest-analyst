@@ -1,37 +1,55 @@
 class_name Player
 extends CharacterBody3D
+## Movement is the Godot platformer demo's, unchanged: the level's gap widths are
+## tuned against these numbers. The model turns to face the way it is moving.
 
-enum _Anim {
-	FLOOR,
-	AIR,
-}
-
-const SHOOT_TIME: float = 1.5
-const SHOOT_SCALE: float = 2.0
-const CHAR_SCALE := Vector3(0.3, 0.3, 0.3)
 const MAX_SPEED: float = 6.0
 const TURN_SPEED: float = 40.0
 const JUMP_VELOCITY: float = 12.5
-const BULLET_SPEED: float = 20.0
 const AIR_IDLE_DEACCEL: bool = false
 const ACCEL: float = 14.0
 const DEACCEL: float = 14.0
 const AIR_ACCEL_FACTOR: float = 0.5
 const SHARP_TURN_THRESHOLD: float = deg_to_rad(140.0)
+## Upward speed after stomping an enemy.
+const BOUNCE_VELOCITY: float = 9.0
+const LOOPING_ANIMS: Array[StringName] = [&"idle", &"walk", &"sprint", &"fall"]
 
-var movement_dir := Vector3()
 var jumping: bool = false
-var prev_shoot: bool = false
-var shoot_blend: float = 0.0
+var _facing := Vector3.FORWARD
 
-@onready var _camera := $Target/Camera3D as Camera3D
-@onready var _animation_tree := $AnimationTree as AnimationTree
+@onready var _camera := $Target/Camera3D as FollowCamera
+@onready var _model := $Model as Node3D
+@onready var _animation := $Model/AnimationPlayer as AnimationPlayer
+
+
+func _ready() -> void:
+	for anim in LOOPING_ANIMS:
+		_animation.get_animation(anim).loop_mode = Animation.LOOP_LINEAR
+	_animation.play(&"idle")
+	# Layer 2 keeps the blob shadow off the player's own body.
+	for mesh: VisualInstance3D in _model.find_children("*", "VisualInstance3D"):
+		mesh.layers = 2
+
+
+## Stand at `at` facing `yaw` (0 faces -Z), with the camera behind.
+func place(at: Vector3, yaw: float) -> void:
+	global_position = at
+	velocity = Vector3.ZERO
+	jumping = false
+	_facing = Vector3.FORWARD.rotated(Vector3.UP, yaw)
+	_model.basis = Basis.looking_at(_facing, Vector3.UP, true).scaled(_model.basis.get_scale())
+	reset_physics_interpolation()
+	_camera.snap(yaw)
+
+
+func bounce() -> void:
+	velocity.y = BOUNCE_VELOCITY
+	jumping = true
 
 
 func _physics_process(delta: float) -> void:
 	velocity += get_gravity() * delta
-
-	var anim := _Anim.FLOOR
 
 	var vertical_velocity := velocity.y
 	var horizontal_velocity := Vector3(velocity.x, 0, velocity.z)
@@ -73,34 +91,12 @@ func _physics_process(delta: float) -> void:
 
 		horizontal_velocity = horizontal_direction * horizontal_speed
 
-		var mesh_xform := ($Player/Skeleton as Node3D).get_transform()
-		var facing_mesh := -mesh_xform.basis[0].normalized()
-		facing_mesh = (facing_mesh - Vector3.UP * facing_mesh.dot(Vector3.UP)).normalized()
-
-		if horizontal_speed > 0:
-			facing_mesh = adjust_facing(
-					facing_mesh,
-					movement_direction,
-					delta,
-					1.0 / horizontal_speed * TURN_SPEED,
-					Vector3.UP
-				)
-		var m3 := Basis(
-				-facing_mesh,
-				Vector3.UP,
-				-facing_mesh.cross(Vector3.UP).normalized()
-			).scaled(CHAR_SCALE)
-
-		$Player/Skeleton.set_transform(Transform3D(m3, mesh_xform.origin))
-
 		if not jumping and jump_attempt:
 			vertical_velocity = JUMP_VELOCITY
 			jumping = true
 			$SoundJump.play()
 
 	else:
-		anim = _Anim.AIR
-
 		if movement_direction.length() > 0.1:
 			horizontal_velocity += movement_direction * (ACCEL * AIR_ACCEL_FACTOR * delta)
 			if horizontal_velocity.length() > MAX_SPEED:
@@ -120,39 +116,32 @@ func _physics_process(delta: float) -> void:
 
 	velocity = horizontal_velocity + Vector3.UP * vertical_velocity
 
-	if is_on_floor():
-		movement_dir = velocity
-
 	move_and_slide()
 
-	if shoot_blend > 0:
-		shoot_blend *= 0.97
-		if (shoot_blend < 0):
-			shoot_blend = 0
-	var shoot_attempt := Input.is_action_pressed(&"shoot")
-	if shoot_attempt and not prev_shoot:
-		shoot_blend = SHOOT_TIME
-		var bullet := preload("res://demo/player/bullet/bullet.tscn").instantiate() as Bullet
-		bullet.set_transform($Player/Skeleton/Bullet.get_global_transform().orthonormalized())
-		get_parent().add_child(bullet)
-		bullet.set_linear_velocity(
-				$Player/Skeleton/Bullet.get_global_transform().basis[2].normalized() * BULLET_SPEED
-			)
-		bullet.add_collision_exception_with(self)
-		$SoundShoot.play()
+	_animate(delta)
 
-	prev_shoot = shoot_attempt
 
-	if is_on_floor():
-		# How much the player should be blending between the "idle" and "walk/run" animations.
-		_animation_tree[&"parameters/run/blend_amount"] = horizontal_speed / MAX_SPEED
+func _animate(delta: float) -> void:
+	var horizontal := Vector3(velocity.x, 0, velocity.z)
+	if horizontal.length() > 0.5:
+		var target := horizontal.normalized()
+		_facing = _facing.slerp(target, minf(1.0, 14.0 * delta)).normalized() \
+				if _facing.dot(target) > -0.99 else target
+		_model.basis = Basis.looking_at(_facing, Vector3.UP, true).scaled(_model.basis.get_scale())
 
-		# How much the player should be running (as opposed to walking). 0.0 = fully walking, 1.0 = fully running.
-		_animation_tree[&"parameters/speed/blend_amount"] = minf(1.0, horizontal_speed / (MAX_SPEED * 0.5))
-
-	_animation_tree[&"parameters/state/blend_amount"] = anim
-	_animation_tree[&"parameters/air_dir/blend_amount"] = clampf(-velocity.y / 4 + 0.5, 0, 1)
-	_animation_tree[&"parameters/gun/blend_amount"] = minf(shoot_blend, 1.0)
+	var anim := &"idle"
+	var anim_speed := 1.0
+	if not is_on_floor():
+		anim = &"jump" if velocity.y > 0.0 else &"fall"
+	elif horizontal.length() > MAX_SPEED * 0.6:
+		anim = &"sprint"
+		anim_speed = horizontal.length() / MAX_SPEED * 1.2
+	elif horizontal.length() > 0.3:
+		anim = &"walk"
+		anim_speed = 1.5
+	if _animation.current_animation != anim:
+		_animation.play(anim, 0.12)
+	_animation.speed_scale = anim_speed
 
 
 func adjust_facing(facing: Vector3, target: Vector3, step: float, adjust_rate: float, \
