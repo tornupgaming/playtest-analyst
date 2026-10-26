@@ -66,9 +66,11 @@ function overlap(f: Finding, wins: Window[]): number | null {
 }
 
 function passes(f: Finding, p: Plant, strict: Strictness) {
-	if (strict === "any") return true;
-	if (f.category !== p.category) return false;
-	return strict === "category" || (f.zone !== null && inZone(f.zone, p.zone));
+	// A finding that names its zone never counts for a plant in another zone, at any strictness:
+	// otherwise the ±pad window credits a plaza finding to the hall's plant next door.
+	if (f.zone !== null && !inZone(f.zone, p.zone)) return false;
+	if (strict === "zone" && f.zone === null) return false;
+	return strict === "any" || f.category === p.category;
 }
 
 export function ratios(c: { hits: number; misses: number; duplicates: number; false_positives: number }) {

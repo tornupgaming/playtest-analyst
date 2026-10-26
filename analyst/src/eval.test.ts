@@ -130,13 +130,15 @@ describe("score", () => {
 		expect(score(r, gt, open, { padS: 0, endT: 120 }).false_positives).toEqual(["a"]);
 	});
 
-	test("strictness: category needs the category, zone also needs finding.zone, any needs only time", () => {
+	test("strictness: category needs the category, zone also needs finding.zone, any needs only time; a named zone must always match", () => {
 		const wrongCat = report([finding("a", 15, 35, "ui", "ledge")]);
 		const wrongZone = report([finding("b", 15, 35, "difficulty", "hall")]);
 		const nullZone = report([finding("c", 15, 35, "difficulty", null)]);
 		expect(score(wrongCat, gt, events, { strict: "category" }).hits).toEqual([]);
 		expect(score(wrongCat, gt, events, { strict: "any" }).hits).toEqual([{ plant: 1, finding: "a" }]);
-		expect(score(wrongZone, gt, events, { strict: "category" }).hits).toEqual([{ plant: 1, finding: "b" }]);
+		expect(score(wrongZone, gt, events, { strict: "category" }).hits).toEqual([]);
+		expect(score(wrongZone, gt, events, { strict: "any" }).hits).toEqual([]);
+		expect(score(nullZone, gt, events, { strict: "category" }).hits).toEqual([{ plant: 1, finding: "c" }]);
 		expect(score(wrongZone, gt, events, { strict: "zone" }).hits).toEqual([]);
 		expect(score(nullZone, gt, events, { strict: "zone" }).hits).toEqual([]);
 	});
