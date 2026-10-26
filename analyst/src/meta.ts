@@ -17,6 +17,8 @@ const LEDGER =
 	process.env.PLAYTEST_SPEND_LEDGER ??
 	join(process.env.XDG_STATE_HOME ?? join(homedir(), ".local/state"), "playtest-analyst/spend.jsonl");
 const CAP_USD = Number(process.env.PLAYTEST_SPEND_CAP_USD ?? 20);
+/** Calls to models with no known price (ASR, …) can't count against CAP_USD, so they get their own cap. */
+const UNPRICED_CALL_CAP = Number(process.env.PLAYTEST_UNPRICED_CALL_CAP ?? 200);
 
 type LedgerEntry = {
 	ts: string;
@@ -31,18 +33,28 @@ type LedgerEntry = {
 	note?: string;
 };
 
-export function spentUsd(): number {
-	if (!existsSync(LEDGER)) return 0;
+function ledger(): LedgerEntry[] {
+	if (!existsSync(LEDGER)) return [];
 	return readFileSync(LEDGER, "utf8")
 		.split("\n")
 		.filter(Boolean)
-		.reduce((sum, line) => sum + (JSON.parse(line) as LedgerEntry).cost_usd, 0);
+		.map((line) => JSON.parse(line) as LedgerEntry);
 }
 
+export function spentUsd(): number {
+	return ledger().reduce((sum, e) => sum + e.cost_usd, 0);
+}
+
+/** Checked before each call, so calls running concurrently can overshoot the cap by their own cost. */
 function assertBudget(): void {
-	const spent = spentUsd();
+	const entries = ledger();
+	const spent = entries.reduce((sum, e) => sum + e.cost_usd, 0);
 	if (spent >= CAP_USD) {
 		throw new Error(`Spend cap reached: $${spent.toFixed(2)} of $${CAP_USD} (ledger ${LEDGER}). Raise PLAYTEST_SPEND_CAP_USD to continue.`);
+	}
+	const unpriced = entries.filter((e) => e.unpriced).length;
+	if (unpriced >= UNPRICED_CALL_CAP) {
+		throw new Error(`Unpriced call cap reached: ${unpriced} calls (ledger ${LEDGER}). Raise PLAYTEST_UNPRICED_CALL_CAP to continue.`);
 	}
 }
 
@@ -104,16 +116,15 @@ export async function uploadFile(path: string, expiresAfterS = 86400): Promise<s
 	return file.id;
 }
 
-/** Any other endpoint (ASR, …) that the SDK doesn't cover. Charged as one unpriced call
- * unless `tokens` is supplied by the caller from the response. */
+/** Any other endpoint (ASR, …) that the SDK doesn't cover. Recorded as one call at the model's
+ * price (zero tokens), which for a model missing from PRICES is an unpriced call. */
 export async function metaFetch(path: string, init: RequestInit, model: string, note?: string): Promise<Response> {
 	assertBudget();
 	const apiKey = process.env.META_MODEL_API_KEY;
 	if (!apiKey) throw new Error("META_MODEL_API_KEY is not set");
-	const res = await fetch(`${API_BASE}${path}`, {
-		...init,
-		headers: { Authorization: `Bearer ${apiKey}`, ...(init.headers ?? {}) },
-	});
+	const headers = new Headers(init.headers);
+	headers.set("Authorization", `Bearer ${apiKey}`);
+	const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
 	charge(model, path, { input: 0, cached: 0, output: 0 }, note);
 	return res;
 }
