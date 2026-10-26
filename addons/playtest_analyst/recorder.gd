@@ -30,6 +30,7 @@ const WATCHDOG := "ffmpeg \"$@\" <&0 & f=$!; while kill -0 $PPID 2>/dev/null && 
 var _dir := ""
 var _meta := {}
 var _ffmpeg := {}
+var _was_resizable := true
 var _tester: Variant = null
 
 
@@ -73,6 +74,12 @@ func start() -> void:
 		push_error("PlaytestRecorder: x11grab needs X11; run with --display-driver x11")
 		return
 	var id := Time.get_datetime_string_from_system(true).replace(":", "-")
+	# Two sessions in one second (F9 twice) must not share, and overwrite, one bundle.
+	var stem := id
+	var n := 1
+	while DirAccess.dir_exists_absolute(sessions_root().path_join(id)):
+		n += 1
+		id = "%s-%d" % [stem, n]
 	_dir = sessions_root().path_join(id)
 	DirAccess.make_dir_recursive_absolute(_dir)
 	# Keep Godot from importing session media when sessions/ is inside the project.
@@ -98,6 +105,10 @@ func start() -> void:
 		# Muxed: video and mic share the file and its wall-clock pts, so no *_start.
 		capture = {video = VIDEO, audio = VIDEO},
 	}
+	# x11grab captures the window's size at start: growing it crops the game, shrinking it
+	# stops the capture. So the window can't be resized while recording.
+	_was_resizable = not DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_RESIZE_DISABLED)
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_RESIZE_DISABLED, true)
 	get_window().title += " [REC]"
 	print("PlaytestRecorder: recording %s" % _dir)
 	_tell_editor("started", [_dir])
@@ -112,6 +123,7 @@ func stop() -> void:
 	var error := _stop_ffmpeg()
 	_ffmpeg = {}
 	get_window().title = get_window().title.trim_suffix(" [REC]")
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_RESIZE_DISABLED, not _was_resizable)
 	if error.is_empty():
 		var f := FileAccess.open(_dir.path_join("session.json"), FileAccess.WRITE)
 		f.store_string(JSON.stringify(_meta, "  ", false))

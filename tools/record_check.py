@@ -49,6 +49,10 @@ def beeps(mkv: str, times_file: str) -> None:
         near = min(heard, key=lambda h: abs(h - played), default=None)
         lags.append(None if near is None or abs(near - played) > 0.5 else round((near - played) * 1000))
     print(f"beeps played {len(lags)}, heard {sum(l is not None for l in lags)}; lag ms (heard - paplay called): {lags}")
+    # Fail on a missed beep or a lag outside 0-100 ms: either means the mic or its timestamps are broken.
+    bad = [l for l in lags if l is None or not 0 <= l <= 100]
+    if not lags or bad:
+        sys.exit(f"FAIL: {len(bad)} of {len(lags)} beeps missing or outside 0-100 ms")
 
 
 if __name__ == "__main__":
