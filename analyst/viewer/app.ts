@@ -115,6 +115,20 @@ $("#usage").append(
 	...stat("cost", `$${usage.cost_usd.toFixed(2)}`),
 );
 $("#count").textContent = String(findings.length);
+const { comparison } = report;
+if (comparison) {
+	const { counts } = comparison;
+	const count = (n: number, name: string) => h("span", { class: name }, h("b", {}, String(n)), ` ${name}`);
+	$("#compare").append(count(counts.resolved, "resolved"), count(counts.new, "new"), count(counts.persisting, "persisting"));
+	$("#compare").title = `Compared with the previous build, session ${comparison.previous_session}`;
+	$("#compare").hidden = false;
+}
+/** Compare mode: whether the previous build had this finding too. */
+const build = (f: Finding): Child =>
+	!!comparison &&
+	(f.previous_id
+		? h("span", { class: "build persisting", title: `${comparison.previous_session} ${f.previous_id}` }, "persisting")
+		: h("span", { class: "build new" }, "new"));
 
 // --- Timeline ---------------------------------------------------------------
 
@@ -199,6 +213,7 @@ for (const f of findings) {
 			{ class: "card-head" },
 			h("span", { class: "category" }, label(f.category)),
 			h("span", { class: `severity ${f.severity}`, title: `${f.severity} severity` }, h("i"), h("i"), h("i"), f.severity),
+			build(f),
 			f.zone && h("span", { class: "zone-name" }, f.zone),
 			h("span", { class: "range" }, `${clock(f.t_start)}–${clock(f.t_end)}`),
 		),
