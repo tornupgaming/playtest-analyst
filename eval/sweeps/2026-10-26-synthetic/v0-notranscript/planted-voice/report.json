@@ -1,0 +1,165 @@
+{
+  "schema": 1,
+  "session_id": "synthetic-planted-voice",
+  "created_at": "2026-10-26T23:30:12.258Z",
+  "model": "muse-wonder-1.0",
+  "config": "v0-notranscript",
+  "findings": [
+    {
+      "id": "f1",
+      "t_start": 6.2,
+      "t_end": 30.9,
+      "category": "difficulty",
+      "severity": "high",
+      "zone": "ledge",
+      "summary": "The player knew to follow the path but fell to their death four times on the jump across to the small floating platform in the ledge zone. The gap and small landing made this early jump block progress for about 25 seconds.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 6.2 s",
+          "death at 9.6 s",
+          "retry at 9.6 s",
+          "death at 14.0 s",
+          "retry at 14.0 s",
+          "death at 19.9 s",
+          "retry at 19.9 s",
+          "death at 24.6 s",
+          "retry at 24.6 s",
+          "zone_enter at 30.9 s"
+        ],
+        "visual": "The player runs along the green path and repeatedly jumps toward the small floating green platform ahead. The character falls into the sky below, respawns, and tries the same jump again several times before finally crossing."
+      },
+      "suggested_fix": "Move the small floating platform about one character-width closer to the takeoff platform and make its landing area about twice as wide, so a normal running jump lands on it reliably.",
+      "highlight": {
+        "t": 12,
+        "prompt": "the small green floating platform"
+      }
+    },
+    {
+      "id": "f2",
+      "t_start": 30.9,
+      "t_end": 70.9,
+      "category": "confusion",
+      "severity": "medium",
+      "zone": "plaza",
+      "summary": "The objective said 'Reach the beacon' but no beacon was visible in the plaza, and the way out up the green steps was hidden behind tall pillars. The player wandered and backtracked around the plaza for about 40 seconds before finding the steps.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 30.9 s",
+          "objective_update at 30.9 s",
+          "zone_enter at 70.9 s"
+        ],
+        "visual": "With 'Reach the beacon.' shown at the top left, the player circles between the tall brown pillars and crates, walks into walls and dead ends, and returns to areas already visited. No beacon or light beam is visible. After about 40 seconds the player finds small green stepped platforms in a corner and climbs them to the raised walkway."
+      },
+      "suggested_fix": "Add a tall, bright light beam above the green stepped platforms in the corner of the plaza, visible over the brown pillars, so the 'Reach the beacon' objective points to a place the player can actually see.",
+      "highlight": {
+        "t": 63,
+        "prompt": "the small green stepped platform"
+      }
+    },
+    {
+      "id": "f3",
+      "t_start": 70.9,
+      "t_end": 100.1,
+      "category": "ui",
+      "severity": "medium",
+      "zone": "hall",
+      "summary": "The link between the small red button on the side shelf and the closed door was not clear. The player tried the door directly and wandered the hall for about 29 seconds before working out that a crate leads up to the button.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 70.9 s",
+          "objective_update at 70.9 s",
+          "objective_update at 100.1 s"
+        ],
+        "visual": "The player enters a room with a small red button on a raised shelf on the side wall and a closed wooden door on the far wall. The player first runs to the far door and jumps against it, then loops around the crates and entrance for about 29 seconds before climbing a crate, reaching the shelf, and stepping on the red button."
+      },
+      "suggested_fix": "Make the red button larger and pulsing, and paint a thick red line on the floor and wall from the button shelf to the closed door, so the player can see that the button opens that door.",
+      "highlight": {
+        "t": 72,
+        "prompt": "the small red button"
+      }
+    },
+    {
+      "id": "f4",
+      "t_start": 108.2,
+      "t_end": 126.4,
+      "category": "difficulty",
+      "severity": "medium",
+      "zone": "drop",
+      "summary": "The red mushroom creature was waiting right where the player lands in the drop room, killing the player twice within a few seconds of entering. The player had almost no time to react after dropping in.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 108.2 s",
+          "death at 110.0 s",
+          "retry at 110.0 s",
+          "zone_enter at 113.9 s",
+          "death at 117.5 s",
+          "retry at 117.5 s",
+          "zone_enter at 121.2 s",
+          "zone_exit at 126.4 s"
+        ],
+        "visual": "The player drops down the narrow ramp into the green room and the red mushroom creature is right at the landing and doorway. The creature reaches the player and the player dies, respawns at the top of the ramp, drops in again, and dies the same way before succeeding on the third attempt."
+      },
+      "suggested_fix": "Move the red mushroom creature's starting position and patrol to the far side of the green room, well away from the drop landing, so the player lands safely and has time to see it before it can reach them.",
+      "highlight": {
+        "t": 109,
+        "prompt": "the red mushroom creature"
+      }
+    },
+    {
+      "id": "f5",
+      "t_start": 126.4,
+      "t_end": 146.5,
+      "category": "ui",
+      "severity": "low",
+      "zone": null,
+      "summary": "The EXIT sign at the fork pointed the player into a dead-end branch of the hedge maze. The player followed it, had to turn back, and returned to the same sign about 14 seconds later.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 126.4 s",
+          "zone_enter at 130.4 s",
+          "zone_enter at 144.7 s",
+          "zone_exit at 146.5 s",
+          "zone_enter at 149.1 s"
+        ],
+        "visual": "The player reaches a sign marked EXIT with a red arrow and follows the branch it points to into the green hedge maze. The player hits a dead end, turns back, and returns to the same EXIT sign about 14 seconds later before taking the other branch toward the grey pillars."
+      },
+      "suggested_fix": "Turn the red arrow on the EXIT sign to point toward the branch that leads to the grey-pillar corridor instead of the left dead-end branch, or remove this sign and place EXIT signs only on the correct route.",
+      "highlight": {
+        "t": 128.5,
+        "prompt": "the red arrow sign"
+      }
+    },
+    {
+      "id": "f6",
+      "t_start": 149.1,
+      "t_end": 189.5,
+      "category": "pacing",
+      "severity": "medium",
+      "zone": "corridor",
+      "summary": "After the fork, the player had to run down a single long, empty, straight corridor for about 40 seconds with nothing to do or look at. This made the end of the course drag.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 149.1 s",
+          "zone_exit at 189.5 s",
+          "objective_update at 190.1 s"
+        ],
+        "visual": "The player runs in a straight line down one very long green corridor for about 40 seconds, passing identical grey pillars and green walls. There are no turns, enemies, items, or decisions until the end of the corridor is finally reached."
+      },
+      "suggested_fix": "Shorten this corridor by at least half, moving the end flag to roughly 15 seconds of running from the corridor entrance, so the final stretch does not drag after the fork.",
+      "highlight": null
+    }
+  ],
+  "usage": {
+    "input_tokens": 26239,
+    "cached_tokens": 1254,
+    "output_tokens": 12154,
+    "cost_usd": 0.343271,
+    "latency_s": 130.7
+  }
+}

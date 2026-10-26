@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "session_id": "synthetic-clean-voice",
+  "created_at": "2026-10-26T23:31:19.152Z",
+  "model": "muse-wonder-1.0",
+  "config": "v1",
+  "findings": [],
+  "usage": {
+    "input_tokens": 9747,
+    "cached_tokens": 0,
+    "output_tokens": 1211,
+    "cost_usd": 0.063208,
+    "latency_s": 12.7
+  }
+}
