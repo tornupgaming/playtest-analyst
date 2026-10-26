@@ -23,11 +23,12 @@ export async function run(argv: string[]) {
 	if (!(await Bun.file(video).exists())) console.warn(`No video.mp4 in ${dir}; run \`playtest finalize\` first.`);
 
 	const server = Bun.serve({
-		hostname: "localhost",
+		// Fail if the port is taken, rather than share it with a stale viewer. Bun 1.4 ignores
+		// reusePort: false for "localhost", so bind the IPv4 loopback explicitly.
+		hostname: "127.0.0.1",
+		reusePort: false,
 		port: Number(values.port),
 		development: false,
-		// Fail if the port is taken, rather than share it with a stale viewer.
-		reusePort: false,
 		routes: {
 			"/": viewer,
 			"/api/session": Response.json({ meta, events, report }),
