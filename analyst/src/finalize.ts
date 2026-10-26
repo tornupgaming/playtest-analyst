@@ -22,10 +22,11 @@ export function alignVideo(start: number): string {
 	return reset;
 }
 
-/** The same for audio: lead with silence when it starts late, trim when it starts early. */
+/** The same for audio: lead with silence when it starts late, trim when it starts early.
+ * The delay is in whole ms: ffmpeg 9's adelay misreads fractional seconds ("0.5s" delays 0.5 ms). */
 export function alignAudio(start: number): string {
 	const reset = "asetpts=PTS-STARTPTS";
-	if (start > 0) return `${reset},adelay=delays=${start}s:all=1`;
+	if (start > 0) return `${reset},adelay=delays=${Math.round(start * 1000)}:all=1`;
 	if (start < 0) return `${reset},atrim=start=${-start},${reset}`;
 	return reset;
 }

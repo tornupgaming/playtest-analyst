@@ -23,7 +23,7 @@ describe("align filters", () => {
 		expect(alignVideo(0.068)).toBe("setpts=PTS-STARTPTS,tpad=start_duration=0.068:start_mode=clone");
 		expect(alignVideo(-1.5)).toBe("setpts=PTS-STARTPTS,trim=start=1.5,setpts=PTS-STARTPTS");
 		expect(alignVideo(0)).toBe("setpts=PTS-STARTPTS");
-		expect(alignAudio(0.5)).toBe("asetpts=PTS-STARTPTS,adelay=delays=0.5s:all=1");
+		expect(alignAudio(0.5)).toBe("asetpts=PTS-STARTPTS,adelay=delays=500:all=1");
 		expect(alignAudio(-1.149)).toBe("asetpts=PTS-STARTPTS,atrim=start=1.149,asetpts=PTS-STARTPTS");
 	});
 });
@@ -62,4 +62,23 @@ test("finalize moves a late wall-clock video and an early declared mic onto the 
 	// The muxed AAC track carries the same beep, aligned the same way.
 	await run(["ffmpeg", "-loglevel", "error", "-i", join(dir, "video.mp4"), "-vn", "-ac", "1", "-ar", "16000", join(dir, "muxed.wav")]);
 	expect((await firstBeep(join(dir, "muxed.wav"))).t).toBeCloseTo(0.6, 1);
+});
+
+test("finalize trims an early declared video and pads a late wall-clock mic", async () => {
+	const dir = mkdtempSync(join(tmpdir(), "finalize-"));
+	// Video: flash 1.0 s into the file, declared to start 0.5 s before t0 → flash at 0.5 s.
+	await run(["ffmpeg", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=black:s=160x120:r=20:d=4,drawbox=c=white:t=fill:enable='between(t,1,1.3)'",
+		"-c:v", "libx264", join(dir, "screen.mkv")]);
+	// Mic: beep 1.0 s into the file, whose pts say it started 0.25 s after t0 → beep at 1.25 s.
+	await run(["ffmpeg", "-loglevel", "error", "-f", "lavfi", "-i", "aevalsrc='if(between(t,1,1.2),0.5*sin(2*PI*1000*t),0)':s=48000:d=4",
+		"-c:a", "flac", "-output_ts_offset", "1000.25", join(dir, "mic.mka")]);
+	await Bun.write(join(dir, "session.json"), JSON.stringify({
+		schema: 1, id: "t", started_at: "2026-10-26T00:00:00Z", t0_unix: 1000, duration: 3, game: "g", build: null, tester: null, profile: null,
+		capture: { video: "screen.mkv", video_start: -0.5, audio: "mic.mka" },
+	}));
+
+	await finalize(dir);
+
+	expect(await firstFlash(join(dir, "video.mp4"), 20)).toBeCloseTo(0.5, 1);
+	expect(await firstBeep(join(dir, "mic16k.wav"))).toEqual({ t: expect.closeTo(1.25, 2), length: 3 });
 });
