@@ -99,6 +99,33 @@ export const Report = z.object({
 });
 export type Report = z.infer<typeof Report>;
 
+// --- Patches (patches.json, written by `playtest patch`) --------------------
+
+/** A patch as the model writes it: one minimal edit to one allowlisted file for one finding. */
+export const ModelPatch = z.object({
+	finding_id: z.string(),
+	/** Path relative to the project root; the only file `diff` touches. */
+	file: z.string(),
+	/** Unified diff with `a/` and `b/` paths relative to the project root, as `git diff` writes it. */
+	diff: z.string(),
+	rationale: z.string(),
+	/** Commit-message line; the dock commits the patch as `playtest-fix: <summary>`. */
+	summary: z.string(),
+});
+export type ModelPatch = z.infer<typeof ModelPatch>;
+
+/** Each diff passed `git apply --check` against the project tree it was made for. Patches to
+ * neighbouring lines of one file overlap in context, so apply them with `git apply -C0`. */
+export const Patches = z.object({
+	schema: z.literal(1),
+	session_id: z.string(),
+	created_at: z.string(),
+	model: z.string(),
+	patches: z.array(ModelPatch.extend({ id: z.string() })),
+	usage: Usage,
+});
+export type Patches = z.infer<typeof Patches>;
+
 // --- Ground truth (eval/ground_truth.json) ----------------------------------
 
 const Tunable = z.object({ path: z.string(), planted: z.unknown(), fixed: z.unknown() });

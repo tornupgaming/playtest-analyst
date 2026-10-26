@@ -11,6 +11,7 @@ What we decided, why, and what we fall back to. The evidence lives in the [wiki]
 | `playtest finalize <session>` | Puts the raw capture on the session clock: writes `video.mp4` and `mic16k.wav` (§2) |
 | `playtest analyse <session>` | Bundle → Muse Wonder (+ ASR, SAM) → `report.json` |
 | `playtest annotate <session>` | Redraws the SAM key frames for an existing `report.json` (§5) |
+| `playtest patch <session>` | `report.json` → Muse Spark → `patches.json`: one diff per fixable finding (§8) |
 | `playtest eval <sessions…>` | Scores reports against `eval/ground_truth.json` |
 | `playtest serve <session>` | Serves the report viewer (`Bun.serve`) |
 
@@ -81,3 +82,14 @@ Six planted friction points on a dedicated test level, with the answer key froze
 ## 7. Spend
 
 Every Meta API call goes through `analyst/src/meta.ts`, which appends its cost to a ledger at `$XDG_STATE_HOME/playtest-analyst/spend.jsonl` (shared by all worktrees) and refuses to call once `PLAYTEST_SPEND_CAP_USD` is reached.
+
+## 8. Patches (TUG-107)
+
+`playtest patch <session> [--report …] [--project <root>]` makes one `muse-spark-1.3` call with every finding, the files the project allows in `playtest.json` (`{"patch_allow": [globs]}`), and the scripts behind any allowlisted `.tres`, read-only, for their export docs. A strict `json_schema` limits each patch's finding id and file to the ones given. Each diff must pass `git apply --check` in the project and touch only its own file. The ones that fail get one retry with git's error, then are dropped. Output: `patches.json` (`Patches` in `analyst/src/schema.ts`).
+
+**Why Spark.** About a quarter of Muse Wonder's price per token, and the task needs no video. First run: 5 patches for 6 findings, all passing first time, $0.05 ([wiki](docs/wiki/muse-spark.md)). It also puts a second Meta model in the pipeline.
+
+**Apply with `git apply -C0`.** Each diff is made against the same tree. In `tuning.tres` the tunables sit on neighbouring lines, so after one patch the next one's context no longer matches and plain `git apply` fails. `-C0` lets the context differ while the changed lines must still match ([wiki](docs/wiki/git-apply.md)). The TUG-108 dock applies with it.
+
+**Fallback.** If Spark's diffs start failing, set `PATCH_MODEL` in `analyst/src/patch.ts` to `muse-wonder-1.0`.
+

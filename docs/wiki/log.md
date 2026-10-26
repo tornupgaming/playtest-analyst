@@ -34,3 +34,8 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 
 ## [2026-10-26] ingest | spikes/tug-104 (check.sh, results/run.txt)
 - sam-3-1.md: added the key-frames-from-video run (matches as on PNG, except "the exit sign"; 4 calls in flight). Extended the JPEG open question.
+
+## [2026-10-26] ingest | spikes/tug-107/README.md (first `playtest patch` run), Spark docs pages, git-apply man page
+- Created muse-spark.md.
+- Created git-apply.md.
+- index.md: added both, and a Tools section.
