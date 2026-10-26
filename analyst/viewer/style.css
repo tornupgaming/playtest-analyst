@@ -1,0 +1,9 @@
+body { margin: 0; background: #111; color: #ddd; font-family: system-ui, sans-serif; }
+main { display: flex; gap: 16px; padding: 16px; }
+video { width: 65%; background: #000; }
+ol { list-style: none; margin: 0; padding: 0; flex: 1; }
+li { padding: 8px 12px; margin-bottom: 8px; border-left: 4px solid; cursor: pointer; background: #1b1b1b; }
+li:hover { background: #262626; }
+.severity-high { border-color: #e5395b; }
+.severity-medium { border-color: #f07f3c; }
+.severity-low { border-color: #ffc61a; }
