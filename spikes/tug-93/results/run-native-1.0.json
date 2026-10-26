@@ -1,0 +1,136 @@
+{
+  "variant": "native",
+  "fps": 1.0,
+  "latency_s": 99.5,
+  "usage": {
+    "input_tokens": 85582,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 7418,
+    "output_tokens_details": {
+      "reasoning_tokens": 7141
+    },
+    "total_tokens": 93000
+  },
+  "cost_usd": 0.4907,
+  "score": {
+    "found": "10/10",
+    "within_tolerance": "6/10",
+    "mean_abs_error_s": 51.9,
+    "events": [
+      {
+        "truth_t": 47,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": 1
+      },
+      {
+        "truth_t": 90,
+        "kind": "speech",
+        "text": "Where am I supposed to go?",
+        "error_s": -78
+      },
+      {
+        "truth_t": 133,
+        "kind": "visual",
+        "text": "CHECKPOINT",
+        "error_s": 0
+      },
+      {
+        "truth_t": 210,
+        "kind": "visual",
+        "text": "KEY",
+        "error_s": 0
+      },
+      {
+        "truth_t": 260,
+        "kind": "speech",
+        "text": "I can't see the quest marker at all.",
+        "error_s": -22
+      },
+      {
+        "truth_t": 305,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": 0
+      },
+      {
+        "truth_t": 400,
+        "kind": "speech",
+        "text": "Is this jump even possible?",
+        "error_s": -170
+      },
+      {
+        "truth_t": 455,
+        "kind": "visual",
+        "text": "PAUSED",
+        "error_s": 2
+      },
+      {
+        "truth_t": 520,
+        "kind": "speech",
+        "text": "Okay, that was actually fun.",
+        "error_s": -245
+      },
+      {
+        "truth_t": 570,
+        "kind": "visual",
+        "text": "LEVEL COMPLETE",
+        "error_s": 1
+      }
+    ]
+  },
+  "raw_events": [
+    {
+      "kind": "speech",
+      "t_seconds": 12,
+      "text": "Where am I supposed to go?"
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 238,
+      "text": "I can't see the quest marker at all"
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 230,
+      "text": "Is this jump even possible?"
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 275,
+      "text": "Okay, that was actually fun"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 48,
+      "text": "Red full-screen display with white text YOU DIED"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 133,
+      "text": "Green text CHECKPOINT appears in the center of the screen"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 210,
+      "text": "Yellow square labeled KEY appears"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 305,
+      "text": "Red full-screen display with white text YOU DIED"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 457,
+      "text": "Blue full-screen display with white text PAUSED"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 571,
+      "text": "Yellow text LEVEL COMPLETE appears in the center of the screen"
+    }
+  ]
+}

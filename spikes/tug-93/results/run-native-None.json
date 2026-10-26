@@ -1,0 +1,141 @@
+{
+  "variant": "native",
+  "fps": null,
+  "latency_s": 75.1,
+  "usage": {
+    "input_tokens": 85582,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 6416,
+    "output_tokens_details": {
+      "reasoning_tokens": 5842
+    },
+    "total_tokens": 91998
+  },
+  "cost_usd": 0.4706,
+  "score": {
+    "found": "10/10",
+    "within_tolerance": "7/10",
+    "mean_abs_error_s": 6.4,
+    "events": [
+      {
+        "truth_t": 47,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": 0
+      },
+      {
+        "truth_t": 90,
+        "kind": "speech",
+        "text": "Where am I supposed to go?",
+        "error_s": 25
+      },
+      {
+        "truth_t": 133,
+        "kind": "visual",
+        "text": "CHECKPOINT",
+        "error_s": 0
+      },
+      {
+        "truth_t": 210,
+        "kind": "visual",
+        "text": "KEY",
+        "error_s": 1
+      },
+      {
+        "truth_t": 260,
+        "kind": "speech",
+        "text": "I can't see the quest marker at all.",
+        "error_s": -15
+      },
+      {
+        "truth_t": 305,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": 1
+      },
+      {
+        "truth_t": 400,
+        "kind": "speech",
+        "text": "Is this jump even possible?",
+        "error_s": -15
+      },
+      {
+        "truth_t": 455,
+        "kind": "visual",
+        "text": "PAUSED",
+        "error_s": 1
+      },
+      {
+        "truth_t": 520,
+        "kind": "speech",
+        "text": "Okay, that was actually fun.",
+        "error_s": -5
+      },
+      {
+        "truth_t": 570,
+        "kind": "visual",
+        "text": "LEVEL COMPLETE",
+        "error_s": 1
+      }
+    ]
+  },
+  "raw_events": [
+    {
+      "kind": "visual",
+      "t_seconds": 0,
+      "text": "Initial scene is present: dark blue background, dark green strip along the bottom, and a small light-grey square sitting on the green strip, left of center. The square remains in the same position for the whole recording except for the colour tint during the full-screen flashes below."
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 115,
+      "text": "Where am I supposed to go?"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 47,
+      "text": "Full-screen solid red flash. White capital text in the centre reads \"YOU DIED\". The square at the bottom is tinted pink. The screen then returns to the initial scene."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 133,
+      "text": "Bright green capital text appears in the centre of the dark background: \"CHECKPOINT\". No full-screen colour change. The text then disappears and the initial scene remains."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 211,
+      "text": "A bright yellow square object appears on the right side, above the green strip. Black capital text inside it reads \"KEY\". It then disappears."
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 245,
+      "text": "I can't see the quest marker at all."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 306,
+      "text": "Full-screen solid red flash again. White capital text in the centre reads \"YOU DIED\". The square at the bottom is tinted pink. The screen then returns to the initial scene."
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 385,
+      "text": "Is this jump even possible?"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 456,
+      "text": "Full-screen solid blue flash. White capital text in the centre reads \"PAUSED\". The screen then returns to the initial scene."
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 515,
+      "text": "Okay, that was actually fun."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 571,
+      "text": "Yellow capital text appears in the centre of the dark background: \"LEVEL COMPLETE\". No full-screen colour change. The text then disappears and the initial static scene continues to the end of the recording at about 600 seconds."
+    }
+  ]
+}

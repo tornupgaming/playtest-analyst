@@ -1,0 +1,79 @@
+[
+  {
+    "variant": "native",
+    "fps": null,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  },
+  {
+    "variant": "native",
+    "fps": 0.5,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  },
+  {
+    "variant": "native",
+    "fps": 1,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  },
+  {
+    "variant": "native",
+    "fps": 2,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  },
+  {
+    "variant": "native",
+    "fps": 5,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  },
+  {
+    "variant": "noaudio",
+    "fps": null,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 233
+  },
+  {
+    "variant": "noaudio",
+    "fps": 1,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 233
+  },
+  {
+    "variant": "long60",
+    "fps": null,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  },
+  {
+    "variant": "long60",
+    "fps": 1,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  },
+  {
+    "variant": "long180",
+    "fps": null,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  },
+  {
+    "variant": "long180",
+    "fps": 1,
+    "status": 200,
+    "object": "response.input_tokens",
+    "input_tokens": 234
+  }
+]

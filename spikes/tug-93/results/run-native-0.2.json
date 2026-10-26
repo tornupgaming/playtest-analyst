@@ -1,0 +1,121 @@
+{
+  "variant": "native",
+  "fps": 0.2,
+  "latency_s": 168.5,
+  "usage": {
+    "input_tokens": 23182,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 14561,
+    "output_tokens_details": {
+      "reasoning_tokens": 14198
+    },
+    "total_tokens": 37743
+  },
+  "cost_usd": 0.3839,
+  "score": {
+    "found": "7/10",
+    "within_tolerance": "2/10",
+    "mean_abs_error_s": 76.9,
+    "events": [
+      {
+        "truth_t": 47,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": 253
+      },
+      {
+        "truth_t": 90,
+        "kind": "speech",
+        "text": "Where am I supposed to go?",
+        "error_s": 52
+      },
+      {
+        "truth_t": 133,
+        "kind": "visual",
+        "text": "CHECKPOINT",
+        "error_s": null
+      },
+      {
+        "truth_t": 210,
+        "kind": "visual",
+        "text": "KEY",
+        "error_s": 1
+      },
+      {
+        "truth_t": 260,
+        "kind": "speech",
+        "text": "I can't see the quest marker at all.",
+        "error_s": 92
+      },
+      {
+        "truth_t": 305,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": -5
+      },
+      {
+        "truth_t": 400,
+        "kind": "speech",
+        "text": "Is this jump even possible?",
+        "error_s": 73
+      },
+      {
+        "truth_t": 455,
+        "kind": "visual",
+        "text": "PAUSED",
+        "error_s": null
+      },
+      {
+        "truth_t": 520,
+        "kind": "speech",
+        "text": "Okay, that was actually fun.",
+        "error_s": 62
+      },
+      {
+        "truth_t": 570,
+        "kind": "visual",
+        "text": "LEVEL COMPLETE",
+        "error_s": null
+      }
+    ]
+  },
+  "raw_events": [
+    {
+      "kind": "visual",
+      "t_seconds": 0,
+      "text": "Start: most of the screen is dark blue/grey; a dark\u2011green strip runs along the bottom edge; a small light\u2011gray/white square sits on top of the green strip, slightly left of centre. The frame is otherwise empty. This static layout is the baseline for the whole recording."
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 142,
+      "text": "Player says: \"Where am I supposed to go?\""
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 211,
+      "text": "A bright yellow square suddenly appears at the right\u2011hand side, mid\u2011height. Black capital letters inside read KEY. It is present only briefly (gone by the ~221 s frame)."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 300,
+      "text": "Full\u2011screen flash to solid red with white capital text centered: YOU DIED. Present only briefly (back to baseline by the ~311 s frame)."
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 352,
+      "text": "Player says: \"I can't see the quest marker at all\""
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 473,
+      "text": "Player says: \"Is this jump even possible?\""
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 582,
+      "text": "Player says: \"Okay, that was actually fun\""
+    }
+  ]
+}

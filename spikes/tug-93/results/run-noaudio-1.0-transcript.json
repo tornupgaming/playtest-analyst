@@ -1,0 +1,141 @@
+{
+  "variant": "noaudio",
+  "fps": 1.0,
+  "latency_s": 65.1,
+  "usage": {
+    "input_tokens": 78140,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 4592,
+    "output_tokens_details": {
+      "reasoning_tokens": 4231
+    },
+    "total_tokens": 82732
+  },
+  "cost_usd": 0.4044,
+  "score": {
+    "found": "10/10",
+    "within_tolerance": "10/10",
+    "mean_abs_error_s": 0.1,
+    "events": [
+      {
+        "truth_t": 47,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": -1.0
+      },
+      {
+        "truth_t": 90,
+        "kind": "speech",
+        "text": "Where am I supposed to go?",
+        "error_s": -0.3
+      },
+      {
+        "truth_t": 133,
+        "kind": "visual",
+        "text": "CHECKPOINT",
+        "error_s": 0.0
+      },
+      {
+        "truth_t": 210,
+        "kind": "visual",
+        "text": "KEY",
+        "error_s": 0.0
+      },
+      {
+        "truth_t": 260,
+        "kind": "speech",
+        "text": "I can't see the quest marker at all.",
+        "error_s": -0.1
+      },
+      {
+        "truth_t": 305,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": 0.0
+      },
+      {
+        "truth_t": 400,
+        "kind": "speech",
+        "text": "Is this jump even possible?",
+        "error_s": 0.0
+      },
+      {
+        "truth_t": 455,
+        "kind": "visual",
+        "text": "PAUSED",
+        "error_s": 0.0
+      },
+      {
+        "truth_t": 520,
+        "kind": "speech",
+        "text": "Okay, that was actually fun.",
+        "error_s": -0.1
+      },
+      {
+        "truth_t": 570,
+        "kind": "visual",
+        "text": "LEVEL COMPLETE",
+        "error_s": 0.0
+      }
+    ]
+  },
+  "raw_events": [
+    {
+      "kind": "visual",
+      "t_seconds": 0,
+      "text": "Scene visible from start: dark blue upper background, green strip along the bottom, and a small light-grey/white square sitting on the green strip, left of centre. The square does not move during the recording."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 46.0,
+      "text": "Full-screen red flash. White text centred on screen: 'YOU DIED'"
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 89.7,
+      "text": "Where am I supposed to go?"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 133.0,
+      "text": "Green text centred on screen over the normal scene: 'CHECKPOINT'"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 210.0,
+      "text": "Object appearing on the right side of the screen: a yellow square with black text inside: 'KEY'"
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 259.9,
+      "text": "I can't see the quest marker at all."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 305.0,
+      "text": "Full-screen red flash. White text centred on screen: 'YOU DIED'"
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 400.0,
+      "text": "Is this jump even possible?"
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 455.0,
+      "text": "Full-screen blue flash. White text centred on screen: 'PAUSED'"
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 519.9,
+      "text": "Okay, that was actually fun."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 570.0,
+      "text": "Yellow text centred on screen over the normal scene: 'LEVEL COMPLETE'"
+    }
+  ]
+}

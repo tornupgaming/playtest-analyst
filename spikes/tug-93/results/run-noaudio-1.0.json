@@ -1,0 +1,131 @@
+{
+  "variant": "noaudio",
+  "fps": 1.0,
+  "latency_s": 57.2,
+  "usage": {
+    "input_tokens": 78079,
+    "input_tokens_details": {
+      "cached_tokens": 0
+    },
+    "output_tokens": 3742,
+    "output_tokens_details": {
+      "reasoning_tokens": 3169
+    },
+    "total_tokens": 81821
+  },
+  "cost_usd": 0.3872,
+  "score": {
+    "found": "6/10",
+    "within_tolerance": "6/10",
+    "mean_abs_error_s": 0.3,
+    "events": [
+      {
+        "truth_t": 47,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": -1
+      },
+      {
+        "truth_t": 90,
+        "kind": "speech",
+        "text": "Where am I supposed to go?",
+        "error_s": null
+      },
+      {
+        "truth_t": 133,
+        "kind": "visual",
+        "text": "CHECKPOINT",
+        "error_s": -1
+      },
+      {
+        "truth_t": 210,
+        "kind": "visual",
+        "text": "KEY",
+        "error_s": 0
+      },
+      {
+        "truth_t": 260,
+        "kind": "speech",
+        "text": "I can't see the quest marker at all.",
+        "error_s": null
+      },
+      {
+        "truth_t": 305,
+        "kind": "visual",
+        "text": "YOU DIED",
+        "error_s": 0
+      },
+      {
+        "truth_t": 400,
+        "kind": "speech",
+        "text": "Is this jump even possible?",
+        "error_s": null
+      },
+      {
+        "truth_t": 455,
+        "kind": "visual",
+        "text": "PAUSED",
+        "error_s": 0
+      },
+      {
+        "truth_t": 520,
+        "kind": "speech",
+        "text": "Okay, that was actually fun.",
+        "error_s": null
+      },
+      {
+        "truth_t": 570,
+        "kind": "visual",
+        "text": "LEVEL COMPLETE",
+        "error_s": 0
+      }
+    ]
+  },
+  "raw_events": [
+    {
+      "kind": "visual",
+      "t_seconds": 0,
+      "text": "Static scene at start: dark blue upper background, green strip along the bottom, and a small light-grey/white square resting on the green at left-of-centre. No on-screen text. The square does not move in the frames shown."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 46,
+      "text": "Full-screen red flash. Centre text: \"YOU DIED\" - first on a dark red background in dark lettering, then on a bright red background in white lettering. Then the view returns to the static scene at ~50s."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 132,
+      "text": "Centre on-screen text appears on the unchanged background: \"CHECKPOINT\" - first dark green, then bright green. Then the text disappears and the static scene continues."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 210,
+      "text": "Object appears on the right side, mid-height: a yellow square with black text inside reading \"KEY\". The square then darkens and disappears. No other change to the scene."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 305,
+      "text": "Second full-screen red flash. Centre text: \"YOU DIED\" - first on a dark red background in dark lettering, then on a bright red background in white lettering. Then the view returns to the static scene."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 455,
+      "text": "Full-screen blue flash. Centre text: \"PAUSED\" - first on a dark blue background in grey lettering, then on a bright blue background in white lettering. Then the view returns to the static scene."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 570,
+      "text": "Centre on-screen text appears on the unchanged background: \"LEVEL COMPLETE\" - first in dull yellow, then in bright yellow. Then the text disappears."
+    },
+    {
+      "kind": "visual",
+      "t_seconds": 600,
+      "text": "Video ends on the same static scene as at the start. No other on-screen text, full-screen flashes, or appearing objects are seen."
+    },
+    {
+      "kind": "speech",
+      "t_seconds": 0,
+      "text": "No player sentences are heard at any point in the recording - there is no audible think-aloud speech to transcribe."
+    }
+  ]
+}

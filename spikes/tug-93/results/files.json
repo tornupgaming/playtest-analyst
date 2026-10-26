@@ -1,0 +1,22 @@
+{
+  "/tmp/tug93/clip/native.mp4": {
+    "id": "file-1135908789395717",
+    "bytes": 1351263,
+    "upload_s": 7.8
+  },
+  "/tmp/tug93/clip/noaudio.mp4": {
+    "id": "file-4478601382399318",
+    "bytes": 949299,
+    "upload_s": 8.6
+  },
+  "/tmp/tug93/clip/long60.mp4": {
+    "id": "file-2131163840944092",
+    "bytes": 8100720,
+    "upload_s": 10.6
+  },
+  "/tmp/tug93/clip/long180.mp4": {
+    "id": "file-1909196673397581",
+    "bytes": 24299292,
+    "upload_s": 30.3
+  }
+}
