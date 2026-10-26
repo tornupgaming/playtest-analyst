@@ -2,12 +2,15 @@
   "name": "playtest-analyst",
   "type": "module",
   "private": true,
-  "bin": { "playtest": "src/cli.ts" },
+  "bin": {
+    "playtest": "src/cli.ts"
+  },
   "scripts": {
     "playtest": "bun src/cli.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@meta-sam/parser": "^0.1.0",
     "openai": "^7.45.0",
     "zod": "^4.6.7"
   },
