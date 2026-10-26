@@ -1,0 +1,150 @@
+// `playtest sweep`: every config × every session through analyse(), each report scored by
+// the eval harness, and one README per sweep so runs can be diffed (TUG-121, DECISIONS.md §6).
+import { existsSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
+import { analyse } from "./analyse.ts";
+import { readSession, type Session } from "./bundle.ts";
+import type { AnalysisConfig } from "./config.ts";
+import { ratios, score, type Score } from "./eval.ts";
+import { finalize, finalized } from "./finalize.ts";
+import { type GroundTruth, Report } from "./schema.ts";
+
+const PAD_S = 10;
+
+export type Run = {
+	config: string;
+	session: Session;
+	/** Scored at strict=category (the headline) and strict=any (would it hit with any category?). */
+	result: { report: Report; strict: Score; any: Score } | { error: string };
+};
+
+/** Runs every config on every session, `concurrency` at a time. A report already at the run's
+ * path is reused, so a sweep can be resumed or extended. A failed run is recorded, not fatal. */
+export async function sweep(configs: AnalysisConfig[], dirs: string[], out: string, gt: GroundTruth, concurrency: number): Promise<Run[]> {
+	const sessions: Session[] = [];
+	const runs: Run[] = [];
+	for (const dir of dirs) {
+		try {
+			if (!finalized(dir)) await finalize(dir);
+			sessions.push(await readSession(dir));
+		} catch (err) {
+			// A session that can't be prepared fails its own runs; the rest still go ahead.
+			const error = `preparing ${dir}: ${(err as Error).message.split("\n")[0]!.slice(0, 300)}`;
+			console.error(error);
+			const meta = { id: basename(dir), profile: null, duration: 0 } as Session["meta"];
+			for (const config of configs) runs.push({ config: config.name, session: { dir, meta, events: [] }, result: { error } });
+		}
+	}
+	// Runs are filed by session id, so two bundles with the same folder name can't share a report.
+	const ids = sessions.map((s) => s.meta.id);
+	const dupe = ids.find((id, i) => ids.indexOf(id) !== i);
+	if (dupe) throw new Error(`Two sessions share the id ${dupe}; a sweep needs distinct session ids.`);
+	const queue = configs.flatMap((config) => sessions.map((session) => ({ config, session })));
+	const worker = async () => {
+		for (let job = queue.shift(); job; job = queue.shift()) {
+			const { config, session } = job;
+			const path = join(out, config.name, session.meta.id, "report.json");
+			let result: Run["result"];
+			try {
+				// Reuse a report only if it came from this exact config and prompt.
+				const stamp = JSON.stringify({ ...config, prompt_text: await Bun.file(config.prompt).text() });
+				const stampPath = join(dirname(path), "config.json");
+				const cached = existsSync(path) && existsSync(stampPath) && (await Bun.file(stampPath).text()) === stamp;
+				const report = cached ? Report.parse(await Bun.file(path).json()) : await analyse(session.dir, config, path);
+				if (!cached) await Bun.write(stampPath, stamp);
+				const opts = { padS: PAD_S, profile: session.meta.profile, endT: session.meta.duration };
+				result = { report, strict: score(report, gt, session.events, { ...opts, strict: "category" }), any: score(report, gt, session.events, { ...opts, strict: "any" }) };
+				console.error(`${config.name} × ${session.meta.id}: ${report.findings.length} findings, $${report.usage.cost_usd.toFixed(3)}`);
+			} catch (err) {
+				result = { error: (err as Error).message.split("\n")[0]!.slice(0, 300) };
+				console.error(`${config.name} × ${session.meta.id} failed: ${result.error}`);
+			}
+			runs.push({ config: config.name, session, result });
+		}
+	};
+	await Promise.all(Array.from({ length: concurrency }, worker));
+	const all = [...new Set(runs.map((r) => r.session))];
+	const order = (r: Run) => configs.findIndex((c) => c.name === r.config) * all.length + all.indexOf(r.session);
+	return runs.sort((a, b) => order(a) - order(b));
+}
+
+const num = (x: number | null, digits = 2) => (x === null ? "n/a" : x.toFixed(digits));
+const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+
+/** The sweep's README: a summary row per config, which plants each config found, then a table
+ * and a list of misses, false positives and failures per config. */
+export function readme(title: string, runs: Run[], gt: GroundTruth): string {
+	const configs = [...new Set(runs.map((r) => r.config))];
+	const scored = (config: string) =>
+		runs.flatMap((r) => (r.config === config && "report" in r.result ? [{ ...r, ...r.result }] : []));
+	const totals = (rows: ReturnType<typeof scored>, s: (r: (typeof rows)[number]) => Score) => {
+		const t = { hits: 0, misses: 0, duplicates: 0, false_positives: 0 };
+		for (const r of rows) {
+			t.hits += s(r).hits.length;
+			t.misses += s(r).misses.length;
+			t.duplicates += s(r).duplicates.length;
+			t.false_positives += s(r).false_positives.length;
+		}
+		return { ...t, ...ratios(t) };
+	};
+	const fpClean = (rows: ReturnType<typeof scored>) => sum(rows.filter((r) => r.session.meta.profile === "clean").map((r) => r.strict.false_positives.length));
+
+	const lines = [
+		`# Sweep ${title}`,
+		"",
+		`Generated by \`playtest sweep\`. Scored against \`eval/ground_truth.json\` with pad ${PAD_S} s. Recall and precision use strict=category; "recall any" ignores the category, so the gap between them is findings in the right place with the wrong label. Recall counts planted sessions only; "FP clean" counts false positives on clean sessions, which have no plants. Cost, latency and output tokens are per run (latency is the model call only).`,
+		"",
+		"## Summary",
+		"",
+		"| config | runs | recall | recall any | precision | FP clean | FP all | duplicates | cost $ (total) | latency s (mean) | output tokens (mean) |",
+		"|---|---|---|---|---|---|---|---|---|---|---|",
+	];
+	for (const config of configs) {
+		const rows = scored(config);
+		const t = totals(rows, (r) => r.strict);
+		const a = totals(rows, (r) => r.any);
+		const failed = runs.filter((r) => r.config === config).length - rows.length;
+		const mean = (f: (r: (typeof rows)[number]) => number) => (rows.length ? sum(rows.map(f)) / rows.length : null);
+		lines.push(
+			`| ${config} | ${rows.length}${failed ? ` (+${failed} failed)` : ""} | ${num(t.recall)} (${t.hits}/${t.hits + t.misses}) | ${num(a.recall)} | ${num(t.precision)} | ${fpClean(rows)} | ${t.false_positives} | ${t.duplicates} | ${num(sum(rows.map((r) => r.report.usage.cost_usd)))} | ${num(mean((r) => r.report.usage.latency_s), 1)} | ${num(mean((r) => r.report.usage.output_tokens), 0)} |`,
+		);
+	}
+
+	lines.push("", "## Plants found", "", 'Planted sessions in which each plant was hit at strict=category, then at strict=any: "1 (any 2) of 2".', "", `| plant | ${configs.join(" | ")} |`, `|---|${configs.map(() => "---|").join("")}`);
+	for (const p of gt.plants) {
+		const cells = configs.map((config) => {
+			const planted = scored(config).filter((r) => r.session.meta.profile !== "clean");
+			const hit = (s: (r: (typeof planted)[number]) => Score) => planted.filter((r) => s(r).hits.some((h) => h.plant === p.id)).length;
+			return `${hit((r) => r.strict)} (any ${hit((r) => r.any)}) of ${planted.length}`;
+		});
+		lines.push(`| ${p.id} ${p.category} in ${p.zone} | ${cells.join(" | ")} |`);
+	}
+
+	for (const config of configs) {
+		lines.push("", `## ${config}`, "", "| session | findings | hits | recall | recall any | precision | false pos | duplicates | cost $ | latency s | output tokens |", "|---|---|---|---|---|---|---|---|---|---|---|");
+		const items: string[] = [];
+		for (const r of runs.filter((r) => r.config === config)) {
+			const name = basename(r.session.dir);
+			if ("error" in r.result) {
+				lines.push(`| ${name} | failed | | | | | | | | | |`);
+				items.push(`- failed: ${name}: ${r.result.error}`);
+				continue;
+			}
+			const { report, strict: s, any } = r.result;
+			const u = report.usage;
+			lines.push(`| ${name} | ${report.findings.length} | ${s.hits.length} | ${num(s.recall)} | ${num(any.recall)} | ${num(s.precision)} | ${s.false_positives.length} | ${s.duplicates.length} | ${num(u.cost_usd, 3)} | ${num(u.latency_s, 1)} | ${u.output_tokens} |`);
+			const byId = new Map(report.findings.map((f) => [f.id, f]));
+			const finding = (id: string) => {
+				const f = byId.get(id)!;
+				return `${id} [${f.t_start.toFixed(1)}–${f.t_end.toFixed(1)} s] ${f.category}${f.zone ? ` in ${f.zone}` : ""}: ${f.summary}`;
+			};
+			for (const id of s.misses) {
+				const p = gt.plants.find((p) => p.id === id)!;
+				items.push(`- miss: ${name}: plant ${id} ${p.category} in ${p.zone}${any.misses.includes(id) ? "" : " (hit with another category)"}`);
+			}
+			for (const id of s.false_positives) items.push(`- false positive: ${name}: ${finding(id)}`);
+		}
+		lines.push("", ...(items.length ? items : ["No misses, false positives or failures."]));
+	}
+	return lines.join("\n") + "\n";
+}

@@ -2,6 +2,7 @@
 title: Muse Wonder video input
 updated: 2026-10-26
 sources:
+  - eval/sweeps/2026-10-26-synthetic/README.md
   - spikes/tug-93/FINDINGS.md
   - spikes/tug-93/probe.py
   - spikes/tug-93/results/
@@ -69,6 +70,19 @@ These runs show that:
 - The API accepted the strict schema with a nullable object written as `anyOf: [object, null]`, and `max_output_tokens` 32000. [report](../../spikes/tug-99/results/voiced-report.json)
 - Output tokens ranged 636–8,560 on about 6.5k input tokens, almost all of it reasoning.
 
+### Synthetic sessions through `playtest sweep`
+
+**Conditions:** 2026-10-26, 24 runs: 6 configs (v0 and five variants: no telemetry, no transcript, the v1 prompt, and a repeat each of v0 and v1) × the 4 TUG-120 synthetic sessions, one model call per run. Every run used silent 720p video at `fps` 1, a strict `json_schema` and `max_output_tokens` 32000. [sweep](../../eval/sweeps/2026-10-26-synthetic/README.md)
+
+| Session length | Runs | Input tokens | Output tokens | Cost | Model latency |
+|---|---|---|---|---|---|
+| 190.5 s (planted) | 12 | 25,784–26,770 | 8,270–12,955 | $0.22–0.36 | 77–153 s |
+| 63.1 s (clean) | 12 | 9,142–9,753 | 579–2,178 | $0.05–0.08 | 11–32 s |
+
+- On the 190 s sessions, the telemetry timeline added about 480 input tokens and the transcript about 370. [sweep](../../eval/sweeps/2026-10-26-synthetic/README.md)
+- On planted-novoice, v0 and its repeat (identical input) reported five of the same problems with identical windows, to 0.1 s. One run labelled the plaza problem `ui` and the other `confusion`, and the repeat left out a sixth finding (the hall) that the first run had. [v0](../../eval/sweeps/2026-10-26-synthetic/v0/planted-novoice/report.json), [repeat](../../eval/sweeps/2026-10-26-synthetic/v0-rep/planted-novoice/report.json)
+- Between a planted run and its repeat with identical input, output tokens differed by a factor of 1.12–1.47 (v1 planted-novoice: 12,142 then 8,270). [sweep](../../eval/sweeps/2026-10-26-synthetic/README.md)
+
 ### Token counting endpoint
 
 `POST /v1/responses/input_tokens` returned 233–234 tokens for every case: the 10-minute clip at default fps and at fps 0.5, 1, 2 and 5, the silent clip, and the clip looped to 60 and 180 minutes. A real request with the same 10-minute clip billed 85,582. So the endpoint does not count video content and can't be used to estimate video cost. [measured](../../spikes/tug-93/results/count.json)
@@ -89,5 +103,5 @@ One upload each. [measured](../../spikes/tug-93/results/files.json)
 - How many input tokens does a 60- or 180-minute video bill? The counting endpoint can't answer this, and only 10-minute requests have been run.
 - Is the default `fps` 1? It billed the same as `fps=1` on one clip, but the docs don't say.
 - How accurate are timestamps on real gameplay footage with a real voice, rather than the synthetic clip?
-- How much do these numbers vary between runs? Each figure above comes from a single run.
+- How much do these numbers vary between runs? Only the synthetic sweep has repeats, two runs per input.
 - What drives the 13× spread in output (reasoning) tokens on the 40-second session?

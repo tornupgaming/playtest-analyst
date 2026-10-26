@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "session_id": "synthetic-clean-novoice",
+  "created_at": "2026-10-26T23:31:46.113Z",
+  "model": "muse-wonder-1.0",
+  "config": "v1",
+  "findings": [],
+  "usage": {
+    "input_tokens": 9559,
+    "cached_tokens": 0,
+    "output_tokens": 979,
+    "cost_usd": 0.057816,
+    "latency_s": 17.3
+  }
+}

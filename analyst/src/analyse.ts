@@ -2,7 +2,7 @@
 // Upload and ASR run in parallel, then one /v1/responses call. Invalid output is retried
 // once with the validation error appended. Last, each finding's highlight is drawn on its key frame.
 import { mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { z } from "zod";
 import { annotate } from "./annotate.ts";
 import { readSession } from "./bundle.ts";
@@ -15,17 +15,17 @@ import { type ModelFinding, ModelOutput, type Report, type TranscriptTurn } from
 const ASR_MODEL = "muse-voice-transcribe-1.0";
 const AsrResponse = z.object({ turns: z.array(z.object({ startMs: z.number(), endMs: z.number(), transcript: z.string() })) });
 
-async function uploadVideo(dir: string, withAudio: boolean): Promise<string> {
+async function uploadVideo(dir: string, work: string, withAudio: boolean): Promise<string> {
 	if (withAudio) return uploadFile(join(dir, "video.mp4"));
-	const silent = join(dir, "analysis/upload.mp4");
+	const silent = join(work, "upload.mp4");
 	await run(["ffmpeg", "-y", "-loglevel", "error", "-i", join(dir, "video.mp4"), "-map", "0:v", "-c", "copy", silent]);
 	return uploadFile(silent);
 }
 
-async function transcribe(dir: string, duration: number): Promise<TranscriptTurn[]> {
+async function transcribe(dir: string, work: string, duration: number): Promise<TranscriptTurn[]> {
 	const chunks = await Promise.all(
 		chunkStarts(duration).map(async (start, i) => {
-			const wav = join(dir, `analysis/asr-${i}.wav`);
+			const wav = join(work, `asr-${i}.wav`);
 			await run(["ffmpeg", "-y", "-loglevel", "error", "-ss", String(start), "-t", String(ASR_CHUNK_S), "-i", join(dir, "mic16k.wav"), "-c", "copy", wav]);
 			const form = new FormData();
 			form.append("request", new Blob([JSON.stringify({ model: ASR_MODEL, audioEncoding: "WAV", mode: "ENDPOINTING" })], { type: "application/json" }));
@@ -36,7 +36,7 @@ async function transcribe(dir: string, duration: number): Promise<TranscriptTurn
 		}),
 	);
 	const turns = sessionTurns(chunks);
-	await Bun.write(join(dir, "analysis/transcript.json"), JSON.stringify(turns, null, 2));
+	await Bun.write(join(work, "transcript.json"), JSON.stringify(turns, null, 2));
 	return turns;
 }
 
@@ -56,16 +56,19 @@ function findings(response: Responded["response"]): ModelFinding[] {
 	return parsed.data.findings;
 }
 
+/** Intermediate files go next to `out`: in `analysis/` for report.json, `<name>.analysis/` for any
+ * other name, so two reports written to one folder never share an upload or ASR chunks. */
 export async function analyse(dir: string, config: AnalysisConfig, out = join(dir, "report.json")): Promise<Report> {
 	if (!finalized(dir)) await finalize(dir);
 	const { meta, events } = await readSession(dir);
-	mkdirSync(join(dir, "analysis"), { recursive: true });
+	const work = join(dirname(out), basename(out) === "report.json" ? "analysis" : `${basename(out, ".json")}.analysis`);
+	mkdirSync(work, { recursive: true });
 	const prompt = await Bun.file(config.prompt).text();
 
 	const [uploadedId, transcript] = await Promise.all([
-		uploadVideo(dir, config.video_audio),
+		uploadVideo(dir, work, config.video_audio),
 		config.include_transcript && meta.capture.audio !== null
-			? transcribe(dir, meta.duration).catch((err: Error) => {
+			? transcribe(dir, work, meta.duration).catch((err: Error) => {
 					console.error(`ASR failed, so the video goes with its audio track instead (DECISIONS.md §4): ${err.message}`);
 					return null;
 				})
@@ -74,7 +77,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	// ASR failed: send the mic as the video's audio track. Speech timing is looser, but the words get through.
 	const asrFailed = transcript === null;
 	if (asrFailed) config = { ...config, include_transcript: false, video_audio: true };
-	const fileId = asrFailed ? await uploadVideo(dir, true) : uploadedId;
+	const fileId = asrFailed ? await uploadVideo(dir, work, true) : uploadedId;
 	const turns = transcript ?? [];
 
 	const usage = { input_tokens: 0, cached_tokens: 0, output_tokens: 0, cost_usd: 0, latency_s: 0 };
@@ -82,9 +85,9 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	let error: string | undefined;
 	for (let attempt = 1; attempt <= 2 && !found; attempt++) {
 		const body = modelRequest({ config, prompt, meta, fileId, turns, events, retryError: error });
-		await Bun.write(join(dir, `analysis/request-${attempt}.json`), JSON.stringify(body, null, 2));
+		await Bun.write(join(work, `request-${attempt}.json`), JSON.stringify(body, null, 2));
 		const { response, costUsd, latencyS } = await respond(body, `analyse ${meta.id} ${config.name} attempt ${attempt}`);
-		await Bun.write(join(dir, `analysis/response-${attempt}.json`), JSON.stringify(response, null, 2));
+		await Bun.write(join(work, `response-${attempt}.json`), JSON.stringify(response, null, 2));
 		usage.input_tokens += response.usage?.input_tokens ?? 0;
 		usage.cached_tokens += response.usage?.input_tokens_details?.cached_tokens ?? 0;
 		usage.output_tokens += response.usage?.output_tokens ?? 0;

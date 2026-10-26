@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "session_id": "synthetic-planted-novoice",
+  "created_at": "2026-10-26T23:30:35.995Z",
+  "model": "muse-wonder-1.0",
+  "config": "v0-notranscript",
+  "findings": [
+    {
+      "id": "f1",
+      "t_start": 6.2,
+      "t_end": 30.9,
+      "category": "difficulty",
+      "severity": "high",
+      "zone": "ledge",
+      "summary": "The player fell four times on the first gap jump in the ledge zone and needed about 25 seconds to get past an obstacle at the very start of the session. The small landing platform is too demanding for a first jump.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 6.2 s zone=\"ledge\"",
+          "death at 9.6 s cause=\"fall\" zone=\"ledge\"",
+          "retry at 9.6 s",
+          "death at 14.0 s cause=\"fall\" zone=\"ledge\"",
+          "retry at 14.0 s",
+          "death at 19.9 s cause=\"fall\" zone=\"ledge\"",
+          "retry at 19.9 s",
+          "death at 24.6 s cause=\"fall\" zone=\"ledge\"",
+          "retry at 24.6 s",
+          "zone_enter at 30.9 s zone=\"plaza\""
+        ],
+        "visual": "The small white and purple character repeatedly runs along the narrow green path, jumps towards the small isolated green platform in front of the brown wall, falls into the sky below, respawns, and tries the same jump again."
+      },
+      "suggested_fix": "Move the small mid-gap green platform closer to the take-off path and make it twice as wide, so this first jump can be made without a near-perfect landing.",
+      "highlight": {
+        "t": 18,
+        "prompt": "the small green floating platform"
+      }
+    },
+    {
+      "id": "f2",
+      "t_start": 30.9,
+      "t_end": 70.9,
+      "category": "confusion",
+      "severity": "high",
+      "zone": "plaza",
+      "summary": "The player spent 40 seconds wandering the plaza because the objective said to reach a beacon, but no beacon or marker could be seen. They only progressed after stumbling on stepped platforms hidden in a corner.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 30.9 s zone=\"plaza\"",
+          "objective_update at 30.9 s text=\"Reach the beacon.\"",
+          "zone_enter at 70.9 s zone=\"hall\""
+        ],
+        "visual": "The character loops around the brown pillars and wooden crates in the sandy plaza, runs along several walls, and revisits the same areas. No beacon, light beam, or marker is visible on screen during the search. After about 40 seconds the character finds small green stepped platforms in a corner, climbs them, and leaves through a high doorway."
+      },
+      "suggested_fix": "Add a tall bright light beam above the high doorway at the top of the green stepped platforms, visible over the plaza pillars from the entrance, so the 'Reach the beacon' objective has a visible target.",
+      "highlight": {
+        "t": 70,
+        "prompt": "the rectangular brown doorway opening"
+      }
+    },
+    {
+      "id": "f3",
+      "t_start": 108.2,
+      "t_end": 126.4,
+      "category": "difficulty",
+      "severity": "medium",
+      "zone": "drop",
+      "summary": "The first enemy in the session killed the player twice in the drop room before they worked out how to get past it. The enemy blocks the way out and the player is given no warning about how it works.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 108.2 s zone=\"drop\"",
+          "death at 110.0 s cause=\"enemy\" zone=\"drop\"",
+          "retry at 110.0 s",
+          "zone_enter at 113.9 s zone=\"drop\"",
+          "death at 117.5 s cause=\"enemy\" zone=\"drop\"",
+          "retry at 117.5 s",
+          "zone_enter at 121.2 s zone=\"drop\"",
+          "zone_exit at 126.4 s zone=\"drop\""
+        ],
+        "visual": "The character drops into a green room where a red spotted mushroom creature waits near the way out. The character is killed on contact twice, respawns above the room, and only gets past on the third entry by jumping onto the creature, with no on-screen warning or instruction before the first death."
+      },
+      "suggested_fix": "Move this first mushroom creature away from the exit doorway into open floor and slow it down, and add a one-line prompt before the room such as 'Jump on enemies to squash them.'",
+      "highlight": {
+        "t": 122,
+        "prompt": "the red spotted mushroom creature"
+      }
+    },
+    {
+      "id": "f4",
+      "t_start": 126.4,
+      "t_end": 146.5,
+      "category": "ui",
+      "severity": "medium",
+      "zone": "fork",
+      "summary": "An EXIT sign with a red arrow pointed the player into a dead-end left branch, costing about 14 seconds of walking there and back before they found the real route.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 126.4 s zone=\"fork\"",
+          "zone_enter at 130.4 s zone=\"fork_left\"",
+          "zone_enter at 144.7 s zone=\"fork\"",
+          "zone_exit at 146.5 s zone=\"fork\"",
+          "zone_enter at 149.1 s zone=\"corridor\""
+        ],
+        "visual": "At the junction the character passes a sign reading EXIT with a large red arrow pointing left, follows it into the left green passages, reaches a dead end, turns around, and retraces the whole branch back to the junction before taking the route past the grey pillars."
+      },
+      "suggested_fix": "Rotate the red arrow on the EXIT sign at the fork so it points towards the grey-pillar corridor route, and remove or move any EXIT sign that faces the dead-end left branch.",
+      "highlight": {
+        "t": 128,
+        "prompt": "the red EXIT arrow sign"
+      }
+    },
+    {
+      "id": "f5",
+      "t_start": 149.1,
+      "t_end": 189.5,
+      "category": "pacing",
+      "severity": "medium",
+      "zone": "corridor",
+      "summary": "The final corridor is about 40 seconds of running straight through an empty, repeating passage with nothing to fight, collect, or decide, which drags out the end of the session.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 149.1 s zone=\"corridor\"",
+          "zone_exit at 189.5 s zone=\"corridor\"",
+          "objective_update at 190.1 s text=\"Course complete!\""
+        ],
+        "visual": "The character runs in a straight line down an identical green corridor between tall green walls, passing the same grey pillars on both sides for about 40 seconds. There are no enemies, turns, pickups, or choices until a small red flag appears at the very end."
+      },
+      "suggested_fix": "Shorten this corridor by about 60 percent, moving the finish flag and end trigger closer, so the final run takes roughly 15 seconds instead of 40.",
+      "highlight": null
+    }
+  ],
+  "usage": {
+    "input_tokens": 26240,
+    "cached_tokens": 0,
+    "output_tokens": 9118,
+    "cost_usd": 0.28732,
+    "latency_s": 86.9
+  }
+}

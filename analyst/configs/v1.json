@@ -1,0 +1,8 @@
+{
+	"name": "v1",
+	"prompt": "../prompts/v1.md",
+	"fps": 1,
+	"include_transcript": true,
+	"include_telemetry": true,
+	"video_audio": false
+}

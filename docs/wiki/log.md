@@ -42,3 +42,6 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 
 ## [2026-10-26] ingest | docs/recorder.md, tools/record_check.sh (TUG-98 recorder runs)
 - capture-sync.md: added the in-process ffmpeg mic on loopback (60 s and 30 s runs, 13–25 ms including paplay start-up), ffmpeg orphaned by SIGKILL of Godot, SIGTERM finalising the file, run args from a plugin needing `settings_changed`, and the editor's Stop button leaving bundles incomplete. Narrowed the in-process mic open question to real mics and runs over 60 s.
+
+## [2026-10-26] ingest | eval/sweeps/2026-10-26-synthetic (TUG-121 first sweep)
+- muse-wonder-video.md: added tokens, cost and latency for 24 sweep runs on the 190 s and 63 s synthetic sessions, the input tokens added by telemetry and transcript, and run-to-run variation on identical input. index.md: updated the line.

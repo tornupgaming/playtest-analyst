@@ -148,7 +148,6 @@ test("when ASR fails, the video is sent with its audio track and no transcript",
 	expect((await Bun.file(join(dir, "report.json")).json()).findings).toHaveLength(2);
 });
 
-/** Mean brightness (0–255) of the region [x0, x1) × [y0, y1) of a 1280-wide rgb24 frame. */
 /** Pixels in the box that are the overlay's yellow in `drawn` but weren't in `plain`. */
 function newYellow(drawn: Uint8Array, plain: Uint8Array, x0: number, y0: number, x1: number, y1: number): number {
 	const yellow = (rgb: Uint8Array, i: number) => rgb[i]! > 200 && rgb[i + 1]! > 170 && rgb[i + 2]! < 90;
@@ -160,6 +159,7 @@ function newYellow(drawn: Uint8Array, plain: Uint8Array, x0: number, y0: number,
 	return n;
 }
 
+/** Mean brightness (0–255) of the region [x0, x1) × [y0, y1) of a 1280-wide rgb24 frame. */
 function brightness(rgb: Uint8Array, x0: number, y0: number, x1: number, y1: number): number {
 	let sum = 0;
 	for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) for (let c = 0; c < 3; c++) sum += rgb[(y * 1280 + x) * 3 + c]!;
@@ -208,4 +208,16 @@ test("when SAM finds nothing, the finding has no annotated frame, the reason is 
 	expect(report.findings).toEqual([{ id: "f1", ...EARLY }, { id: "f2", ...LATE }]);
 	expect(existsSync(join(dir, "analysis/frames/test/f2.png"))).toBe(false);
 	expect(logged).toEqual(['f2: no annotated frame: SAM found no match for "the exit door".']);
+});
+
+test("with --out elsewhere, the report and the intermediate files go there, not into the session", async () => {
+	replies = [VALID];
+	const out = join(tmp, `sweep-${n}`, "v0", "report.json");
+	await analyse(dir, config, out);
+
+	expect((await Bun.file(out).json()).findings).toHaveLength(2);
+	expect(await Bun.file(join(tmp, `sweep-${n}`, "v0", "analysis/transcript.json")).json()).toEqual([{ start: 1.2, end: 2, text: "where do I go" }]);
+	// Only annotated key frames live in the session (the viewer serves them from there).
+	expect(existsSync(join(dir, "analysis/transcript.json"))).toBe(false);
+	expect(existsSync(join(dir, "analysis/upload.mp4"))).toBe(false);
 });
