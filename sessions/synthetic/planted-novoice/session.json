@@ -1,0 +1,17 @@
+{
+	"schema": 1,
+	"id": "synthetic-planted-novoice",
+	"started_at": "2026-10-26T23:10:49+00:00",
+	"t0_unix": 1793056249.097,
+	"duration": 190.466,
+	"game": "Playtest Analyst Test Level",
+	"build": null,
+	"tester": "synthetic-bot",
+	"profile": "planted",
+	"capture": {
+		"video": "screen.mkv",
+		"video_start": 0,
+		"audio": "mic.wav",
+		"audio_start": 0
+	}
+}
