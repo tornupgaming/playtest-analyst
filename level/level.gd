@@ -65,6 +65,7 @@ func _physics_process(_delta: float) -> void:
 
 func _build() -> void:
 	# Paths and cliffs are grass-topped clay. Past the drop, the walls are hedges.
+	# Blocks meet edge to edge: overlapping ones share faces, which flicker.
 	var wall: Material = GRASS
 	_rng.seed = 7
 
@@ -121,8 +122,8 @@ func _build() -> void:
 	# Hall: a gate at the far end, opened by the switch on the balcony.
 	var z1 := z0 - 40.0
 	_box(Vector3(-9, -1, z1), Vector3(9, 8, z1 - 30), STONE)
-	_box(Vector3(-9, 8, z1), Vector3(-8, 16, z1 - 30), wall)
-	_box(Vector3(8, 8, z1), Vector3(9, 16, z1 - 30), wall)
+	_box(Vector3(-9, 8, z1 - 1), Vector3(-8, 16, z1 - 30), wall)
+	_box(Vector3(8, 8, z1 - 1), Vector3(9, 16, z1 - 30), wall)
 	_box(Vector3(-9, 8, z1 - 30), Vector3(-2, 16, z1 - 31), wall)
 	_box(Vector3(2, 8, z1 - 30), Vector3(9, 16, z1 - 31), wall)
 	_box(Vector3(-2, 13, z1 - 30), Vector3(2, 16, z1 - 31), wall)
@@ -154,7 +155,8 @@ func _build() -> void:
 	_box(Vector3(-8, -1, z2 - 6), Vector3(8, 0, z2 - 26), GRASS)
 	_box(Vector3(-9, 0, z2 - 6), Vector3(-8, 7, z2 - 26), wall)
 	_box(Vector3(8, 0, z2 - 6), Vector3(9, 7, z2 - 26), wall)
-	_box(Vector3(-9, 0, z2 - 5), Vector3(9, 7, z2 - 6), wall)
+	_box(Vector3(-9, 0, z2 - 5), Vector3(-3, 7, z2 - 6), wall)
+	_box(Vector3(3, 0, z2 - 5), Vector3(9, 7, z2 - 6), wall)
 	_box(Vector3(-9, 0, z2 - 26), Vector3(-2, 7, z2 - 27), wall)
 	_box(Vector3(2, 0, z2 - 26), Vector3(9, 7, z2 - 27), wall)
 	_box(Vector3(-2, 4, z2 - 26), Vector3(2, 7, z2 - 27), wall)
@@ -187,14 +189,14 @@ func _build() -> void:
 	_zone("fork", Vector3(-5, -1, z3), Vector3(5, 6, z3 - 18))
 	var corridor_end := z3 - 15.0 - tuning.corridor_segments * CORRIDOR_SEGMENT_LENGTH
 	for side in [-1, 1]:
-		_box(Vector3(side * 6, 0, z3 - 8), Vector3(side * 5, 4, z3 - 11), wall)
-		_box(Vector3(side * 6, 0, z3 - 15), Vector3(side * 5, 4, z3 - 18), wall)
+		_box(Vector3(side * 6, 0, z3 - 8), Vector3(side * 5, 4, z3 - 10), wall)
+		_box(Vector3(side * 6, 0, z3 - 16), Vector3(side * 5, 4, z3 - 18), wall)
 		_box(Vector3(side * 5, -1, z3 - 11), Vector3(side * 21, 0, z3 - 15), GRASS)
 		_box(Vector3(side * 5, 0, z3 - 10), Vector3(side * 22, 4, z3 - 11), wall)
 		_box(Vector3(side * 5, 0, z3 - 15), Vector3(side * 17, 4, z3 - 16), wall)
 		var end := corridor_end if side == 1 else z3 - 35.0
 		_box(Vector3(side * 17, -1, z3 - 15), Vector3(side * 21, 0, end), GRASS)
-		_box(Vector3(side * 21, 0, z3 - 10), Vector3(side * 22, 4, end), wall)
+		_box(Vector3(side * 21, 0, z3 - 11), Vector3(side * 22, 4, end), wall)
 		_box(Vector3(side * 16, 0, z3 - 16), Vector3(side * 17, 4, end), wall)
 	_box(Vector3(-22, 0, z3 - 35), Vector3(-16, 4, z3 - 36), wall)
 	_zone("fork_left", Vector3(-21, -1, z3 - 11), Vector3(-5.2, 6, z3 - 35))
@@ -209,8 +211,8 @@ func _build() -> void:
 
 	# Finish.
 	_box(Vector3(15, -1, corridor_end), Vector3(23, 0, corridor_end - 10), SAND)
-	_box(Vector3(14, 0, corridor_end), Vector3(17, 4, corridor_end - 11), wall)
-	_box(Vector3(21, 0, corridor_end), Vector3(24, 4, corridor_end - 11), wall)
+	_box(Vector3(14, 0, corridor_end), Vector3(17, 4, corridor_end - 10), wall)
+	_box(Vector3(21, 0, corridor_end), Vector3(24, 4, corridor_end - 10), wall)
 	_box(Vector3(14, 0, corridor_end - 10), Vector3(24, 4, corridor_end - 11), wall)
 	_build_goal(Vector3(19, 0, corridor_end - 6))
 	for side in [-1, 1]:

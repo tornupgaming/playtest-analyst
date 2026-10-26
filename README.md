@@ -43,7 +43,7 @@ blender -b -P art/enemy/build_enemy.py -- art/enemy/enemy.glb /tmp/enemy_preview
 These run the real game from the command line and write images, so a change can be checked without playing it.
 
 ```sh
-tools/check.sh                      # build both profiles headless; prints a summary, fails on script errors
+tools/check.sh                      # build both profiles headless; fails on script errors or z-fighting blocks
 tools/shots.sh                      # every named view -> /tmp/shots/sheet.png (one labelled contact sheet)
 tools/shots.sh -p planted beacon    # one view, planted profile
 tools/shots.sh over=50,70,30:0,0,-90                   # a free camera: name=eye:target
