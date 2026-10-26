@@ -31,3 +31,6 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 
 ## [2026-10-26] ingest | tools/make_synthetic.sh (TUG-120 synthetic runs)
 - synthetic-sessions.md: new page. SubViewport capture speed at 720p30, headless vs rendered determinism, Piper on Python 3.14 and its output rate and onset lag. index.md: added the page.
+
+## [2026-10-26] ingest | eval/sweeps/2026-10-26-synthetic (TUG-121 first sweep)
+- muse-wonder-video.md: added tokens, cost and latency for 24 sweep runs on the 190 s and 63 s synthetic sessions, the input tokens added by telemetry and transcript, and run-to-run variation on identical input. index.md: updated the line.
