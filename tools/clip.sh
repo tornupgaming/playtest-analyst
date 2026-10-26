@@ -31,7 +31,7 @@ steps=$1
 mkdir -p "$dir"
 rm -f "$dir/${name}"_[0-9][0-9][0-9].png
 
-args=(--no-telemetry --out "$dir/$name.png" --profile "$profile" --view "$view" --play "$steps" --every "$every")
+args=(--out "$dir/$name.png" --profile "$profile" --view "$view" --play "$steps" --every "$every")
 [[ -n $eye ]] && args+=(--eye "$eye")
 timeout 300 godot --path . --fixed-fps 60 --resolution 960x540 -s res://tools/shot.gd -- "${args[@]}" \
 	>"$dir/$name.log" 2>&1 || true

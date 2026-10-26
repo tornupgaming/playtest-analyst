@@ -9,6 +9,8 @@ sources:
   - spikes/tug-93/FINDINGS.md
   - spikes/tug-99/results/finalize-alignment.txt
   - spikes/tug-99/results/adelay.txt
+  - docs/recorder.md
+  - tools/record_check.sh
 ---
 
 # Screen, mic and telemetry capture sync
@@ -34,6 +36,17 @@ Stream minus event time: [README](../../spikes/tug-95/README.md#results)
 - Video lagged events by up to 45 ms with no drift.
 - After `playtest finalize` on the 40-second real-mic run (offsets derived from wall-clock pts: video +0.068 s, ffmpeg mic −1.149 s), the mic was 22–30 ms and the video 5–26 ms after each event. [measured](../../spikes/tug-99/results/finalize-alignment.txt)
 
+### ffmpeg mic in the same process as x11grab
+
+`ffmpeg -f x11grab … -f pulse -i default -copyts` into one `screen.mkv`. The recorder from TUG-98 ran on loopback (a PipeWire null sink monitor as the mic), with a 1 kHz beep played through `paplay` every 3 s. Lag is the time the beep was heard minus the moment `paplay` was called, so it includes paplay's own start-up. [measured](../recorder.md#measured)
+
+| Run | Beeps heard | Lag |
+|---|---|---|
+| Loopback, 60 s (`tools/record_check.sh 60`) | 19 / 19 | 20 – 25 ms, no trend |
+| Loopback, 30 s | 9 / 9 | 13 – 24 ms |
+
+- In the muxed file the audio stream's `start_time` was 39–58 ms after the video's in three runs. Each stream carries its own wall-clock pts. [measured](../recorder.md#measured)
+
 ## Facts about the tools
 
 - **Mix-rate mismatch causes mic drift.** At Godot's default 44.1 kHz mix rate with a 48 kHz PipeWire mic, mic latency grew by about 137 ms/min (109 ms at 3 s, 368 ms at 115 s). The WAV length was still correct, because the delay builds up in the input buffer. [README](../../spikes/tug-95/README.md#findings)
@@ -44,9 +57,13 @@ Stream minus event time: [README](../../spikes/tug-95/README.md#results)
 - Godot's Movie Maker mode doesn't write MP4. [FINDINGS](../../spikes/tug-93/FINDINGS.md#implications-for-other-issues)
 - `mic.wav` (stereo, 16-bit, 48 kHz) is about 11.5 MB/min. [README](../../spikes/tug-95/README.md#limits)
 - ffmpeg 9.0.2's `adelay` misreads fractional seconds: `delays=0.5s` delayed 0.5 ms and `22.5s` 22.5 ms (the output grew by that much), while `9s` and `500` (ms) delayed correctly. [measured](../../spikes/tug-99/results/adelay.txt)
+- **ffmpeg keeps recording after its parent dies.** When Godot was killed with SIGKILL, the ffmpeg it started with `OS.execute_with_pipe` was still running 4 s later. EOF on its stdin pipe doesn't stop it. [measured](../recorder.md#measured)
+- **SIGTERM finalises the file.** An orphaned ffmpeg sent SIGTERM exited, and `ffprobe` then reported a container duration, which it hadn't before. [measured](../recorder.md#measured)
+- **Run args from a plugin.** If you set `editor/run/main_run_args` and call `EditorInterface.play_main_scene()` in the same frame, the game launches without the new args. Waiting for `ProjectSettings.settings_changed` before playing passes them. The editor launched the game with `--wid` (game embedding), and x11grab of the game's window still captured the game view. Godot 4.7.2, editor on Wayland. [measured](../recorder.md#measured)
+- **The editor's Stop button gives the game no chance to stop recording.** The recorder's stop code didn't run and the bundle was left incomplete. [measured](../recorder.md#measured) [README](../../spikes/tug-95/README.md#limits)
 
 ## Open questions
 
 - Capture on Windows (`gdigrab` / `ddagrab`) and macOS (`avfoundation`). Not tested.
-- The ffmpeg mic when it runs inside the same ffmpeg process as x11grab, and over 2 minutes or more. Only the separate-process, 40-second run has been measured.
+- The ffmpeg mic inside the x11grab process on a real mic, and over more than 60 s. Only loopback runs of up to 60 s have been measured.
 - Real-mic latency on other hardware (USB mics, headsets). Only one laptop has been measured.
