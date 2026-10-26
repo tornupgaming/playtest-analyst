@@ -21,6 +21,14 @@ if [[ $mode == loopback ]]; then
   export PULSE_SINK=pt_loop PULSE_SOURCE=pt_loop.monitor
 fi
 
+# Reference: ffmpeg records the same mic in parallel, stamped with wall time
+# minus PulseAudio's reported latency, so check_sync.py can compare it with
+# Godot's mic path.
+mkdir -p "$out"
+ffmpeg -hide_banner -loglevel error -nostdin -y -f pulse -i default -copyts -c:a pcm_s16le "$out/ref_mic.mka" &
+ref_pid=$!
+
 # x11grab can only see X11 windows, so run Godot through XWayland on Wayland.
 godot --path . --display-driver x11 --audio-driver PulseAudio -- --duration="$duration" --out="$out"
+kill -INT "$ref_pid"; wait "$ref_pid" || true
 python3 -I tools/check_sync.py "$out"
