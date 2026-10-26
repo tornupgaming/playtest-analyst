@@ -10,4 +10,3 @@ Facts established so far, each with a source. Rules: [CLAUDE.md](CLAUDE.md). His
 ## Capture
 - [Screen, mic and telemetry sync](capture-sync.md): measured offsets and drift for Godot + ffmpeg x11grab on Linux, Godot vs ffmpeg mic lag on a real mic, and the mix-rate drift; alignment after `playtest finalize`; an ffmpeg `adelay` pitfall.
 - [Synthetic sessions](synthetic-sessions.md): measured speed and determinism of scripted SubViewport capture, Piper TTS on Python 3.14.
-- [Screen, mic and telemetry sync](capture-sync.md): measured offsets and drift for Godot + ffmpeg x11grab on Linux, Godot vs ffmpeg mic lag on a real mic, and the mix-rate drift.
