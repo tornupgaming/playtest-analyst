@@ -23,3 +23,8 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 ## [2026-10-26] ingest | spikes/tug-94 (FINDINGS.md, probe.ts, results/), SAM docs pages
 - Created sam-3-1.md.
 - index.md: added sam-3-1.md.
+
+## [2026-10-26] ingest | spikes/tug-99/results (first `playtest analyse` runs, finalize alignment, adelay)
+- muse-wonder-video.md: added three 40-second `playtest analyse` runs (tokens, cost, latency) and that the strict schema with `anyOf` null and `max_output_tokens` 32000 are accepted. Added an open question on the output-token spread.
+- meta-asr.md: added the TTS-on-real-mic ASR run (−0.22, −0.28 s, repeated words).
+- capture-sync.md: added post-finalize alignment on the real-mic run and the `adelay` fractional-seconds behaviour.

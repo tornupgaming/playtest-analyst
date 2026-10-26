@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "session_id": "tug95-201803-voiced",
+  "created_at": "2026-10-26T23:07:49.962Z",
+  "model": "muse-wonder-1.0",
+  "config": "v0",
+  "findings": [
+    {
+      "id": "f1",
+      "t_start": 3,
+      "t_end": 34,
+      "category": "ui",
+      "severity": "high",
+      "zone": null,
+      "summary": "The player died six times between 3.0 s and 34.0 s and said they could not see what was killing them, so they had nothing visible to learn from or avoid and became increasingly frustrated.",
+      "evidence": {
+        "quotes": [
+          {
+            "t": 8.8,
+            "text": "Wait, why did I die again? I can't can't see what's killing me"
+          },
+          {
+            "t": 22.2,
+            "text": "That's the fourth time time now. This is really frustrating."
+          }
+        ],
+        "telemetry": [
+          "death at 3.0 s",
+          "death at 8.3 s",
+          "death at 14.6 s",
+          "death at 21.3 s",
+          "death at 28.8 s",
+          "death at 34.0 s"
+        ],
+        "visual": "During the window the screen stays black apart from the white timer text in the top-left corner, with a brief full-screen white flash around 2 s. No enemy, hazard, or other visible cause of the deaths is shown."
+      },
+      "suggested_fix": "Make the lethal hazard clearly visible before it kills: draw it as a bright red shape and make it flash for 1 second before it becomes lethal.",
+      "highlight": null
+    }
+  ],
+  "usage": {
+    "input_tokens": 6566,
+    "cached_tokens": 0,
+    "output_tokens": 8560,
+    "cost_usd": 0.197464,
+    "latency_s": 78
+  }
+}

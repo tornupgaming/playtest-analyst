@@ -8,6 +8,7 @@ sources:
   - spikes/tug-93/probe.py
   - spikes/tug-93/results/asr.json
   - spikes/tug-93/results/asr-raw-endpointing.json
+  - spikes/tug-99/results/voiced-transcript.json
 ---
 
 # Meta ASR (`muse-voice-transcribe-1.0`)
@@ -35,6 +36,12 @@ Speech-to-text on the Meta Model API. Used to give [Muse Wonder](muse-wonder-vid
 | Turns found | Start time error | Text | Latency | Source |
 |---|---|---|---|---|
 | 4/4 | −0.3, −0.1, 0.0, −0.1 s | All 4 word for word | 57.3 s | [asr.json](../../spikes/tug-93/results/asr.json) |
+
+**Conditions:** 2026-10-26, two Piper TTS lines (`en_US-lessac-medium`) mixed at 9.0 s and 22.5 s into a 40-second real-mic recording of six 1 kHz beeps, 16 kHz mono WAV, `mode: ENDPOINTING`, one run. Request shape is in [analyse.ts](../../analyst/src/analyse.ts).
+
+| Turns found | Start time error | Text | Source |
+|---|---|---|---|
+| 2/2 | −0.22, −0.28 s | One word repeated in each ("can't can't", "time time"); the final full stop dropped from the first | [transcript](../../spikes/tug-99/results/voiced-transcript.json) |
 
 - The raw response had 6 turns, not 4. Two were zero-length (`startMs` = `endMs`) repeats of the previous turn's last word ("all.", "possible?"), 80 ms after it ended. The top-level `transcript` includes the repeats. [raw](../../spikes/tug-93/results/asr-raw-endpointing.json)
 - `asr.json` holds the turns after dropping those with `endMs` ≤ `startMs`. [probe.py](../../spikes/tug-93/probe.py)

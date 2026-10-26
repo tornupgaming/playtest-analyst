@@ -40,6 +40,10 @@ export const TelemetryEvent = z.object({
 });
 export type TelemetryEvent = z.infer<typeof TelemetryEvent>;
 
+/** One think-aloud turn in analysis/transcript.json (an array of these), on the session clock. */
+export const TranscriptTurn = z.object({ start: z.number(), end: z.number(), text: z.string() });
+export type TranscriptTurn = z.infer<typeof TranscriptTurn>;
+
 // --- Report -----------------------------------------------------------------
 
 export const Category = z.enum(["confusion", "difficulty", "pacing", "ui", "bug"]);
