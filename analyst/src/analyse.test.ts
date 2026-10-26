@@ -149,6 +149,17 @@ test("when ASR fails, the video is sent with its audio track and no transcript",
 });
 
 /** Mean brightness (0–255) of the region [x0, x1) × [y0, y1) of a 1280-wide rgb24 frame. */
+/** Pixels in the box that are the overlay's yellow in `drawn` but weren't in `plain`. */
+function newYellow(drawn: Uint8Array, plain: Uint8Array, x0: number, y0: number, x1: number, y1: number): number {
+	const yellow = (rgb: Uint8Array, i: number) => rgb[i]! > 200 && rgb[i + 1]! > 170 && rgb[i + 2]! < 90;
+	let n = 0;
+	for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+		const i = (y * 1280 + x) * 3;
+		if (yellow(drawn, i) && !yellow(plain, i)) n++;
+	}
+	return n;
+}
+
 function brightness(rgb: Uint8Array, x0: number, y0: number, x1: number, y1: number): number {
 	let sum = 0;
 	for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) for (let c = 0; c < 3; c++) sum += rgb[(y * 1280 + x) * 3 + c]!;
@@ -171,17 +182,19 @@ test("a finding with a highlight gets an annotated key frame drawn around SAM's 
 	await analyse(dir, config);
 
 	const report = await Bun.file(join(dir, "report.json")).json();
-	expect(report.findings).toEqual([{ id: "f1", ...EARLY }, { id: "f2", ...LATE, annotated_frame: "analysis/frames/f2.png" }]);
+	expect(report.findings).toEqual([{ id: "f1", ...EARLY }, { id: "f2", ...LATE, annotated_frame: "analysis/frames/test/f2.png" }]);
 	// SAM got the highlight's phrase and the key frame, once: f1 has no highlight.
 	expect(seen.sam).toHaveLength(1);
 	const sent = JSON.stringify(seen.sam[0]);
 	expect(sent).toContain('{"type":"input_text","text":"the exit door"}');
 	expect(sent).toContain('"image_url":"data:image/png;base64,');
 	// A 1280×720 frame, darkened away from the match's box (607–673, 328–383) but not over it.
-	const { drawn, plain } = await frames(join(dir, "analysis/frames/f2.png"), 2.0);
+	const { drawn, plain } = await frames(join(dir, "analysis/frames/test/f2.png"), 2.0);
 	expect(drawn.length).toBe(1280 * 720 * 3);
 	expect(brightness(drawn, 0, 0, 300, 720) / brightness(plain, 0, 0, 300, 720)).toBeLessThan(0.6);
 	expect(brightness(drawn, 607, 328, 673, 383) / brightness(plain, 607, 328, 673, 383)).toBeGreaterThan(0.95);
+	// The outline: yellow drawn around the match that wasn't in the frame.
+	expect(newYellow(drawn, plain, 597, 318, 683, 393)).toBeGreaterThan(200);
 });
 
 test("when SAM finds nothing, the finding has no annotated frame, the reason is logged, and the report is still written", async () => {
@@ -193,6 +206,6 @@ test("when SAM finds nothing, the finding has no annotated frame, the reason is 
 
 	const report = await Bun.file(join(dir, "report.json")).json();
 	expect(report.findings).toEqual([{ id: "f1", ...EARLY }, { id: "f2", ...LATE }]);
-	expect(existsSync(join(dir, "analysis/frames/f2.png"))).toBe(false);
+	expect(existsSync(join(dir, "analysis/frames/test/f2.png"))).toBe(false);
 	expect(logged).toEqual(['f2: no annotated frame: SAM found no match for "the exit door".']);
 });

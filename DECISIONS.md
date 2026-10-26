@@ -36,7 +36,7 @@ sessions/<id>/
   # written by `playtest analyse`:
   report.json
   analysis/      # intermediate files: transcript.json, upload.mp4, request/response dumps,
-                 # frames/<finding id>.png (annotated key frames, §5)
+                 # frames/<config>/<finding id>.png (annotated key frames, §5)
 ```
 
 **One clock.** `t` everywhere is seconds since the recorder started, read from `Time.get_ticks_usec()` in Godot. `session.json` anchors each raw stream to that clock (`video_start`, `audio_start`: the session time of the file's first frame or sample, or omitted to derive from the file's wall-clock pts minus `t0_unix`). `finalize` applies the offsets once, so nothing after it handles offsets again.

@@ -1,5 +1,5 @@
 // The SAM step (DECISIONS.md §5): for each finding with a highlight, segment its phrase on the
-// key frame with sam-3.1 and draw the top match onto analysis/frames/<id>.png. A finding SAM
+// key frame with sam-3.1 and draw the top match onto analysis/frames/<config>/<id>.png. A finding SAM
 // can't annotate gets no annotated_frame, so the viewer shows the plain frame instead.
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -127,10 +127,12 @@ async function mapLimit<T, R>(items: readonly T[], limit: number, fn: (item: T) 
 
 /** The report with `annotated_frame` set on each finding SAM could annotate, and cleared on the rest. */
 export async function annotate(dir: string, report: Report): Promise<Report> {
-	mkdirSync(join(dir, "analysis/frames"), { recursive: true });
+	// One folder per config, so reports from different configs on one session keep their own frames.
+	const frames = `analysis/frames/${report.config.replace(/[^\w.-]/g, "_")}`;
+	mkdirSync(join(dir, frames), { recursive: true });
 	const findings = await mapLimit(report.findings, CONCURRENCY, async ({ annotated_frame: _, ...f }): Promise<Finding> => {
 		if (!f.highlight) return f;
-		const frame = `analysis/frames/${f.id}.png`;
+		const frame = `${frames}/${f.id}.png`;
 		try {
 			await annotateFinding(join(dir, "video.mp4"), f.highlight, join(dir, frame), `annotate ${report.session_id} ${f.id}`);
 			return { ...f, annotated_frame: frame };
