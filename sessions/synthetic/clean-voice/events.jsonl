@@ -1,0 +1,17 @@
+{"data":{"text":"Follow the path."},"player_pos":[0.0,0.0,-1.0],"t":0.008,"type":"objective_update"}
+{"data":{"zone":"ledge"},"player_pos":[0.0,0.0,-31.69],"t":6.158,"type":"zone_enter"}
+{"data":{"zone":"plaza"},"player_pos":[0.68,0.0,-55.66],"t":10.183,"type":"zone_enter"}
+{"data":{"text":"Reach the beacon."},"player_pos":[0.68,0.0,-55.66],"t":10.183,"type":"objective_update"}
+{"data":{"zone":"ledge"},"player_pos":[1.28,0.0,-56.45],"t":10.35,"type":"zone_exit"}
+{"data":{"zone":"hall"},"player_pos":[-0.65,8.0,-95.68],"t":22.858,"type":"zone_enter"}
+{"data":{"text":"Press the red switch on the balcony to open the gate."},"player_pos":[-0.65,8.0,-95.68],"t":22.858,"type":"objective_update"}
+{"data":{"zone":"plaza"},"player_pos":[-0.69,8.0,-96.48],"t":22.992,"type":"zone_exit"}
+{"data":{"text":"The gate is open. Find the exit."},"player_pos":[-6.43,11.0,-112.32],"t":29.742,"type":"objective_update"}
+{"data":{"zone":"hall"},"player_pos":[0.08,8.0,-126.47],"t":34.933,"type":"zone_exit"}
+{"data":{"zone":"drop"},"player_pos":[0.0,6.94,-138.32],"t":37.758,"type":"zone_enter"}
+{"data":{"zone":"drop"},"player_pos":[0.0,0.0,-153.49],"t":45.058,"type":"zone_exit"}
+{"data":{"zone":"fork"},"player_pos":[0.0,0.0,-153.69],"t":45.092,"type":"zone_enter"}
+{"data":{"zone":"fork"},"player_pos":[5.48,0.0,-166.83],"t":49.208,"type":"zone_exit"}
+{"data":{"zone":"corridor"},"player_pos":[20.14,0.0,-168.68],"t":51.742,"type":"zone_enter"}
+{"data":{"zone":"corridor"},"player_pos":[19.0,0.0,-229.48],"t":62.15,"type":"zone_exit"}
+{"data":{"text":"Course complete!"},"player_pos":[19.0,0.0,-233.18],"t":62.767,"type":"objective_update"}

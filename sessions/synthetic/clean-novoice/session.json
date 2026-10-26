@@ -1,0 +1,17 @@
+{
+	"schema": 1,
+	"id": "synthetic-clean-novoice",
+	"started_at": "2026-10-26T23:11:56+00:00",
+	"t0_unix": 1793056316.284,
+	"duration": 63.133,
+	"game": "Playtest Analyst Test Level",
+	"build": null,
+	"tester": "synthetic-bot",
+	"profile": "clean",
+	"capture": {
+		"video": "screen.mkv",
+		"video_start": 0,
+		"audio": "mic.wav",
+		"audio_start": 0
+	}
+}

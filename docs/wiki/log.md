@@ -28,3 +28,6 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 - muse-wonder-video.md: added three 40-second `playtest analyse` runs (tokens, cost, latency) and that the strict schema with `anyOf` null and `max_output_tokens` 32000 are accepted. Added an open question on the output-token spread.
 - meta-asr.md: added the TTS-on-real-mic ASR run (−0.22, −0.28 s, repeated words).
 - capture-sync.md: added post-finalize alignment on the real-mic run and the `adelay` fractional-seconds behaviour.
+
+## [2026-10-26] ingest | tools/make_synthetic.sh (TUG-120 synthetic runs)
+- synthetic-sessions.md: new page. SubViewport capture speed at 720p30, headless vs rendered determinism, Piper on Python 3.14 and its output rate and onset lag. index.md: added the page.
