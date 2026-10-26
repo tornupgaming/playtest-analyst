@@ -1,0 +1,1 @@
+{ "name": "tug-94-probe", "private": true, "type": "module", "dependencies": { "@meta-sam/parser": "latest" } }

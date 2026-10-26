@@ -1,0 +1,2356 @@
+[
+  {
+    "frame": "beacon",
+    "prompt": "the glowing beacon",
+    "rep": 1,
+    "latencyS": 1.079,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the doorway",
+    "rep": 1,
+    "latencyS": 1.599,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the wooden crate",
+    "rep": 1,
+    "latencyS": 1.183,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the star",
+    "rep": 1,
+    "latencyS": 3.845,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 775,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 613,
+          "top": 0,
+          "right": 668,
+          "bottom": 48
+        },
+        "box": {
+          "left": 613,
+          "top": 0,
+          "right": 668,
+          "bottom": 48
+        },
+        "confidence": 0.8865247964859009,
+        "maskConfidence": 0.8865247964859009,
+        "maskPixels": 1689,
+        "maskFile": "masks/beacon__the-star__r1__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the blue sky",
+    "rep": 1,
+    "latencyS": 2.014,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the player",
+    "rep": 1,
+    "latencyS": 1.194,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the ledge edge",
+    "rep": 1,
+    "latencyS": 0.91,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the gap between the ledges",
+    "rep": 1,
+    "latencyS": 1.028,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the tree",
+    "rep": 1,
+    "latencyS": 2.647,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 83358,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 669,
+          "top": 174,
+          "right": 684,
+          "bottom": 199
+        },
+        "box": {
+          "left": 669,
+          "top": 174,
+          "right": 684,
+          "bottom": 199
+        },
+        "confidence": 0.7730495929718018,
+        "maskConfidence": 0.7730495929718018,
+        "maskPixels": 278,
+        "maskFile": "masks/ledge__the-tree__r1__0.pgm"
+      },
+      {
+        "objectId": "1",
+        "bounds": {
+          "left": 408,
+          "top": 112,
+          "right": 434,
+          "bottom": 154
+        },
+        "box": {
+          "left": 408,
+          "top": 112,
+          "right": 434,
+          "bottom": 154
+        },
+        "confidence": 0.8552036285400391,
+        "maskConfidence": 0.8552036285400391,
+        "maskPixels": 732,
+        "maskFile": "masks/ledge__the-tree__r1__1.pgm"
+      },
+      {
+        "objectId": "2",
+        "bounds": {
+          "left": 766,
+          "top": 105,
+          "right": 788,
+          "bottom": 143
+        },
+        "box": {
+          "left": 766,
+          "top": 105,
+          "right": 788,
+          "bottom": 143
+        },
+        "confidence": 0.8476190567016602,
+        "maskConfidence": 0.8476190567016602,
+        "maskPixels": 521,
+        "maskFile": "masks/ledge__the-tree__r1__2.pgm"
+      },
+      {
+        "objectId": "3",
+        "bounds": {
+          "left": 847,
+          "top": 140,
+          "right": 871,
+          "bottom": 184
+        },
+        "box": {
+          "left": 847,
+          "top": 140,
+          "right": 871,
+          "bottom": 184
+        },
+        "confidence": 0.8202247023582458,
+        "maskConfidence": 0.8202247023582458,
+        "maskPixels": 631,
+        "maskFile": "masks/ledge__the-tree__r1__3.pgm"
+      },
+      {
+        "objectId": "4",
+        "bounds": {
+          "left": 305,
+          "top": 136,
+          "right": 318,
+          "bottom": 161
+        },
+        "box": {
+          "left": 305,
+          "top": 136,
+          "right": 318,
+          "bottom": 161
+        },
+        "confidence": 0.8202247023582458,
+        "maskConfidence": 0.8202247023582458,
+        "maskPixels": 207,
+        "maskFile": "masks/ledge__the-tree__r1__4.pgm"
+      },
+      {
+        "objectId": "5",
+        "bounds": {
+          "left": 673,
+          "top": 129,
+          "right": 693,
+          "bottom": 155
+        },
+        "box": {
+          "left": 673,
+          "top": 129,
+          "right": 693,
+          "bottom": 155
+        },
+        "confidence": 0.719298243522644,
+        "maskConfidence": 0.719298243522644,
+        "maskPixels": 322,
+        "maskFile": "masks/ledge__the-tree__r1__5.pgm"
+      },
+      {
+        "objectId": "6",
+        "bounds": {
+          "left": 786,
+          "top": 90,
+          "right": 810,
+          "bottom": 129
+        },
+        "box": {
+          "left": 786,
+          "top": 90,
+          "right": 810,
+          "bottom": 129
+        },
+        "confidence": 0.8709677457809448,
+        "maskConfidence": 0.8709677457809448,
+        "maskPixels": 606,
+        "maskFile": "masks/ledge__the-tree__r1__6.pgm"
+      },
+      {
+        "objectId": "7",
+        "bounds": {
+          "left": 0,
+          "top": 136,
+          "right": 28,
+          "bottom": 195
+        },
+        "box": {
+          "left": 0,
+          "top": 136,
+          "right": 28,
+          "bottom": 195
+        },
+        "confidence": 0.7815700173377991,
+        "maskConfidence": 0.7815700173377991,
+        "maskPixels": 918,
+        "maskFile": "masks/ledge__the-tree__r1__7.pgm"
+      },
+      {
+        "objectId": "8",
+        "bounds": {
+          "left": 132,
+          "top": 171,
+          "right": 152,
+          "bottom": 191
+        },
+        "box": {
+          "left": 132,
+          "top": 171,
+          "right": 152,
+          "bottom": 191
+        },
+        "confidence": 0.5897435545921326,
+        "maskConfidence": 0.5897435545921326,
+        "maskPixels": 262,
+        "maskFile": "masks/ledge__the-tree__r1__8.pgm"
+      },
+      {
+        "objectId": "9",
+        "bounds": {
+          "left": 436,
+          "top": 56,
+          "right": 468,
+          "bottom": 111
+        },
+        "box": {
+          "left": 436,
+          "top": 56,
+          "right": 468,
+          "bottom": 111
+        },
+        "confidence": 0.8827838897705078,
+        "maskConfidence": 0.8827838897705078,
+        "maskPixels": 1121,
+        "maskFile": "masks/ledge__the-tree__r1__9.pgm"
+      },
+      {
+        "objectId": "10",
+        "bounds": {
+          "left": 523,
+          "top": 174,
+          "right": 538,
+          "bottom": 198
+        },
+        "box": {
+          "left": 523,
+          "top": 174,
+          "right": 538,
+          "bottom": 198
+        },
+        "confidence": 0.7770034670829773,
+        "maskConfidence": 0.7770034670829773,
+        "maskPixels": 271,
+        "maskFile": "masks/ledge__the-tree__r1__10.pgm"
+      },
+      {
+        "objectId": "11",
+        "bounds": {
+          "left": 951,
+          "top": 227,
+          "right": 1191,
+          "bottom": 648
+        },
+        "box": {
+          "left": 951,
+          "top": 227,
+          "right": 1191,
+          "bottom": 648
+        },
+        "confidence": 0.8865247964859009,
+        "maskConfidence": 0.8865247964859009,
+        "maskPixels": 63975,
+        "maskFile": "masks/ledge__the-tree__r1__11.pgm"
+      },
+      {
+        "objectId": "12",
+        "bounds": {
+          "left": 750,
+          "top": 116,
+          "right": 769,
+          "bottom": 152
+        },
+        "box": {
+          "left": 750,
+          "top": 116,
+          "right": 769,
+          "bottom": 152
+        },
+        "confidence": 0.8400000333786011,
+        "maskConfidence": 0.8400000333786011,
+        "maskPixels": 465,
+        "maskFile": "masks/ledge__the-tree__r1__12.pgm"
+      },
+      {
+        "objectId": "13",
+        "bounds": {
+          "left": 512,
+          "top": 126,
+          "right": 528,
+          "bottom": 151
+        },
+        "box": {
+          "left": 512,
+          "top": 126,
+          "right": 528,
+          "bottom": 151
+        },
+        "confidence": 0.8202247023582458,
+        "maskConfidence": 0.8202247023582458,
+        "maskPixels": 279,
+        "maskFile": "masks/ledge__the-tree__r1__13.pgm"
+      },
+      {
+        "objectId": "14",
+        "bounds": {
+          "left": 492,
+          "top": 105,
+          "right": 514,
+          "bottom": 144
+        },
+        "box": {
+          "left": 492,
+          "top": 105,
+          "right": 514,
+          "bottom": 144
+        },
+        "confidence": 0.8552036285400391,
+        "maskConfidence": 0.8552036285400391,
+        "maskPixels": 534,
+        "maskFile": "masks/ledge__the-tree__r1__14.pgm"
+      },
+      {
+        "objectId": "15",
+        "bounds": {
+          "left": 0,
+          "top": 192,
+          "right": 339,
+          "bottom": 661
+        },
+        "box": {
+          "left": 0,
+          "top": 192,
+          "right": 339,
+          "bottom": 661
+        },
+        "confidence": 0.7387754917144775,
+        "maskConfidence": 0.7387754917144775,
+        "maskPixels": 105523,
+        "maskFile": "masks/ledge__the-tree__r1__15.pgm"
+      },
+      {
+        "objectId": "16",
+        "bounds": {
+          "left": 470,
+          "top": 91,
+          "right": 494,
+          "bottom": 129
+        },
+        "box": {
+          "left": 470,
+          "top": 91,
+          "right": 494,
+          "bottom": 129
+        },
+        "confidence": 0.8552036285400391,
+        "maskConfidence": 0.8552036285400391,
+        "maskPixels": 587,
+        "maskFile": "masks/ledge__the-tree__r1__16.pgm"
+      },
+      {
+        "objectId": "17",
+        "bounds": {
+          "left": 561,
+          "top": 177,
+          "right": 574,
+          "bottom": 200
+        },
+        "box": {
+          "left": 561,
+          "top": 177,
+          "right": 574,
+          "bottom": 200
+        },
+        "confidence": 0.7419355511665344,
+        "maskConfidence": 0.7419355511665344,
+        "maskPixels": 247,
+        "maskFile": "masks/ledge__the-tree__r1__17.pgm"
+      },
+      {
+        "objectId": "18",
+        "bounds": {
+          "left": 587,
+          "top": 133,
+          "right": 606,
+          "bottom": 155
+        },
+        "box": {
+          "left": 587,
+          "top": 133,
+          "right": 606,
+          "bottom": 155
+        },
+        "confidence": 0.6995305418968201,
+        "maskConfidence": 0.6995305418968201,
+        "maskPixels": 262,
+        "maskFile": "masks/ledge__the-tree__r1__18.pgm"
+      },
+      {
+        "objectId": "19",
+        "bounds": {
+          "left": 866,
+          "top": 134,
+          "right": 894,
+          "bottom": 184
+        },
+        "box": {
+          "left": 866,
+          "top": 134,
+          "right": 894,
+          "bottom": 184
+        },
+        "confidence": 0.8241757750511169,
+        "maskConfidence": 0.8241757750511169,
+        "maskPixels": 912,
+        "maskFile": "masks/ledge__the-tree__r1__19.pgm"
+      },
+      {
+        "objectId": "20",
+        "bounds": {
+          "left": 369,
+          "top": 156,
+          "right": 384,
+          "bottom": 179
+        },
+        "box": {
+          "left": 369,
+          "top": 156,
+          "right": 384,
+          "bottom": 179
+        },
+        "confidence": 0.8128654956817627,
+        "maskConfidence": 0.8128654956817627,
+        "maskPixels": 239,
+        "maskFile": "masks/ledge__the-tree__r1__20.pgm"
+      },
+      {
+        "objectId": "21",
+        "bounds": {
+          "left": 596,
+          "top": 176,
+          "right": 611,
+          "bottom": 199
+        },
+        "box": {
+          "left": 596,
+          "top": 176,
+          "right": 611,
+          "bottom": 199
+        },
+        "confidence": 0.7852349281311035,
+        "maskConfidence": 0.7852349281311035,
+        "maskPixels": 265,
+        "maskFile": "masks/ledge__the-tree__r1__21.pgm"
+      },
+      {
+        "objectId": "22",
+        "bounds": {
+          "left": 706,
+          "top": 176,
+          "right": 720,
+          "bottom": 198
+        },
+        "box": {
+          "left": 706,
+          "top": 176,
+          "right": 720,
+          "bottom": 198
+        },
+        "confidence": 0.7770034670829773,
+        "maskConfidence": 0.7770034670829773,
+        "maskPixels": 235,
+        "maskFile": "masks/ledge__the-tree__r1__22.pgm"
+      },
+      {
+        "objectId": "23",
+        "bounds": {
+          "left": 932,
+          "top": 150,
+          "right": 949,
+          "bottom": 175
+        },
+        "box": {
+          "left": 932,
+          "top": 150,
+          "right": 949,
+          "bottom": 175
+        },
+        "confidence": 0.8476190567016602,
+        "maskConfidence": 0.8476190567016602,
+        "maskPixels": 301,
+        "maskFile": "masks/ledge__the-tree__r1__23.pgm"
+      },
+      {
+        "objectId": "24",
+        "bounds": {
+          "left": 873,
+          "top": 409,
+          "right": 904,
+          "bottom": 446
+        },
+        "box": {
+          "left": 873,
+          "top": 409,
+          "right": 904,
+          "bottom": 446
+        },
+        "confidence": 0.5631399154663086,
+        "maskConfidence": 0.5631399154663086,
+        "maskPixels": 654,
+        "maskFile": "masks/ledge__the-tree__r1__24.pgm"
+      },
+      {
+        "objectId": "25",
+        "bounds": {
+          "left": 741,
+          "top": 170,
+          "right": 758,
+          "bottom": 197
+        },
+        "box": {
+          "left": 741,
+          "top": 170,
+          "right": 758,
+          "bottom": 197
+        },
+        "confidence": 0.7968254089355469,
+        "maskConfidence": 0.7968254089355469,
+        "maskPixels": 366,
+        "maskFile": "masks/ledge__the-tree__r1__25.pgm"
+      },
+      {
+        "objectId": "26",
+        "bounds": {
+          "left": 0,
+          "top": 73,
+          "right": 64,
+          "bottom": 144
+        },
+        "box": {
+          "left": 0,
+          "top": 73,
+          "right": 64,
+          "bottom": 144
+        },
+        "confidence": 0.8750000596046448,
+        "maskConfidence": 0.8750000596046448,
+        "maskPixels": 2983,
+        "maskFile": "masks/ledge__the-tree__r1__26.pgm"
+      },
+      {
+        "objectId": "27",
+        "bounds": {
+          "left": 849,
+          "top": 422,
+          "right": 881,
+          "bottom": 452
+        },
+        "box": {
+          "left": 849,
+          "top": 422,
+          "right": 881,
+          "bottom": 452
+        },
+        "confidence": 0.5038759708404541,
+        "maskConfidence": 0.5038759708404541,
+        "maskPixels": 649,
+        "maskFile": "masks/ledge__the-tree__r1__27.pgm"
+      },
+      {
+        "objectId": "28",
+        "bounds": {
+          "left": 832,
+          "top": 139,
+          "right": 839,
+          "bottom": 168
+        },
+        "box": {
+          "left": 832,
+          "top": 139,
+          "right": 839,
+          "bottom": 168
+        },
+        "confidence": 0.6246334314346313,
+        "maskConfidence": 0.6246334314346313,
+        "maskPixels": 140,
+        "maskFile": "masks/ledge__the-tree__r1__28.pgm"
+      },
+      {
+        "objectId": "29",
+        "bounds": {
+          "left": 815,
+          "top": 64,
+          "right": 841,
+          "bottom": 112
+        },
+        "box": {
+          "left": 815,
+          "top": 64,
+          "right": 841,
+          "bottom": 112
+        },
+        "confidence": 0.8709677457809448,
+        "maskConfidence": 0.8709677457809448,
+        "maskPixels": 808,
+        "maskFile": "masks/ledge__the-tree__r1__29.pgm"
+      },
+      {
+        "objectId": "30",
+        "bounds": {
+          "left": 908,
+          "top": 156,
+          "right": 926,
+          "bottom": 175
+        },
+        "box": {
+          "left": 908,
+          "top": 156,
+          "right": 926,
+          "bottom": 175
+        },
+        "confidence": 0.8083832263946533,
+        "maskConfidence": 0.8083832263946533,
+        "maskPixels": 259,
+        "maskFile": "masks/ledge__the-tree__r1__30.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the flower",
+    "rep": 1,
+    "latencyS": 1.338,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 2892,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 712,
+          "top": 279,
+          "right": 721,
+          "bottom": 286
+        },
+        "box": {
+          "left": 712,
+          "top": 279,
+          "right": 721,
+          "bottom": 286
+        },
+        "confidence": 0.5038759708404541,
+        "maskConfidence": 0.5038759708404541,
+        "maskPixels": 55,
+        "maskFile": "masks/ledge__the-flower__r1__0.pgm"
+      },
+      {
+        "objectId": "1",
+        "bounds": {
+          "left": 773,
+          "top": 347,
+          "right": 791,
+          "bottom": 360
+        },
+        "box": {
+          "left": 773,
+          "top": 347,
+          "right": 791,
+          "bottom": 360
+        },
+        "confidence": 0.5540069937705994,
+        "maskConfidence": 0.5540069937705994,
+        "maskPixels": 173,
+        "maskFile": "masks/ledge__the-flower__r1__1.pgm"
+      },
+      {
+        "objectId": "2",
+        "bounds": {
+          "left": 771,
+          "top": 336,
+          "right": 786,
+          "bottom": 346
+        },
+        "box": {
+          "left": 771,
+          "top": 336,
+          "right": 786,
+          "bottom": 346
+        },
+        "confidence": 0.5661016702651978,
+        "maskConfidence": 0.5661016702651978,
+        "maskPixels": 120,
+        "maskFile": "masks/ledge__the-flower__r1__2.pgm"
+      },
+      {
+        "objectId": "3",
+        "bounds": {
+          "left": 734,
+          "top": 321,
+          "right": 745,
+          "bottom": 331
+        },
+        "box": {
+          "left": 734,
+          "top": 321,
+          "right": 745,
+          "bottom": 331
+        },
+        "confidence": 0.518796980381012,
+        "maskConfidence": 0.518796980381012,
+        "maskPixels": 90,
+        "maskFile": "masks/ledge__the-flower__r1__3.pgm"
+      },
+      {
+        "objectId": "4",
+        "bounds": {
+          "left": 254,
+          "top": 490,
+          "right": 330,
+          "bottom": 527
+        },
+        "box": {
+          "left": 254,
+          "top": 490,
+          "right": 330,
+          "bottom": 527
+        },
+        "confidence": 0.5540069937705994,
+        "maskConfidence": 0.5540069937705994,
+        "maskPixels": 1800,
+        "maskFile": "masks/ledge__the-flower__r1__4.pgm"
+      },
+      {
+        "objectId": "5",
+        "bounds": {
+          "left": 703,
+          "top": 275,
+          "right": 712,
+          "bottom": 281
+        },
+        "box": {
+          "left": 703,
+          "top": 275,
+          "right": 712,
+          "bottom": 281
+        },
+        "confidence": 0.5038759708404541,
+        "maskConfidence": 0.5038759708404541,
+        "maskPixels": 40,
+        "maskFile": "masks/ledge__the-flower__r1__5.pgm"
+      },
+      {
+        "objectId": "6",
+        "bounds": {
+          "left": 469,
+          "top": 350,
+          "right": 495,
+          "bottom": 365
+        },
+        "box": {
+          "left": 469,
+          "top": 350,
+          "right": 495,
+          "bottom": 365
+        },
+        "confidence": 0.5038759708404541,
+        "maskConfidence": 0.5038759708404541,
+        "maskPixels": 289,
+        "maskFile": "masks/ledge__the-flower__r1__6.pgm"
+      },
+      {
+        "objectId": "7",
+        "bounds": {
+          "left": 794,
+          "top": 354,
+          "right": 812,
+          "bottom": 367
+        },
+        "box": {
+          "left": 794,
+          "top": 354,
+          "right": 812,
+          "bottom": 367
+        },
+        "confidence": 0.5508772134780884,
+        "maskConfidence": 0.5508772134780884,
+        "maskPixels": 171,
+        "maskFile": "masks/ledge__the-flower__r1__7.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the grass path",
+    "rep": 1,
+    "latencyS": 0.975,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the cliff",
+    "rep": 1,
+    "latencyS": 1.11,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "drop",
+    "prompt": "the exit sign",
+    "rep": 1,
+    "latencyS": 1.081,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 211,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 631,
+          "top": 234,
+          "right": 648,
+          "bottom": 242
+        },
+        "box": {
+          "left": 631,
+          "top": 234,
+          "right": 648,
+          "bottom": 242
+        },
+        "confidence": 0.507692277431488,
+        "maskConfidence": 0.507692277431488,
+        "maskPixels": 111,
+        "maskFile": "masks/drop__the-exit-sign__r1__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "drop",
+    "prompt": "the doorway",
+    "rep": 1,
+    "latencyS": 0.719,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 5544,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 580,
+          "top": 224,
+          "right": 699,
+          "bottom": 342
+        },
+        "box": {
+          "left": 580,
+          "top": 224,
+          "right": 699,
+          "bottom": 342
+        },
+        "confidence": 0.5508772134780884,
+        "maskConfidence": 0.5508772134780884,
+        "maskPixels": 10054,
+        "maskFile": "masks/drop__the-doorway__r1__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "drop",
+    "prompt": "the enemy",
+    "rep": 1,
+    "latencyS": 0.58,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "drop",
+    "prompt": "the arrow",
+    "rep": 1,
+    "latencyS": 1.518,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 328,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 624,
+          "top": 253,
+          "right": 653,
+          "bottom": 270
+        },
+        "box": {
+          "left": 624,
+          "top": 253,
+          "right": 653,
+          "bottom": 270
+        },
+        "confidence": 0.6132930517196655,
+        "maskConfidence": 0.6132930517196655,
+        "maskPixels": 367,
+        "maskFile": "masks/drop__the-arrow__r1__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "drop",
+    "prompt": "the mushroom",
+    "rep": 1,
+    "latencyS": 2.673,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 1129,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 607,
+          "top": 328,
+          "right": 674,
+          "bottom": 384
+        },
+        "box": {
+          "left": 607,
+          "top": 328,
+          "right": 674,
+          "bottom": 384
+        },
+        "confidence": 0.8632478713989258,
+        "maskConfidence": 0.8632478713989258,
+        "maskPixels": 2615,
+        "maskFile": "masks/drop__the-mushroom__r1__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "drop",
+    "prompt": "the player",
+    "rep": 1,
+    "latencyS": 0.804,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "the exit sign",
+    "rep": 1,
+    "latencyS": 0.85,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "exit sign",
+    "rep": 1,
+    "latencyS": 2.091,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "the arrow sign",
+    "rep": 1,
+    "latencyS": 1.558,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 810,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 603,
+          "top": 289,
+          "right": 672,
+          "bottom": 334
+        },
+        "box": {
+          "left": 603,
+          "top": 289,
+          "right": 672,
+          "bottom": 334
+        },
+        "confidence": 0.8750000596046448,
+        "maskConfidence": 0.8750000596046448,
+        "maskPixels": 2000,
+        "maskFile": "masks/fork__the-arrow-sign__r1__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "fork",
+    "prompt": "the hedge wall",
+    "rep": 1,
+    "latencyS": 1.893,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "the wooden sign",
+    "rep": 1,
+    "latencyS": 1.809,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "the hedge",
+    "rep": 1,
+    "latencyS": 0.852,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "box+point on sign",
+    "rep": 1,
+    "latencyS": 1.043,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 287,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "1",
+        "bounds": {
+          "left": 602,
+          "top": 289,
+          "right": 671,
+          "bottom": 334
+        },
+        "box": {
+          "left": 602,
+          "top": 289,
+          "right": 671,
+          "bottom": 334
+        },
+        "confidence": 0.9375,
+        "maskConfidence": 0.9375,
+        "maskPixels": 2015,
+        "maskFile": "masks/fork__box-point-on-sign__r1__0.pgm"
+      },
+      {
+        "objectId": "2",
+        "bounds": {
+          "left": 606,
+          "top": 296,
+          "right": 655,
+          "bottom": 328
+        },
+        "box": {
+          "left": 606,
+          "top": 296,
+          "right": 655,
+          "bottom": 328
+        },
+        "confidence": 0.86328125,
+        "maskConfidence": 0.86328125,
+        "maskPixels": 6,
+        "maskFile": "masks/fork__box-point-on-sign__r1__1.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the glowing beacon",
+    "rep": 2,
+    "latencyS": 0.864,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the doorway",
+    "rep": 2,
+    "latencyS": 0.818,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the wooden crate",
+    "rep": 2,
+    "latencyS": 0.632,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the star",
+    "rep": 2,
+    "latencyS": 1.801,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 775,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 613,
+          "top": 0,
+          "right": 668,
+          "bottom": 48
+        },
+        "box": {
+          "left": 613,
+          "top": 0,
+          "right": 668,
+          "bottom": 48
+        },
+        "confidence": 0.8865247964859009,
+        "maskConfidence": 0.8865247964859009,
+        "maskPixels": 1689,
+        "maskFile": "masks/beacon__the-star__r2__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the blue sky",
+    "rep": 2,
+    "latencyS": 0.926,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "beacon",
+    "prompt": "the player",
+    "rep": 2,
+    "latencyS": 0.787,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the ledge edge",
+    "rep": 2,
+    "latencyS": 2.141,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the gap between the ledges",
+    "rep": 2,
+    "latencyS": 2.173,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the tree",
+    "rep": 2,
+    "latencyS": 1.242,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 83329,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 669,
+          "top": 174,
+          "right": 684,
+          "bottom": 199
+        },
+        "box": {
+          "left": 669,
+          "top": 174,
+          "right": 684,
+          "bottom": 199
+        },
+        "confidence": 0.7697842121124268,
+        "maskConfidence": 0.7697842121124268,
+        "maskPixels": 278,
+        "maskFile": "masks/ledge__the-tree__r2__0.pgm"
+      },
+      {
+        "objectId": "1",
+        "bounds": {
+          "left": 408,
+          "top": 112,
+          "right": 434,
+          "bottom": 154
+        },
+        "box": {
+          "left": 408,
+          "top": 112,
+          "right": 434,
+          "bottom": 154
+        },
+        "confidence": 0.8552036285400391,
+        "maskConfidence": 0.8552036285400391,
+        "maskPixels": 732,
+        "maskFile": "masks/ledge__the-tree__r2__1.pgm"
+      },
+      {
+        "objectId": "2",
+        "bounds": {
+          "left": 766,
+          "top": 105,
+          "right": 788,
+          "bottom": 143
+        },
+        "box": {
+          "left": 766,
+          "top": 105,
+          "right": 788,
+          "bottom": 143
+        },
+        "confidence": 0.8476190567016602,
+        "maskConfidence": 0.8476190567016602,
+        "maskPixels": 521,
+        "maskFile": "masks/ledge__the-tree__r2__2.pgm"
+      },
+      {
+        "objectId": "3",
+        "bounds": {
+          "left": 847,
+          "top": 140,
+          "right": 871,
+          "bottom": 184
+        },
+        "box": {
+          "left": 847,
+          "top": 140,
+          "right": 871,
+          "bottom": 184
+        },
+        "confidence": 0.8202247023582458,
+        "maskConfidence": 0.8202247023582458,
+        "maskPixels": 631,
+        "maskFile": "masks/ledge__the-tree__r2__3.pgm"
+      },
+      {
+        "objectId": "4",
+        "bounds": {
+          "left": 305,
+          "top": 136,
+          "right": 318,
+          "bottom": 161
+        },
+        "box": {
+          "left": 305,
+          "top": 136,
+          "right": 318,
+          "bottom": 161
+        },
+        "confidence": 0.8202247023582458,
+        "maskConfidence": 0.8202247023582458,
+        "maskPixels": 207,
+        "maskFile": "masks/ledge__the-tree__r2__4.pgm"
+      },
+      {
+        "objectId": "5",
+        "bounds": {
+          "left": 673,
+          "top": 129,
+          "right": 693,
+          "bottom": 155
+        },
+        "box": {
+          "left": 673,
+          "top": 129,
+          "right": 693,
+          "bottom": 155
+        },
+        "confidence": 0.7229437232017517,
+        "maskConfidence": 0.7229437232017517,
+        "maskPixels": 322,
+        "maskFile": "masks/ledge__the-tree__r2__5.pgm"
+      },
+      {
+        "objectId": "6",
+        "bounds": {
+          "left": 786,
+          "top": 90,
+          "right": 810,
+          "bottom": 129
+        },
+        "box": {
+          "left": 786,
+          "top": 90,
+          "right": 810,
+          "bottom": 129
+        },
+        "confidence": 0.8672199249267578,
+        "maskConfidence": 0.8672199249267578,
+        "maskPixels": 606,
+        "maskFile": "masks/ledge__the-tree__r2__6.pgm"
+      },
+      {
+        "objectId": "7",
+        "bounds": {
+          "left": 0,
+          "top": 136,
+          "right": 28,
+          "bottom": 195
+        },
+        "box": {
+          "left": 0,
+          "top": 136,
+          "right": 28,
+          "bottom": 195
+        },
+        "confidence": 0.7815700173377991,
+        "maskConfidence": 0.7815700173377991,
+        "maskPixels": 919,
+        "maskFile": "masks/ledge__the-tree__r2__7.pgm"
+      },
+      {
+        "objectId": "8",
+        "bounds": {
+          "left": 132,
+          "top": 171,
+          "right": 152,
+          "bottom": 191
+        },
+        "box": {
+          "left": 132,
+          "top": 171,
+          "right": 152,
+          "bottom": 191
+        },
+        "confidence": 0.5897435545921326,
+        "maskConfidence": 0.5897435545921326,
+        "maskPixels": 262,
+        "maskFile": "masks/ledge__the-tree__r2__8.pgm"
+      },
+      {
+        "objectId": "9",
+        "bounds": {
+          "left": 436,
+          "top": 56,
+          "right": 468,
+          "bottom": 111
+        },
+        "box": {
+          "left": 436,
+          "top": 56,
+          "right": 468,
+          "bottom": 111
+        },
+        "confidence": 0.8827838897705078,
+        "maskConfidence": 0.8827838897705078,
+        "maskPixels": 1121,
+        "maskFile": "masks/ledge__the-tree__r2__9.pgm"
+      },
+      {
+        "objectId": "10",
+        "bounds": {
+          "left": 523,
+          "top": 174,
+          "right": 538,
+          "bottom": 198
+        },
+        "box": {
+          "left": 523,
+          "top": 174,
+          "right": 538,
+          "bottom": 198
+        },
+        "confidence": 0.7770034670829773,
+        "maskConfidence": 0.7770034670829773,
+        "maskPixels": 272,
+        "maskFile": "masks/ledge__the-tree__r2__10.pgm"
+      },
+      {
+        "objectId": "11",
+        "bounds": {
+          "left": 951,
+          "top": 227,
+          "right": 1191,
+          "bottom": 648
+        },
+        "box": {
+          "left": 951,
+          "top": 227,
+          "right": 1191,
+          "bottom": 648
+        },
+        "confidence": 0.8865247964859009,
+        "maskConfidence": 0.8865247964859009,
+        "maskPixels": 63980,
+        "maskFile": "masks/ledge__the-tree__r2__11.pgm"
+      },
+      {
+        "objectId": "12",
+        "bounds": {
+          "left": 750,
+          "top": 116,
+          "right": 769,
+          "bottom": 152
+        },
+        "box": {
+          "left": 750,
+          "top": 116,
+          "right": 769,
+          "bottom": 152
+        },
+        "confidence": 0.8400000333786011,
+        "maskConfidence": 0.8400000333786011,
+        "maskPixels": 465,
+        "maskFile": "masks/ledge__the-tree__r2__12.pgm"
+      },
+      {
+        "objectId": "13",
+        "bounds": {
+          "left": 512,
+          "top": 126,
+          "right": 528,
+          "bottom": 151
+        },
+        "box": {
+          "left": 512,
+          "top": 126,
+          "right": 528,
+          "bottom": 151
+        },
+        "confidence": 0.8202247023582458,
+        "maskConfidence": 0.8202247023582458,
+        "maskPixels": 279,
+        "maskFile": "masks/ledge__the-tree__r2__13.pgm"
+      },
+      {
+        "objectId": "14",
+        "bounds": {
+          "left": 492,
+          "top": 105,
+          "right": 514,
+          "bottom": 144
+        },
+        "box": {
+          "left": 492,
+          "top": 105,
+          "right": 514,
+          "bottom": 144
+        },
+        "confidence": 0.8552036285400391,
+        "maskConfidence": 0.8552036285400391,
+        "maskPixels": 536,
+        "maskFile": "masks/ledge__the-tree__r2__14.pgm"
+      },
+      {
+        "objectId": "15",
+        "bounds": {
+          "left": 0,
+          "top": 192,
+          "right": 339,
+          "bottom": 661
+        },
+        "box": {
+          "left": 0,
+          "top": 192,
+          "right": 339,
+          "bottom": 661
+        },
+        "confidence": 0.7387754917144775,
+        "maskConfidence": 0.7387754917144775,
+        "maskPixels": 105509,
+        "maskFile": "masks/ledge__the-tree__r2__15.pgm"
+      },
+      {
+        "objectId": "16",
+        "bounds": {
+          "left": 470,
+          "top": 91,
+          "right": 494,
+          "bottom": 129
+        },
+        "box": {
+          "left": 470,
+          "top": 91,
+          "right": 494,
+          "bottom": 129
+        },
+        "confidence": 0.8518518805503845,
+        "maskConfidence": 0.8518518805503845,
+        "maskPixels": 587,
+        "maskFile": "masks/ledge__the-tree__r2__16.pgm"
+      },
+      {
+        "objectId": "17",
+        "bounds": {
+          "left": 561,
+          "top": 177,
+          "right": 574,
+          "bottom": 200
+        },
+        "box": {
+          "left": 561,
+          "top": 177,
+          "right": 574,
+          "bottom": 200
+        },
+        "confidence": 0.7419355511665344,
+        "maskConfidence": 0.7419355511665344,
+        "maskPixels": 247,
+        "maskFile": "masks/ledge__the-tree__r2__17.pgm"
+      },
+      {
+        "objectId": "18",
+        "bounds": {
+          "left": 587,
+          "top": 133,
+          "right": 606,
+          "bottom": 155
+        },
+        "box": {
+          "left": 587,
+          "top": 133,
+          "right": 606,
+          "bottom": 155
+        },
+        "confidence": 0.6952381134033203,
+        "maskConfidence": 0.6952381134033203,
+        "maskPixels": 262,
+        "maskFile": "masks/ledge__the-tree__r2__18.pgm"
+      },
+      {
+        "objectId": "19",
+        "bounds": {
+          "left": 866,
+          "top": 134,
+          "right": 894,
+          "bottom": 184
+        },
+        "box": {
+          "left": 866,
+          "top": 134,
+          "right": 894,
+          "bottom": 184
+        },
+        "confidence": 0.8241757750511169,
+        "maskConfidence": 0.8241757750511169,
+        "maskPixels": 912,
+        "maskFile": "masks/ledge__the-tree__r2__19.pgm"
+      },
+      {
+        "objectId": "20",
+        "bounds": {
+          "left": 369,
+          "top": 156,
+          "right": 384,
+          "bottom": 179
+        },
+        "box": {
+          "left": 369,
+          "top": 156,
+          "right": 384,
+          "bottom": 179
+        },
+        "confidence": 0.8128654956817627,
+        "maskConfidence": 0.8128654956817627,
+        "maskPixels": 239,
+        "maskFile": "masks/ledge__the-tree__r2__20.pgm"
+      },
+      {
+        "objectId": "21",
+        "bounds": {
+          "left": 596,
+          "top": 176,
+          "right": 611,
+          "bottom": 199
+        },
+        "box": {
+          "left": 596,
+          "top": 176,
+          "right": 611,
+          "bottom": 199
+        },
+        "confidence": 0.7815700173377991,
+        "maskConfidence": 0.7815700173377991,
+        "maskPixels": 265,
+        "maskFile": "masks/ledge__the-tree__r2__21.pgm"
+      },
+      {
+        "objectId": "22",
+        "bounds": {
+          "left": 706,
+          "top": 176,
+          "right": 720,
+          "bottom": 198
+        },
+        "box": {
+          "left": 706,
+          "top": 176,
+          "right": 720,
+          "bottom": 198
+        },
+        "confidence": 0.7770034670829773,
+        "maskConfidence": 0.7770034670829773,
+        "maskPixels": 235,
+        "maskFile": "masks/ledge__the-tree__r2__22.pgm"
+      },
+      {
+        "objectId": "23",
+        "bounds": {
+          "left": 932,
+          "top": 150,
+          "right": 949,
+          "bottom": 175
+        },
+        "box": {
+          "left": 932,
+          "top": 150,
+          "right": 949,
+          "bottom": 175
+        },
+        "confidence": 0.8476190567016602,
+        "maskConfidence": 0.8476190567016602,
+        "maskPixels": 301,
+        "maskFile": "masks/ledge__the-tree__r2__23.pgm"
+      },
+      {
+        "objectId": "24",
+        "bounds": {
+          "left": 873,
+          "top": 409,
+          "right": 904,
+          "bottom": 446
+        },
+        "box": {
+          "left": 873,
+          "top": 409,
+          "right": 904,
+          "bottom": 446
+        },
+        "confidence": 0.5631399154663086,
+        "maskConfidence": 0.5631399154663086,
+        "maskPixels": 654,
+        "maskFile": "masks/ledge__the-tree__r2__24.pgm"
+      },
+      {
+        "objectId": "25",
+        "bounds": {
+          "left": 741,
+          "top": 170,
+          "right": 758,
+          "bottom": 197
+        },
+        "box": {
+          "left": 741,
+          "top": 170,
+          "right": 758,
+          "bottom": 197
+        },
+        "confidence": 0.7968254089355469,
+        "maskConfidence": 0.7968254089355469,
+        "maskPixels": 366,
+        "maskFile": "masks/ledge__the-tree__r2__25.pgm"
+      },
+      {
+        "objectId": "26",
+        "bounds": {
+          "left": 0,
+          "top": 73,
+          "right": 64,
+          "bottom": 144
+        },
+        "box": {
+          "left": 0,
+          "top": 73,
+          "right": 64,
+          "bottom": 144
+        },
+        "confidence": 0.8750000596046448,
+        "maskConfidence": 0.8750000596046448,
+        "maskPixels": 2984,
+        "maskFile": "masks/ledge__the-tree__r2__26.pgm"
+      },
+      {
+        "objectId": "27",
+        "bounds": {
+          "left": 849,
+          "top": 422,
+          "right": 881,
+          "bottom": 452
+        },
+        "box": {
+          "left": 849,
+          "top": 422,
+          "right": 881,
+          "bottom": 452
+        },
+        "confidence": 0.5038759708404541,
+        "maskConfidence": 0.5038759708404541,
+        "maskPixels": 647,
+        "maskFile": "masks/ledge__the-tree__r2__27.pgm"
+      },
+      {
+        "objectId": "28",
+        "bounds": {
+          "left": 832,
+          "top": 139,
+          "right": 839,
+          "bottom": 168
+        },
+        "box": {
+          "left": 832,
+          "top": 139,
+          "right": 839,
+          "bottom": 168
+        },
+        "confidence": 0.6246334314346313,
+        "maskConfidence": 0.6246334314346313,
+        "maskPixels": 140,
+        "maskFile": "masks/ledge__the-tree__r2__28.pgm"
+      },
+      {
+        "objectId": "29",
+        "bounds": {
+          "left": 815,
+          "top": 64,
+          "right": 841,
+          "bottom": 112
+        },
+        "box": {
+          "left": 815,
+          "top": 64,
+          "right": 841,
+          "bottom": 112
+        },
+        "confidence": 0.8709677457809448,
+        "maskConfidence": 0.8709677457809448,
+        "maskPixels": 809,
+        "maskFile": "masks/ledge__the-tree__r2__29.pgm"
+      },
+      {
+        "objectId": "30",
+        "bounds": {
+          "left": 908,
+          "top": 156,
+          "right": 926,
+          "bottom": 175
+        },
+        "box": {
+          "left": 908,
+          "top": 156,
+          "right": 926,
+          "bottom": 175
+        },
+        "confidence": 0.8048780560493469,
+        "maskConfidence": 0.8048780560493469,
+        "maskPixels": 259,
+        "maskFile": "masks/ledge__the-tree__r2__30.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the flower",
+    "rep": 2,
+    "latencyS": 0.817,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 2892,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 712,
+          "top": 279,
+          "right": 721,
+          "bottom": 286
+        },
+        "box": {
+          "left": 712,
+          "top": 279,
+          "right": 721,
+          "bottom": 286
+        },
+        "confidence": 0.5038759708404541,
+        "maskConfidence": 0.5038759708404541,
+        "maskPixels": 55,
+        "maskFile": "masks/ledge__the-flower__r2__0.pgm"
+      },
+      {
+        "objectId": "1",
+        "bounds": {
+          "left": 773,
+          "top": 347,
+          "right": 791,
+          "bottom": 360
+        },
+        "box": {
+          "left": 773,
+          "top": 347,
+          "right": 791,
+          "bottom": 360
+        },
+        "confidence": 0.5540069937705994,
+        "maskConfidence": 0.5540069937705994,
+        "maskPixels": 173,
+        "maskFile": "masks/ledge__the-flower__r2__1.pgm"
+      },
+      {
+        "objectId": "2",
+        "bounds": {
+          "left": 771,
+          "top": 336,
+          "right": 786,
+          "bottom": 346
+        },
+        "box": {
+          "left": 771,
+          "top": 336,
+          "right": 786,
+          "bottom": 346
+        },
+        "confidence": 0.5661016702651978,
+        "maskConfidence": 0.5661016702651978,
+        "maskPixels": 120,
+        "maskFile": "masks/ledge__the-flower__r2__2.pgm"
+      },
+      {
+        "objectId": "3",
+        "bounds": {
+          "left": 734,
+          "top": 321,
+          "right": 745,
+          "bottom": 331
+        },
+        "box": {
+          "left": 734,
+          "top": 321,
+          "right": 745,
+          "bottom": 331
+        },
+        "confidence": 0.518796980381012,
+        "maskConfidence": 0.518796980381012,
+        "maskPixels": 90,
+        "maskFile": "masks/ledge__the-flower__r2__3.pgm"
+      },
+      {
+        "objectId": "4",
+        "bounds": {
+          "left": 254,
+          "top": 490,
+          "right": 330,
+          "bottom": 527
+        },
+        "box": {
+          "left": 254,
+          "top": 490,
+          "right": 330,
+          "bottom": 527
+        },
+        "confidence": 0.5540069937705994,
+        "maskConfidence": 0.5540069937705994,
+        "maskPixels": 1800,
+        "maskFile": "masks/ledge__the-flower__r2__4.pgm"
+      },
+      {
+        "objectId": "5",
+        "bounds": {
+          "left": 703,
+          "top": 275,
+          "right": 712,
+          "bottom": 281
+        },
+        "box": {
+          "left": 703,
+          "top": 275,
+          "right": 712,
+          "bottom": 281
+        },
+        "confidence": 0.5038759708404541,
+        "maskConfidence": 0.5038759708404541,
+        "maskPixels": 40,
+        "maskFile": "masks/ledge__the-flower__r2__5.pgm"
+      },
+      {
+        "objectId": "6",
+        "bounds": {
+          "left": 469,
+          "top": 350,
+          "right": 495,
+          "bottom": 365
+        },
+        "box": {
+          "left": 469,
+          "top": 350,
+          "right": 495,
+          "bottom": 365
+        },
+        "confidence": 0.5038759708404541,
+        "maskConfidence": 0.5038759708404541,
+        "maskPixels": 289,
+        "maskFile": "masks/ledge__the-flower__r2__6.pgm"
+      },
+      {
+        "objectId": "7",
+        "bounds": {
+          "left": 794,
+          "top": 354,
+          "right": 812,
+          "bottom": 367
+        },
+        "box": {
+          "left": 794,
+          "top": 354,
+          "right": 812,
+          "bottom": 367
+        },
+        "confidence": 0.5508772134780884,
+        "maskConfidence": 0.5508772134780884,
+        "maskPixels": 171,
+        "maskFile": "masks/ledge__the-flower__r2__7.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the grass path",
+    "rep": 2,
+    "latencyS": 0.73,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "ledge",
+    "prompt": "the cliff",
+    "rep": 2,
+    "latencyS": 1.601,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "drop",
+    "prompt": "the exit sign",
+    "rep": 2,
+    "latencyS": 1.325,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 211,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 631,
+          "top": 234,
+          "right": 648,
+          "bottom": 242
+        },
+        "box": {
+          "left": 631,
+          "top": 234,
+          "right": 648,
+          "bottom": 242
+        },
+        "confidence": 0.507692277431488,
+        "maskConfidence": 0.507692277431488,
+        "maskPixels": 111,
+        "maskFile": "masks/drop__the-exit-sign__r2__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "drop",
+    "prompt": "the doorway",
+    "rep": 2,
+    "latencyS": 0.735,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 5566,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 580,
+          "top": 224,
+          "right": 699,
+          "bottom": 342
+        },
+        "box": {
+          "left": 580,
+          "top": 224,
+          "right": 699,
+          "bottom": 342
+        },
+        "confidence": 0.5508772134780884,
+        "maskConfidence": 0.5508772134780884,
+        "maskPixels": 10040,
+        "maskFile": "masks/drop__the-doorway__r2__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "drop",
+    "prompt": "the enemy",
+    "rep": 2,
+    "latencyS": 1.837,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "drop",
+    "prompt": "the arrow",
+    "rep": 2,
+    "latencyS": 1.341,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 328,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 624,
+          "top": 253,
+          "right": 653,
+          "bottom": 270
+        },
+        "box": {
+          "left": 624,
+          "top": 253,
+          "right": 653,
+          "bottom": 270
+        },
+        "confidence": 0.6132930517196655,
+        "maskConfidence": 0.6132930517196655,
+        "maskPixels": 367,
+        "maskFile": "masks/drop__the-arrow__r2__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "drop",
+    "prompt": "the mushroom",
+    "rep": 2,
+    "latencyS": 0.74,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 1129,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 607,
+          "top": 328,
+          "right": 674,
+          "bottom": 384
+        },
+        "box": {
+          "left": 607,
+          "top": 328,
+          "right": 674,
+          "bottom": 384
+        },
+        "confidence": 0.8632478713989258,
+        "maskConfidence": 0.8632478713989258,
+        "maskPixels": 2615,
+        "maskFile": "masks/drop__the-mushroom__r2__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "drop",
+    "prompt": "the player",
+    "rep": 2,
+    "latencyS": 0.934,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "the exit sign",
+    "rep": 2,
+    "latencyS": 0.964,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "exit sign",
+    "rep": 2,
+    "latencyS": 1.123,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "the arrow sign",
+    "rep": 2,
+    "latencyS": 0.76,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 815,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "0",
+        "bounds": {
+          "left": 603,
+          "top": 289,
+          "right": 672,
+          "bottom": 334
+        },
+        "box": {
+          "left": 603,
+          "top": 289,
+          "right": 672,
+          "bottom": 334
+        },
+        "confidence": 0.8709677457809448,
+        "maskConfidence": 0.8709677457809448,
+        "maskPixels": 2000,
+        "maskFile": "masks/fork__the-arrow-sign__r2__0.pgm"
+      }
+    ]
+  },
+  {
+    "frame": "fork",
+    "prompt": "the hedge wall",
+    "rep": 2,
+    "latencyS": 0.839,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "the wooden sign",
+    "rep": 2,
+    "latencyS": 0.939,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "the hedge",
+    "rep": 2,
+    "latencyS": 1.007,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 0,
+    "diagnostics": [],
+    "instances": []
+  },
+  {
+    "frame": "fork",
+    "prompt": "box+point on sign",
+    "rep": 2,
+    "latencyS": 0.765,
+    "costUsd": 0.0025,
+    "imagesProcessed": 1,
+    "outputChars": 287,
+    "diagnostics": [],
+    "instances": [
+      {
+        "objectId": "1",
+        "bounds": {
+          "left": 602,
+          "top": 289,
+          "right": 671,
+          "bottom": 334
+        },
+        "box": {
+          "left": 602,
+          "top": 289,
+          "right": 671,
+          "bottom": 334
+        },
+        "confidence": 0.9375,
+        "maskConfidence": 0.9375,
+        "maskPixels": 2015,
+        "maskFile": "masks/fork__box-point-on-sign__r2__0.pgm"
+      },
+      {
+        "objectId": "2",
+        "bounds": {
+          "left": 606,
+          "top": 296,
+          "right": 655,
+          "bottom": 328
+        },
+        "box": {
+          "left": 606,
+          "top": 296,
+          "right": 655,
+          "bottom": 328
+        },
+        "confidence": 0.86328125,
+        "maskConfidence": 0.86328125,
+        "maskPixels": 6,
+        "maskFile": "masks/fork__box-point-on-sign__r2__1.pgm"
+      }
+    ]
+  }
+]

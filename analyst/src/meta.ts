@@ -13,6 +13,10 @@ const PRICES: Record<string, { input: number; cached: number; output: number }> 
 	"muse-wonder-1.0": { input: 4.0, cached: 0.2, output: 20.0 },
 };
 
+/** $ per image. SAM is billed per image, not per token; `usage.images_processed` counts them.
+ * https://dev.meta.ai/docs/pricing-rate-limits */
+const PRICE_PER_IMAGE: Record<string, number> = { "sam-3.1": 2.5 / 1000 };
+
 const LEDGER =
 	process.env.PLAYTEST_SPEND_LEDGER ??
 	join(process.env.XDG_STATE_HOME ?? join(homedir(), ".local/state"), "playtest-analyst/spend.jsonl");
@@ -64,8 +68,8 @@ export function costUsd(model: string, input: number, cached: number, output: nu
 	return ((input - cached) * p.input + cached * p.cached + output * p.output) / 1e6;
 }
 
-function charge(model: string, endpoint: string, tokens: { input: number; cached: number; output: number }, note?: string): number {
-	const cost = costUsd(model, tokens.input, tokens.cached, tokens.output);
+function charge(model: string, endpoint: string, tokens: { input: number; cached: number; output: number }, note?: string, images = 0): number {
+	const cost = model in PRICE_PER_IMAGE ? images * PRICE_PER_IMAGE[model]! : costUsd(model, tokens.input, tokens.cached, tokens.output);
 	const entry: LedgerEntry = {
 		ts: new Date().toISOString(),
 		model,
@@ -102,7 +106,7 @@ export async function respond(body: Record<string, unknown>, note?: string): Pro
 		input: u?.input_tokens ?? 0,
 		cached: u?.input_tokens_details?.cached_tokens ?? 0,
 		output: u?.output_tokens ?? 0,
-	}, note);
+	}, note, (u as { images_processed?: number } | undefined)?.images_processed);
 	return { response, costUsd, latencyS };
 }
 
