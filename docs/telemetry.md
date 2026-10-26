@@ -9,7 +9,7 @@ PlaytestTelemetry.event("death", {cause = "fall", zone = "ledge"})
 PlaytestTelemetry.event("found_secret", {secret = "cave"})   # a custom event: any type name
 ```
 
-`event()` does nothing when no session is running, so games can call it unconditionally.
+`event()` does nothing when no session is running, so games can call it unconditionally. A session runs while `PlaytestRecorder` records ([recorder.md](recorder.md)), or from launch with `--telemetry-dir`.
 
 ## Line format
 
@@ -55,8 +55,7 @@ Pass these after `--`:
 
 | Arg | Effect |
 |---|---|
-| `--no-telemetry` | Write nothing |
-| `--telemetry-dir=PATH` | Write `PATH/events.jsonl` |
+| `--telemetry-dir=PATH` | Start a session at launch, writing `PATH/events.jsonl`, without the recorder |
 | `--telemetry-game-clock` | Stamp `t` from physics frames |
 
 ## Sample

@@ -8,9 +8,9 @@ extends Node
 ## the matching `zone_enter` as `data.dwell`, and `input_idle` is written by itself
 ## once input resumes after `idle_after` seconds without any.
 ##
-## User args (after `--`):
-##   --no-telemetry             write nothing (scripted checks)
-##   --telemetry-dir=PATH       write PATH/events.jsonl instead of user://sessions/<time>/
+## It writes nothing until a session starts: PlaytestRecorder starts one, or these
+## user args (after `--`) do, for scripted runs without the recorder:
+##   --telemetry-dir=PATH       write PATH/events.jsonl from launch
 ##   --telemetry-game-clock     stamp `t` from physics frames, not wall time, so scripted
 ##                              runs at --fixed-fps line up with frames captured per game second
 
@@ -29,17 +29,13 @@ var _zones := {}
 
 
 func _ready() -> void:
+	process_mode = PROCESS_MODE_ALWAYS  # input in a pause menu is not idle
 	set_physics_process(false)
 	set_process_input(false)
 	var args := OS.get_cmdline_user_args()
-	# Scripted runs (tools/*.sh) pass this so they don't leave sessions behind.
-	if "--no-telemetry" in args:
-		return
-	var dir := "user://sessions/%s" % Time.get_datetime_string_from_system().replace(":", "-")
 	for arg in args:
 		if arg.begins_with("--telemetry-dir="):
-			dir = arg.trim_prefix("--telemetry-dir=")
-	start(dir, "--telemetry-game-clock" in args)
+			start(arg.trim_prefix("--telemetry-dir="), "--telemetry-game-clock" in args)
 
 
 ## Starts a new events.jsonl in `dir`, with session t=0 at `t0_usec` (a

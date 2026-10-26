@@ -6,7 +6,7 @@ A Godot plugin that records a playtest (screen, think-aloud and telemetry), send
 
 | Path | What it is |
 |---|---|
-| `addons/playtest_analyst/` | The plugin. `telemetry.gd` is the `PlaytestTelemetry` autoload ([docs/telemetry.md](docs/telemetry.md)). |
+| `addons/playtest_analyst/` | The plugin: the Playtest dock, the `PlaytestRecorder` autoload that records a session bundle ([docs/recorder.md](docs/recorder.md)), and the `PlaytestTelemetry` autoload ([docs/telemetry.md](docs/telemetry.md)). |
 | `tests/` | GDScript tests, run headless by `tools/test.sh`. |
 | `level/` | The test course (`level.tscn`). It reads every tunable from `level/tuning.tres` at `_ready()`. |
 | `eval/` | Ground truth and the two tuning profiles. Godot ignores this folder (`.gdignore`), so its labels never reach the analysis. |
@@ -24,6 +24,8 @@ cp eval/tuning_clean.tres level/tuning.tres     # baseline
 ```
 
 `eval/ground_truth.json` lists what differs between the profiles and the evidence each difference should leave.
+
+To record a playtest, use the **Playtest** dock in the editor ([docs/recorder.md](docs/recorder.md)).
 
 Controls: WASD or arrows to move, Space to jump. Click to capture the mouse, then move it to orbit the camera (Esc releases it). Jump on the enemy to squash it.
 
@@ -46,6 +48,7 @@ These run the real game from the command line and write images, so a change can 
 ```sh
 tools/check.sh                      # build both profiles headless; fails on script errors or z-fighting blocks
 tools/test.sh                       # GDScript tests in tests/ (telemetry), headless
+tools/record_check.sh 60            # record a real 60 s session with a loopback mic; check the bundle and mic lag
 tools/shots.sh                      # every named view -> /tmp/shots/sheet.png (one labelled contact sheet)
 tools/shots.sh -p planted beacon    # one view, planted profile
 tools/shots.sh over=50,70,30:0,0,-90                   # a free camera: name=eye:target

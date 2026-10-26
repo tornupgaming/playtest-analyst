@@ -6,7 +6,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 
 godot --headless --path . --import >/dev/null 2>&1
-out=$(godot --headless --path . -s res://tools/check.gd -- --no-telemetry 2>&1)
+out=$(godot --headless --path . -s res://tools/check.gd 2>&1)
 # Leak reports at exit are engine noise from quitting a -s script, not our errors.
 errors=$(grep -E 'SCRIPT ERROR|^ERROR|Parse Error' <<<"$out" \
 	| grep -v -e 'PagedAllocator' -e 'resources still in use' -e 'ObjectDB instances')

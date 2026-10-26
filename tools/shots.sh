@@ -38,7 +38,7 @@ render() {
 	fi
 	rm -f "$dir/$name.png"
 	timeout 60 godot --path . --resolution 1280x720 -s res://tools/shot.gd -- \
-		--no-telemetry --out "$dir/$name.png" --profile "$profile" "${args[@]}" >"$dir/$name.log" 2>&1 || true
+		--out "$dir/$name.png" --profile "$profile" "${args[@]}" >"$dir/$name.log" 2>&1 || true
 	if [[ ! -f $dir/$name.png ]]; then
 		echo "no image for $name:" >&2
 		grep -E 'ERROR|error' "$dir/$name.log" | head -5 >&2

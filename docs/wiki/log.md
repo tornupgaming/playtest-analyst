@@ -19,3 +19,6 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 ## [2026-10-26] ingest | spikes/tug-95/README.md (real-mic runs with ffmpeg mic reference)
 - capture-sync.md: replaced the single 30-second real-mic anecdote with two real-mic runs (2 min and 40 s) and an ffmpeg `-f pulse` reference column. Added the Godot-mic minus ffmpeg-mic gap (~59 ms on loopback, ~82 ms on the real mic). Updated the open questions.
 - capture-sync.md: removed the unsourced claim that the mix rate only changes on restart. index.md: updated the capture-sync line.
+
+## [2026-10-26] ingest | docs/recorder.md, tools/record_check.sh (TUG-98 recorder runs)
+- capture-sync.md: added the in-process ffmpeg mic on loopback (60 s and 30 s runs, 13–25 ms including paplay start-up), ffmpeg orphaned by SIGKILL of Godot, SIGTERM finalising the file, run args from a plugin needing `settings_changed`, and the editor's Stop button leaving bundles incomplete. Narrowed the in-process mic open question to real mics and runs over 60 s.
