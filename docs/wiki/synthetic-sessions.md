@@ -12,9 +12,9 @@ Measured on 2026-10-26 with `tools/make_synthetic.sh` (TUG-120): Godot 4.7.2, Vu
 
 | Run | Game time | Frames (1280x720, 30 fps game time) | Wall time |
 |---|---|---|---|
-| clean | 68.2 s | 2047 | 21 s |
+| clean | 63.1 s | 1894 | 22 s |
 
-The frames were piped as raw RGBA to `ffmpeg -c:v libx264 -preset veryfast -crf 20` with `OS.execute_with_pipe`, at `--fixed-fps 60` and 120 physics ticks per second. The planted run and the clean run each finished at the same session time (195.57 s and 68.22 s) headless (`--headless --no-video`) and rendered, and logged the same deaths at the same times. [measured](../../tools/synth.gd)
+The frames were piped as raw RGBA to `ffmpeg -c:v libx264 -preset veryfast -crf 20` with `OS.execute_with_pipe`, at `--fixed-fps 60` and 120 physics ticks per second. The planted run and the clean run each finished at the same session time (190.45 s and 63.11 s) headless (`--headless --no-video`) and rendered, and logged the same deaths at the same times. [measured](../../tools/synth.gd)
 
 ## Piper TTS
 
