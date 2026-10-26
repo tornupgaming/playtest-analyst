@@ -36,7 +36,9 @@ async function rejection(root: string, p: ModelPatch): Promise<string | null> {
 	const proc = Bun.spawn(["git", "-C", root, "apply", "--check", "--numstat", "-z"], { stdin: new Blob([p.diff]), stdout: "pipe", stderr: "pipe" });
 	const [out, err, code] = await Promise.all([new Response(proc.stdout).text(), new Response(proc.stderr).text(), proc.exited]);
 	if (code !== 0) return err.trim();
-	const touched = out.split("\0").filter(Boolean).map((line) => line.split("\t")[2]);
+	// git reports paths from the repository root; the project root may be a subfolder of it.
+	const prefix = (await new Response(Bun.spawn(["git", "-C", root, "rev-parse", "--show-prefix"], { stdout: "pipe" }).stdout).text()).trim();
+	const touched = out.split("\0").filter(Boolean).map((line) => line.split("\t")[2]!.replace(prefix, ""));
 	return touched.length === 1 && touched[0] === p.file ? null : `The diff touches ${touched.join(", ") || "no files"}; it must change only ${p.file}.`;
 }
 
@@ -96,6 +98,8 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 			const proposed = parsePatches(response, Output).filter((p) => attempt === 1 || retried.has(p.finding_id));
 			rejected = [];
 			for (const p of proposed) {
+				// One patch per finding: a second one for the same finding would fail once the first is applied.
+				if (accepted.some((a) => a.finding_id === p.finding_id)) continue;
 				const error = await rejection(root, p);
 				if (error === null) accepted.push(p);
 				else rejected.push({ patch: p, error });
