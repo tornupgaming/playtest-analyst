@@ -5,6 +5,8 @@ sources:
   - spikes/tug-94/FINDINGS.md
   - spikes/tug-94/probe.ts
   - spikes/tug-94/results/
+  - spikes/tug-104/check.sh
+  - spikes/tug-104/results/run.txt
   - https://dev.meta.ai/docs/media-segmentation
   - https://dev.meta.ai/docs/sam/overview
   - https://dev.meta.ai/docs/sam/segmenting
@@ -52,9 +54,19 @@ How `sam-3.1` on the Meta Model API (`https://api.meta.ai/v1`) takes an image an
 | The Responses `output_text` for 31 tree masks was about 83 kB. | [measured](../../spikes/tug-94/results/raw/ledge__the-tree__r1.json) |
 | `@meta-sam/parser` 0.1.0 `parseImageStream` throws `ResponsesStreamLaneError` on an empty result unless the fed events include an `output_text.done` event (an empty-string one). | [measured](../../spikes/tug-94/probe.ts) |
 
+### Key frames from a finalized video (TUG-104)
+
+**Conditions:** 2026-10-26, one recorded run of [`check.sh`](../../spikes/tug-104/check.sh): three of the frames above encoded into a 1280×720 H.264 yuv420p slideshow (libx264 defaults), one frame each extracted by ffmpeg as PNG, five calls through `playtest annotate`, at most 4 in flight. ([run log](../../spikes/tug-104/results/run.txt))
+
+| Fact | Source |
+|---|---|
+| "the star" (beacon), "the mushroom" (drop) and "the arrow sign" (fork) matched, as on the source PNGs. "the player" (beacon) returned no match, as on the source PNG. | [measured](../../spikes/tug-104/results/run.txt) |
+| "the exit sign" on the drop frame returned no match, where it matched (c 0.51, 17×8 px) on the source PNG in both probe runs. | [measured](../../spikes/tug-104/results/run.txt) |
+| All five calls with 4 in flight succeeded; the whole command, including ffmpeg and drawing, took 3.7 s wall-clock. | [measured](../../spikes/tug-104/results/run.txt) |
+
 ## Open questions
 
 - Whether streaming changes latency.
 - Whether `file_id` input is accepted for images, and any image size limit.
-- Whether JPEG input changes results.
+- Whether JPEG input changes results, and whether the H.264 re-encode or chance explains the "the exit sign" miss (one run).
 - How phrasing affects matches, beyond the few variants above.

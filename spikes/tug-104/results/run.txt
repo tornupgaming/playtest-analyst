@@ -1,0 +1,10 @@
+$0.69 of $20.00
+f3: no annotated frame: SAM found no match for "the exit sign".
+f5: no annotated frame: SAM found no match for "the player".
+3 of 5 highlights annotated → /tmp/annotate/session/report.json
+
+real	0m3.669s
+user	0m1.129s
+sys	0m0.489s
+$0.70 of $20.00
+sheet: /tmp/annotate/sheet.png
