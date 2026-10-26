@@ -29,16 +29,21 @@ if [[ ! -f $voice ]]; then
 fi
 godot --headless --path . --import >/dev/null 2>&1
 
+# A private scratch dir per invocation, so builds in two worktrees can't clobber each other.
+scratch=$(mktemp -d /tmp/synthetic-run.XXXXXX)
+trap 'rm -rf "$scratch"' EXIT
+mkdir -p /tmp/synthetic
+
 for profile in planted clean; do
-	run=/tmp/synthetic/run-$profile
-	rm -rf "$run"
+	run=$scratch/$profile
 	mkdir -p "$run"
 	started=$(date +%s.%N)
 	godot --path . --fixed-fps 60 --resolution 1280x720 -s res://tools/synth.gd -- \
 		--profile "$profile" --out "$run" --telemetry-dir="$run" --telemetry-game-clock >"$run/godot.log" 2>&1 || true
 	if ! grep -q '^finished at' "$run/godot.log"; then
 		grep -E 'BOT FAILED|SCRIPT ERROR|Parse Error' -A2 "$run/godot.log" >&2
-		echo "$profile run failed; log: $run/godot.log" >&2
+		cp "$run/godot.log" "/tmp/synthetic/$profile-failed.log"
+		echo "$profile run failed; log: /tmp/synthetic/$profile-failed.log" >&2
 		exit 1
 	fi
 	grep -E '^(t=|finished)' "$run/godot.log"
