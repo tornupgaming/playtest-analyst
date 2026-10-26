@@ -42,8 +42,8 @@ Stream minus event time: [README](../../spikes/tug-95/README.md#results)
 - A recorder that stops on `NOTIFICATION_WM_CLOSE_REQUEST` writes a complete bundle when the window is closed early. The check passed after a close at about 13 s. [README](../../spikes/tug-95/README.md#how-it-works)
 - Stopping ffmpeg by writing `q` to its stdin finalises the file. Killing the process leaves it truncated. [README](../../spikes/tug-95/README.md#how-it-works)
 - Godot's Movie Maker mode doesn't write MP4. [FINDINGS](../../spikes/tug-93/FINDINGS.md#implications-for-other-issues)
-- `mic.wav` (stereo, 16-bit, 48 kHz) is about 11.5 MB/min.
-- ffmpeg 9.0.2's `adelay` misreads fractional seconds: `delays=0.5s` delayed 0.5 ms and `22.5s` 22.5 ms (the output grew by that much), while `9s` and `500` (ms) delayed correctly. [measured](../../spikes/tug-99/results/adelay.txt) [README](../../spikes/tug-95/README.md#limits)
+- `mic.wav` (stereo, 16-bit, 48 kHz) is about 11.5 MB/min. [README](../../spikes/tug-95/README.md#limits)
+- ffmpeg 9.0.2's `adelay` misreads fractional seconds: `delays=0.5s` delayed 0.5 ms and `22.5s` 22.5 ms (the output grew by that much), while `9s` and `500` (ms) delayed correctly. [measured](../../spikes/tug-99/results/adelay.txt)
 
 ## Open questions
 
