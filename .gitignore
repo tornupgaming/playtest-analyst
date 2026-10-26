@@ -1,1 +1,7 @@
 .godot/
+node_modules/
+# Session media is large; bundles keep session.json, events.jsonl and report.json in git.
+sessions/**/*.mkv
+sessions/**/*.mp4
+sessions/**/*.wav
+sessions/**/analysis/

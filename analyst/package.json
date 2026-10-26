@@ -1,0 +1,18 @@
+{
+  "name": "playtest-analyst",
+  "type": "module",
+  "private": true,
+  "bin": { "playtest": "src/cli.ts" },
+  "scripts": {
+    "playtest": "bun src/cli.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "openai": "^7.45.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "typescript": "^7.0.2"
+  }
+}

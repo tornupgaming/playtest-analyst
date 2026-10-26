@@ -1,0 +1,119 @@
+// The data contracts. Everything that crosses a file boundary is parsed with one of these.
+// See DECISIONS.md §2 for the bundle layout and the session clock.
+import { z } from "zod";
+
+// --- Session bundle ---------------------------------------------------------
+
+/** session.json, written by a recorder. Times are seconds on the session clock. */
+export const SessionMeta = z.object({
+	schema: z.literal(1),
+	id: z.string(),
+	/** ISO wall time when the session clock started. */
+	started_at: z.string(),
+	/** Unix wall time (s) at session t=0. Anchors streams stamped with wall-clock pts. */
+	t0_unix: z.number(),
+	duration: z.number(),
+	game: z.string(),
+	build: z.string().nullable(),
+	tester: z.string().nullable(),
+	/** Test-level tuning profile ("planted" | "clean"), null for a real game. */
+	profile: z.string().nullable(),
+	capture: z.object({
+		/** Raw video file, relative to the bundle. */
+		video: z.string(),
+		/** Session time of the file's first frame. Omit to derive it from pts − t0_unix. */
+		video_start: z.number().optional(),
+		/** Raw mic file (may be the video file if muxed), or null for no mic. */
+		audio: z.string().nullable(),
+		audio_start: z.number().optional(),
+	}),
+});
+export type SessionMeta = z.infer<typeof SessionMeta>;
+
+/** One line of events.jsonl. Known types: death, retry, zone_enter, zone_exit, input_idle,
+ * ui_open, ui_close, objective_update, plus any custom name. */
+export const TelemetryEvent = z.object({
+	t: z.number(),
+	type: z.string(),
+	player_pos: z.tuple([z.number(), z.number(), z.number()]).nullable().default(null),
+	data: z.record(z.string(), z.unknown()).default({}),
+});
+export type TelemetryEvent = z.infer<typeof TelemetryEvent>;
+
+// --- Report -----------------------------------------------------------------
+
+export const Category = z.enum(["confusion", "difficulty", "pacing", "ui", "bug"]);
+export type Category = z.infer<typeof Category>;
+
+/** A finding as the model writes it. Every field is required (nullable instead of optional)
+ * so the schema works as a strict json_schema output format. */
+export const ModelFinding = z.object({
+	t_start: z.number(),
+	t_end: z.number(),
+	category: Category,
+	severity: z.enum(["low", "medium", "high"]),
+	zone: z.string().nullable(),
+	summary: z.string(),
+	evidence: z.object({
+		quotes: z.array(z.object({ t: z.number(), text: z.string() })),
+		telemetry: z.array(z.string()),
+		visual: z.string(),
+	}),
+	suggested_fix: z.string(),
+	/** Key frame and the noun phrase SAM should segment in it, e.g. "the glowing beacon". */
+	highlight: z.object({ t: z.number(), prompt: z.string() }).nullable(),
+});
+export type ModelFinding = z.infer<typeof ModelFinding>;
+
+export const ModelOutput = z.object({ findings: z.array(ModelFinding) });
+
+export const Finding = ModelFinding.extend({
+	id: z.string(),
+	/** Path relative to the bundle, added by the SAM step (TUG-104). */
+	annotated_frame: z.string().optional(),
+});
+export type Finding = z.infer<typeof Finding>;
+
+export const Usage = z.object({
+	input_tokens: z.number(),
+	cached_tokens: z.number(),
+	output_tokens: z.number(),
+	cost_usd: z.number(),
+	latency_s: z.number(),
+});
+export type Usage = z.infer<typeof Usage>;
+
+export const Report = z.object({
+	schema: z.literal(1),
+	session_id: z.string(),
+	created_at: z.string(),
+	model: z.string(),
+	/** Name of the analysis config that produced it (prompt variant, fps, …). */
+	config: z.string(),
+	findings: z.array(Finding),
+	usage: Usage,
+});
+export type Report = z.infer<typeof Report>;
+
+// --- Ground truth (eval/ground_truth.json) ----------------------------------
+
+const Tunable = z.object({ path: z.string(), planted: z.unknown(), fixed: z.unknown() });
+
+export const Plant = z.object({
+	id: z.number(),
+	category: Category,
+	zone: z.string(),
+	symptom: z.string(),
+	evidence: z.object({ telemetry: z.string(), video: z.string(), voice: z.string() }),
+	tunable: z.union([Tunable, z.array(Tunable)]),
+});
+export type Plant = z.infer<typeof Plant>;
+
+export const GroundTruth = z.object({
+	level: z.string(),
+	profiles: z.record(z.string(), z.string()),
+	frozen_at: z.string().nullable(),
+	plants: z.array(Plant),
+	known_unplanned: z.array(z.object({ zone: z.string(), description: z.string(), evidence: z.string() })),
+});
+export type GroundTruth = z.infer<typeof GroundTruth>;

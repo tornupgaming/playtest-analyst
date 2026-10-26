@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "session_id": "fixture-planted",
+  "created_at": "2026-10-26T21:00:00Z",
+  "model": "muse-wonder-1.0",
+  "config": "fixture",
+  "findings": [
+    {
+      "id": "f1",
+      "t_start": 12.0,
+      "t_end": 70.0,
+      "category": "difficulty",
+      "severity": "high",
+      "zone": "ledge",
+      "summary": "The player falls at the same ledge gap four times before clearing it.",
+      "evidence": {
+        "quotes": [{ "t": 33.5, "text": "Is this jump even possible?" }],
+        "telemetry": ["4× death (fall) in ledge between 18.4 s and 58.2 s"],
+        "visual": "Each attempt falls just short of the far platform."
+      },
+      "suggested_fix": "Narrow the gap or add a visible landing lip on the far side.",
+      "highlight": { "t": 30.5, "prompt": "the gap between the two ledges" }
+    },
+    {
+      "id": "f2",
+      "t_start": 72.0,
+      "t_end": 158.0,
+      "category": "ui",
+      "severity": "high",
+      "zone": "plaza",
+      "summary": "The player can't find the beacon and wanders the plaza for almost 90 seconds.",
+      "evidence": {
+        "quotes": [{ "t": 101.2, "text": "Where am I going? What beacon?" }],
+        "telemetry": ["88 s between zone_enter plaza and zone_enter hall", "input_idle 6.2 s at 95.0 s"],
+        "visual": "The beacon over the door is the same colour as the wall behind it."
+      },
+      "suggested_fix": "Give the beacon a contrasting colour and an emissive glow.",
+      "highlight": { "t": 100.0, "prompt": "the beacon above the door" }
+    },
+    {
+      "id": "f3",
+      "t_start": 161.0,
+      "t_end": 249.0,
+      "category": "confusion",
+      "severity": "medium",
+      "zone": "hall",
+      "summary": "The objective 'Find a way through.' doesn't point to the switch; the player tries the gate repeatedly.",
+      "evidence": {
+        "quotes": [{ "t": 190.0, "text": "Find a way through... how?" }],
+        "telemetry": ["89 s between objective 'Find a way through.' and the gate opening"],
+        "visual": "The player walks into the closed gate three times before climbing to the balcony."
+      },
+      "suggested_fix": "Change the objective to name the red switch on the balcony.",
+      "highlight": { "t": 200.0, "prompt": "the red switch on the balcony" }
+    },
+    {
+      "id": "f4",
+      "t_start": 262.0,
+      "t_end": 278.0,
+      "category": "difficulty",
+      "severity": "high",
+      "zone": "drop",
+      "summary": "The enemy hits the player within two seconds of landing from the drop, twice.",
+      "evidence": {
+        "quotes": [{ "t": 265.0, "text": "I couldn't even see it!" }],
+        "telemetry": ["death (enemy) 1.6 s after zone_enter drop", "second death (enemy) at 276.2 s"],
+        "visual": "The enemy charges as soon as the player lands."
+      },
+      "suggested_fix": "Delay the enemy's charge by about 2 seconds after the player lands.",
+      "highlight": { "t": 263.5, "prompt": "the enemy" }
+    },
+    {
+      "id": "f5",
+      "t_start": 303.0,
+      "t_end": 323.0,
+      "category": "confusion",
+      "severity": "medium",
+      "zone": "fork",
+      "summary": "The EXIT sign sends the player into the left dead end, and they have to backtrack.",
+      "evidence": {
+        "quotes": [{ "t": 318.0, "text": "The sign said exit... dead end?" }],
+        "telemetry": ["zone_enter fork_left 305.1 s, back in fork at 322.1 s"],
+        "visual": "The arrow on the sign points left."
+      },
+      "suggested_fix": "Point the EXIT arrow to the right branch.",
+      "highlight": { "t": 304.0, "prompt": "the exit sign arrow" }
+    },
+    {
+      "id": "f6",
+      "t_start": 140.0,
+      "t_end": 150.0,
+      "category": "bug",
+      "severity": "low",
+      "zone": "plaza",
+      "summary": "The camera clips into the plaza wall when the player backs into a corner.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [],
+        "visual": "The view is briefly filled by the wall texture."
+      },
+      "suggested_fix": "Add a camera collision margin.",
+      "highlight": null
+    }
+  ],
+  "usage": { "input_tokens": 52000, "cached_tokens": 0, "output_tokens": 4100, "cost_usd": 0.29, "latency_s": 58.0 }
+}

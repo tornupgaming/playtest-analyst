@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "id": "fixture-planted",
+  "started_at": "2026-10-26T20:00:00Z",
+  "t0_unix": 1793044800.0,
+  "duration": 385.0,
+  "game": "Playtest Analyst Test Level",
+  "build": null,
+  "tester": "fixture",
+  "profile": "planted",
+  "capture": { "video": "screen.mkv", "video_start": 0, "audio": "mic.wav", "audio_start": 0 }
+}

@@ -1,0 +1,34 @@
+{"t": 0.0, "type": "objective_update", "player_pos": null, "data": {"text": "Follow the path."}}
+{"t": 5.2, "type": "zone_enter", "player_pos": null, "data": {"zone": "ledge"}}
+{"t": 18.4, "type": "death", "player_pos": null, "data": {"cause": "fall", "zone": "ledge"}}
+{"t": 19.0, "type": "retry", "player_pos": null, "data": {}}
+{"t": 31.0, "type": "death", "player_pos": null, "data": {"cause": "fall", "zone": "ledge"}}
+{"t": 31.6, "type": "retry", "player_pos": null, "data": {}}
+{"t": 44.7, "type": "death", "player_pos": null, "data": {"cause": "fall", "zone": "ledge"}}
+{"t": 45.3, "type": "retry", "player_pos": null, "data": {}}
+{"t": 58.2, "type": "death", "player_pos": null, "data": {"cause": "fall", "zone": "ledge"}}
+{"t": 58.8, "type": "retry", "player_pos": null, "data": {}}
+{"t": 71.5, "type": "zone_exit", "player_pos": null, "data": {"zone": "ledge"}}
+{"t": 71.6, "type": "zone_enter", "player_pos": null, "data": {"zone": "plaza"}}
+{"t": 71.6, "type": "objective_update", "player_pos": null, "data": {"text": "Reach the beacon."}}
+{"t": 95.0, "type": "input_idle", "player_pos": null, "data": {"duration": 6.2}}
+{"t": 160.3, "type": "zone_exit", "player_pos": null, "data": {"zone": "plaza"}}
+{"t": 160.4, "type": "zone_enter", "player_pos": null, "data": {"zone": "hall"}}
+{"t": 160.4, "type": "objective_update", "player_pos": null, "data": {"text": "Find a way through."}}
+{"t": 250.0, "type": "objective_update", "player_pos": null, "data": {"text": "The gate is open. Find the exit."}}
+{"t": 262.0, "type": "zone_exit", "player_pos": null, "data": {"zone": "hall"}}
+{"t": 262.5, "type": "zone_enter", "player_pos": null, "data": {"zone": "drop"}}
+{"t": 264.1, "type": "death", "player_pos": null, "data": {"cause": "enemy", "zone": "drop"}}
+{"t": 264.7, "type": "retry", "player_pos": null, "data": {}}
+{"t": 276.2, "type": "death", "player_pos": null, "data": {"cause": "enemy", "zone": "drop"}}
+{"t": 276.8, "type": "retry", "player_pos": null, "data": {}}
+{"t": 301.0, "type": "zone_exit", "player_pos": null, "data": {"zone": "drop"}}
+{"t": 301.5, "type": "zone_enter", "player_pos": null, "data": {"zone": "fork"}}
+{"t": 305.0, "type": "zone_exit", "player_pos": null, "data": {"zone": "fork"}}
+{"t": 305.1, "type": "zone_enter", "player_pos": null, "data": {"zone": "fork_left"}}
+{"t": 322.0, "type": "zone_exit", "player_pos": null, "data": {"zone": "fork_left"}}
+{"t": 322.1, "type": "zone_enter", "player_pos": null, "data": {"zone": "fork"}}
+{"t": 327.0, "type": "zone_exit", "player_pos": null, "data": {"zone": "fork"}}
+{"t": 327.5, "type": "zone_enter", "player_pos": null, "data": {"zone": "corridor"}}
+{"t": 371.0, "type": "zone_exit", "player_pos": null, "data": {"zone": "corridor"}}
+{"t": 380.0, "type": "objective_update", "player_pos": null, "data": {"text": "Course complete!"}}
