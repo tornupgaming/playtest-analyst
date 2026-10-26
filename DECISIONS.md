@@ -68,7 +68,9 @@ One `POST /v1/responses` call to `muse-wonder-1.0` with:
 
 Muse Wonder's report names, for each finding, a key-frame time and a short noun phrase to highlight (`highlight` in the report schema), so no extra call is needed to choose it. `sam-3.1` segments that phrase on the extracted frame and we draw the outline.
 
-**Fallback.** Plain key frame, with no overlay. Decided in TUG-94 once the probe (TUG-118) is judged.
+The probe (TUG-118, [wiki](docs/wiki/sam-3-1.md)) matched distinct objects named by how they look ("the star", "the mushroom", "the arrow sign"). It missed names based on game role ("the beacon", "the enemy"), large flat surfaces (ledges, paths) and spatial phrases ("the gap between…"). So `highlight.prompt` must describe the element as a concrete object, by its appearance. One call is about 1 s and $0.0025.
+
+**Fallback.** Plain key frame, with no overlay, when SAM returns nothing. Phil makes the final call in TUG-94.
 
 ## 6. Eval
 
