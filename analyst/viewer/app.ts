@@ -83,6 +83,10 @@ const seek = (t: number, play = true) => {
 	video.currentTime = Math.min(Math.max(t, 0), duration);
 	if (play) video.play();
 };
+/** A finding the user clicked. It stays open while the playhead is inside it, even when
+ * another finding overlaps or starts at the same time. */
+let pinned: Finding | undefined;
+const open = (f: Finding) => ((pinned = f), seek(f.t_start));
 const toggle = () => (video.paused ? video.play() : video.pause());
 video.onclick = toggle;
 $("#play").onclick = toggle;
@@ -132,7 +136,7 @@ for (const f of findings) {
 		class: "mark",
 		style: { ...span({ t0: f.t_start, t1: f.t_end }), top: `${rows.get(f)! * ROW + 5}px`, "--accent": accent(f.category) },
 		title: `${label(f.category)} · ${f.summary}`,
-		onpointerdown: (e: Event) => (e.stopPropagation(), seek(f.t_start)),
+		onpointerdown: (e: Event) => (e.stopPropagation(), open(f)),
 	});
 	markers.set(f, el);
 }
@@ -189,7 +193,7 @@ for (const f of findings) {
 
 	const card = h(
 		"li",
-		{ class: "card", style: { "--accent": accent(f.category) }, onclick: () => seek(f.t_start) },
+		{ class: "card", style: { "--accent": accent(f.category) }, onclick: () => open(f) },
 		h(
 			"div",
 			{ class: "card-head" },
@@ -232,7 +236,8 @@ function frame() {
 	$("#clock").textContent = `${clock(t)} / ${clock(duration)}`;
 	document.body.classList.toggle("playing", !video.paused);
 	document.body.classList.toggle("muted", video.muted);
-	const active = findingAt(t);
+	if (pinned && (t < pinned.t_start || t > pinned.t_end)) pinned = undefined;
+	const active = pinned ?? findingAt(t);
 	// Keep the last finding open between findings, so it can still be read.
 	if (active && active !== shown) {
 		if (shown) (cards.get(shown)!.classList.remove("active"), markers.get(shown)!.classList.remove("active"));
