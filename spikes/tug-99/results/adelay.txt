@@ -1,0 +1,8 @@
+# ffmpeg n9.0.2, 2026-10-26. A 1 s 1 kHz sine through adelay; first sample over 3000 and output length (s).
+# ffmpeg -f lavfi -i sine=f=1000:d=1 -af "adelay=delays=<d>:all=1" -f s16le -ar 16000 -ac 1 out.raw
+delays   first_loud_s  length_s
+0.5s     0.0006875     1.0005
+2.5s     0.002625      1.0025
+9s       9.0001875     10.0
+22.5s    0.022625      1.0225
+500      0.5001875     1.5

@@ -8,7 +8,7 @@ What we decided, why, and what we fall back to. The evidence lives in the [wiki]
 
 | Command | Does |
 |---|---|
-| `playtest finalize <session>` | Puts the raw capture on the session clock: writes `video.mp4` and `mic.wav` (§2) |
+| `playtest finalize <session>` | Puts the raw capture on the session clock: writes `video.mp4` and `mic16k.wav` (§2) |
 | `playtest analyse <session>` | Bundle → Muse Wonder (+ ASR, SAM) → `report.json` |
 | `playtest eval <sessions…>` | Scores reports against `eval/ground_truth.json` |
 | `playtest serve <session>` | Serves the report viewer (`Bun.serve`) |

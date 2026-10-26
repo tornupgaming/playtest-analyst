@@ -1,0 +1,12 @@
+# spikes/tug-95/out/20261026-201803 (real mic, 40 s, 6 flash+beep events) after `playtest finalize`, 2026-10-26.
+# Video screen.mkv and mic ref_mic.mka (ffmpeg -f pulse, separate process), both with no declared start, so
+# offsets came from wall-clock pts − t0_unix: video +0.068 s (padded), mic −1.149 s (trimmed).
+# Columns: telemetry event t, then output stream minus event: first mic16k.wav sample over 30% of peak,
+# first video.mp4 frame brighter than mid-grey (sampled at 100 fps).
+event_t   audio   video
+3.004     +28ms   +26ms
+8.321     +23ms   +9ms
+14.604    +22ms   +26ms
+21.295    +30ms   +5ms
+28.762    +30ms   +8ms
+33.962    +24ms   +8ms

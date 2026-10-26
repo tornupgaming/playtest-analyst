@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "session_id": "tug95-20261026-201803",
+  "created_at": "2026-10-26T23:04:26.829Z",
+  "model": "muse-wonder-1.0",
+  "config": "v0",
+  "findings": [],
+  "usage": {
+    "input_tokens": 6523,
+    "cached_tokens": 0,
+    "output_tokens": 636,
+    "cost_usd": 0.038812,
+    "latency_s": 11.9
+  }
+}

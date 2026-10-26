@@ -19,3 +19,8 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 ## [2026-10-26] ingest | spikes/tug-95/README.md (real-mic runs with ffmpeg mic reference)
 - capture-sync.md: replaced the single 30-second real-mic anecdote with two real-mic runs (2 min and 40 s) and an ffmpeg `-f pulse` reference column. Added the Godot-mic minus ffmpeg-mic gap (~59 ms on loopback, ~82 ms on the real mic). Updated the open questions.
 - capture-sync.md: removed the unsourced claim that the mix rate only changes on restart. index.md: updated the capture-sync line.
+
+## [2026-10-26] ingest | spikes/tug-99/results (first `playtest analyse` runs, finalize alignment, adelay)
+- muse-wonder-video.md: added three 40-second `playtest analyse` runs (tokens, cost, latency) and that the strict schema with `anyOf` null and `max_output_tokens` 32000 are accepted. Added an open question on the output-token spread.
+- meta-asr.md: added the TTS-on-real-mic ASR run (−0.22, −0.28 s, repeated words).
+- capture-sync.md: added post-finalize alignment on the real-mic run and the `adelay` fractional-seconds behaviour.
