@@ -9,6 +9,8 @@ export type Options = {
 	strict: Strictness;
 	/** The session's profile. "clean" has no plants, so every unexcused finding is a false positive. */
 	profile: string | null;
+	/** Session end (session.json duration). Closes an interval the player never exited. */
+	endT: number;
 };
 export type Window = [start: number, end: number];
 
@@ -32,8 +34,8 @@ export type Score = {
 /** `fork_left` belongs to zone `fork`. */
 const inZone = (id: string, zone: string) => id === zone || id.startsWith(`${zone}_`);
 
-/** Merged, padded intervals the player spent in `zone`. An interval with no exit runs to the last event. */
-export function windows(events: TelemetryEvent[], zone: string, padS: number): Window[] {
+/** Merged, padded intervals the player spent in `zone`. An interval with no exit runs to `endT`. */
+export function windows(events: TelemetryEvent[], zone: string, padS: number, endT: number): Window[] {
 	const open = new Map<string, number>();
 	const spans: Window[] = [];
 	for (const e of events) {
@@ -46,8 +48,7 @@ export function windows(events: TelemetryEvent[], zone: string, padS: number): W
 			open.delete(id);
 		}
 	}
-	const lastT = events.at(-1)?.t ?? 0;
-	for (const start of open.values()) spans.push([start, lastT]);
+	for (const start of open.values()) spans.push([start, endT]);
 
 	const merged: Window[] = [];
 	for (const [start, end] of spans.sort((a, b) => a[0] - b[0])) {
@@ -79,9 +80,9 @@ export function ratios(c: { hits: number; misses: number; duplicates: number; fa
 }
 
 export function score(report: Report, gt: GroundTruth, events: TelemetryEvent[], opts: Partial<Options> = {}): Score {
-	const { padS = 10, strict = "category", profile = null } = opts;
+	const { padS = 10, strict = "category", profile = null, endT = events.at(-1)?.t ?? 0 } = opts;
 	const plants = profile === "clean" ? [] : gt.plants;
-	const wins = new Map(plants.map((p) => [p.id, windows(events, p.zone, padS)]));
+	const wins = new Map(plants.map((p) => [p.id, windows(events, p.zone, padS, endT)]));
 	const excusedZones = new Set(gt.known_unplanned.map((u) => u.zone));
 
 	const hits: Score["hits"] = [];

@@ -123,10 +123,11 @@ describe("score", () => {
 		expect(score(r, gt, events, { padS: 2 }).false_positives).toEqual(["a"]);
 	});
 
-	test("a zone with no exit runs to the session's last event", () => {
+	test("a zone with no exit runs to the end of the session", () => {
 		const open = [enter(10, "ledge"), ev(90, "death", "ledge")];
-		const r = report([finding("a", 85, 88, "difficulty", "ledge")]);
-		expect(score(r, gt, open, { padS: 0 }).hits).toEqual([{ plant: 1, finding: "a" }]);
+		const r = report([finding("a", 130, 145, "difficulty", "ledge")]);
+		expect(score(r, gt, open, { padS: 0, endT: 160 }).hits).toEqual([{ plant: 1, finding: "a" }]);
+		expect(score(r, gt, open, { padS: 0, endT: 120 }).false_positives).toEqual(["a"]);
 	});
 
 	test("strictness: category needs the category, zone also needs finding.zone, any needs only time", () => {

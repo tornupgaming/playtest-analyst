@@ -43,7 +43,7 @@ export async function run(argv: string[]) {
 	for (const dir of args.positionals) {
 		const session = await readSession(dir);
 		const report = Report.parse(await Bun.file(join(dir, reportName)).json());
-		const opts = { padS, strict: strict as Strictness, profile: session.meta.profile };
+		const opts = { padS, strict: strict as Strictness, profile: session.meta.profile, endT: session.meta.duration };
 		rows.push({ report, session, score: score(report, gt, session.events, opts) });
 	}
 
@@ -73,7 +73,7 @@ export async function run(argv: string[]) {
 		const items = [
 			...s.misses.map((id) => {
 				const p = gt.plants.find((p) => p.id === id)!;
-				const wins = windows(session.events, p.zone, padS);
+				const wins = windows(session.events, p.zone, padS, session.meta.duration);
 				return `- miss: plant ${id} ${p.category} in ${p.zone} (${wins.length ? wins.map(span).join(", ") : "zone never entered"}): ${p.symptom}`;
 			}),
 			...s.false_positives.map((id) => `- false positive: ${finding(id)}`),
