@@ -11,6 +11,7 @@ export const API_BASE = process.env.META_API_BASE ?? "https://api.meta.ai/v1";
 /** $ per 1M tokens. https://dev.meta.ai/docs/pricing-rate-limits */
 const PRICES: Record<string, { input: number; cached: number; output: number }> = {
 	"muse-wonder-1.0": { input: 4.0, cached: 0.2, output: 20.0 },
+	"muse-spark-1.3": { input: 1.25, cached: 0.15, output: 4.25 },
 };
 
 /** $ per image. SAM is billed per image, not per token; `usage.images_processed` counts them.
