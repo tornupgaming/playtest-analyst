@@ -10,11 +10,15 @@ import type { Finding, Report } from "./schema.ts";
 const CONCURRENCY = 4;
 /** The viewer's highlight yellow, a translucent fill over the match and a solid stroke around it. */
 const ACCENT = [255, 212, 0] as const;
-const FILL_ALPHA = 0.35;
-const STROKE_PX = 3;
+const FILL_ALPHA = 0.2;
+const STROKE_PX = 4;
 /** A dark edge outside the stroke, so the yellow reads on bright footage. */
 const HALO_PX = 2;
 const HALO_ALPHA = 0.6;
+/** Everything outside a soft circle around the match is darkened, so the eye goes to it. */
+const SPOT_MARGIN_PX = 28;
+const SPOT_FEATHER_PX = 36;
+const SPOT_DIM = 0.55;
 
 async function ffmpeg(args: string[], stdin?: Uint8Array): Promise<Uint8Array> {
 	const proc = Bun.spawn(["ffmpeg", "-loglevel", "error", ...args], { stdin: stdin ?? "ignore", stdout: "pipe", stderr: "pipe" });
@@ -31,9 +35,9 @@ async function* replay(text: string): AsyncIterable<ResponsesEvent> {
 	yield { type: "response.completed" };
 }
 
-type Mask = { raster: ArrayLike<number>; left: number; top: number; width: number };
+type Mask = { raster: ArrayLike<number>; left: number; top: number; width: number; height: number };
 
-/** The frame with `mask` filled and outlined. Pixels are rgb24. Distances are chamfer 3-4
+/** The frame with `mask` filled, outlined and spotlit. Pixels are rgb24. Distances are chamfer 3-4
  * (3 per straight step, 4 per diagonal), so `d / 3` is about the distance in pixels. */
 function drawHighlight(rgb: Uint8Array, width: number, height: number, mask: Mask): Uint8Array {
 	const far = 1 << 20;
@@ -68,7 +72,11 @@ function drawHighlight(rgb: Uint8Array, width: number, height: number, mask: Mas
 	const blend = (i: number, color: readonly number[], alpha: number) => {
 		for (let c = 0; c < 3; c++) out[i * 3 + c] = Math.round(out[i * 3 + c]! * (1 - alpha) + color[c]! * alpha);
 	};
+	const [cx, cy] = [mask.left + mask.width / 2, mask.top + mask.height / 2];
+	const radius = Math.hypot(mask.width, mask.height) / 2 + SPOT_MARGIN_PX;
 	for (let i = 0; i < d.length; i++) {
+		const outside = Math.hypot((i % width) - cx, Math.floor(i / width) - cy) - radius;
+		if (outside > 0) blend(i, [0, 0, 0], SPOT_DIM * Math.min(1, outside / SPOT_FEATHER_PX));
 		if (d[i] === 0) blend(i, ACCENT, FILL_ALPHA);
 		else if (d[i]! <= STROKE_PX * 3) blend(i, ACCENT, 1);
 		else if (d[i]! <= (STROKE_PX + HALO_PX) * 3) blend(i, [0, 0, 0], HALO_ALPHA);
@@ -99,7 +107,7 @@ async function annotateFinding(video: string, highlight: NonNullable<Finding["hi
 	const header = new DataView(png.buffer, png.byteOffset);
 	const [width, height] = [header.getUint32(16), header.getUint32(20)];
 	const rgb = await ffmpeg(["-f", "png_pipe", "-i", "-", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], png);
-	const mask = { raster: decodeMaskToRaster(top.mask), left: top.bounds.left, top: top.bounds.top, width: top.mask.width };
+	const mask = { raster: decodeMaskToRaster(top.mask), left: top.bounds.left, top: top.bounds.top, width: top.mask.width, height: top.mask.height };
 	await ffmpeg(["-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", `${width}x${height}`, "-i", "-", out], drawHighlight(rgb, width, height, mask));
 }
 

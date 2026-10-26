@@ -148,20 +148,21 @@ test("when ASR fails, the video is sent with its audio track and no transcript",
 	expect((await Bun.file(join(dir, "report.json")).json()).findings).toHaveLength(2);
 });
 
-/** The output PNG's pixels and the bounding box of the pixels that differ from the plain frame at `t`. */
-async function drawnRegion(png: string, t: number) {
+/** Mean brightness (0–255) of the region [x0, x1) × [y0, y1) of a 1280-wide rgb24 frame. */
+function brightness(rgb: Uint8Array, x0: number, y0: number, x1: number, y1: number): number {
+	let sum = 0;
+	for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) for (let c = 0; c < 3; c++) sum += rgb[(y * 1280 + x) * 3 + c]!;
+	return sum / ((x1 - x0) * (y1 - y0) * 3);
+}
+
+/** The PNG and the plain video frame at `t`, as rgb24. */
+async function frames(png: string, t: number) {
 	const rgb = async (args: string[], out: string) => {
 		await run(["ffmpeg", "-y", "-loglevel", "error", ...args, "-frames:v", "1", "-f", "rawvideo", "-pix_fmt", "rgb24", out]);
 		return Bun.file(out).bytes();
 	};
 	const [drawn, plain] = await Promise.all([rgb(["-i", png], join(tmp, "drawn.rgb")), rgb(["-ss", String(t), "-i", join(dir, "video.mp4")], join(tmp, "plain.rgb"))]);
-	const box = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity };
-	for (let i = 0; i < drawn.length; i += 3) {
-		if (drawn[i] === plain[i] && drawn[i + 1] === plain[i + 1] && drawn[i + 2] === plain[i + 2]) continue;
-		const x = (i / 3) % 1280, y = Math.floor(i / 3 / 1280);
-		box.left = Math.min(box.left, x); box.top = Math.min(box.top, y); box.right = Math.max(box.right, x); box.bottom = Math.max(box.bottom, y);
-	}
-	return { bytes: drawn.length, box };
+	return { drawn, plain };
 }
 
 test("a finding with a highlight gets an annotated key frame drawn around SAM's match", async () => {
@@ -176,15 +177,11 @@ test("a finding with a highlight gets an annotated key frame drawn around SAM's 
 	const sent = JSON.stringify(seen.sam[0]);
 	expect(sent).toContain('{"type":"input_text","text":"the exit door"}');
 	expect(sent).toContain('"image_url":"data:image/png;base64,');
-	// A 1280×720 frame, drawn on only around the match's box (607–673, 328–383), not elsewhere.
-	const { bytes, box } = await drawnRegion(join(dir, "analysis/frames/f2.png"), 2.0);
-	expect(bytes).toBe(1280 * 720 * 3);
-	expect(box.left).toBeGreaterThanOrEqual(597);
-	expect(box.top).toBeGreaterThanOrEqual(318);
-	expect(box.right).toBeLessThanOrEqual(683);
-	expect(box.bottom).toBeLessThanOrEqual(393);
-	expect(box.right - box.left).toBeGreaterThanOrEqual(60);
-	expect(box.bottom - box.top).toBeGreaterThanOrEqual(50);
+	// A 1280×720 frame, darkened away from the match's box (607–673, 328–383) but not over it.
+	const { drawn, plain } = await frames(join(dir, "analysis/frames/f2.png"), 2.0);
+	expect(drawn.length).toBe(1280 * 720 * 3);
+	expect(brightness(drawn, 0, 0, 300, 720) / brightness(plain, 0, 0, 300, 720)).toBeLessThan(0.6);
+	expect(brightness(drawn, 607, 328, 673, 383) / brightness(plain, 607, 328, 673, 383)).toBeGreaterThan(0.95);
 });
 
 test("when SAM finds nothing, the finding has no annotated frame, the reason is logged, and the report is still written", async () => {
