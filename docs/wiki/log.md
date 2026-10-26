@@ -19,3 +19,6 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 ## [2026-10-26] ingest | spikes/tug-95/README.md (real-mic runs with ffmpeg mic reference)
 - capture-sync.md: replaced the single 30-second real-mic anecdote with two real-mic runs (2 min and 40 s) and an ffmpeg `-f pulse` reference column. Added the Godot-mic minus ffmpeg-mic gap (~59 ms on loopback, ~82 ms on the real mic). Updated the open questions.
 - capture-sync.md: removed the unsourced claim that the mix rate only changes on restart. index.md: updated the capture-sync line.
+
+## [2026-10-26] ingest | tools/make_synthetic.sh (TUG-120 synthetic runs)
+- synthetic-sessions.md: new page. SubViewport capture speed at 720p30, headless vs rendered determinism, Piper on Python 3.14 and its output rate and onset lag. index.md: added the page.
