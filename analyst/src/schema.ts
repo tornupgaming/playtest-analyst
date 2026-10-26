@@ -75,6 +75,8 @@ export const Finding = ModelFinding.extend({
 	id: z.string(),
 	/** Path relative to the bundle, added by the SAM step (TUG-104). */
 	annotated_frame: z.string().optional(),
+	/** Compare mode (TUG-109): the previous build's finding this one matches, or null if it is new. */
+	previous_id: z.string().nullable().optional(),
 });
 export type Finding = z.infer<typeof Finding>;
 
@@ -96,6 +98,14 @@ export const Report = z.object({
 	config: z.string(),
 	findings: z.array(Finding),
 	usage: Usage,
+	/** Compare mode (TUG-109): the previous build's findings that no finding here matches are resolved. */
+	comparison: z
+		.object({
+			previous_session: z.string(),
+			resolved: z.array(z.string()),
+			counts: z.object({ resolved: z.number(), new: z.number(), persisting: z.number() }),
+		})
+		.optional(),
 });
 export type Report = z.infer<typeof Report>;
 

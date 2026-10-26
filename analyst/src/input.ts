@@ -41,7 +41,10 @@ export function telemetryText(events: TelemetryEvent[]): string {
 }
 
 // The strict output format. `$schema` is dropped: it is metadata, not part of the format.
-const { $schema, ...OUTPUT_SCHEMA } = z.toJSONSchema(ModelOutput);
+function jsonSchema(output: z.ZodType) {
+	const { $schema, ...schema } = z.toJSONSchema(output);
+	return schema;
+}
 
 /** The one /v1/responses body. `retryError` is the previous attempt's validation error. */
 export function modelRequest(a: {
@@ -52,6 +55,8 @@ export function modelRequest(a: {
 	turns: TranscriptTurn[];
 	events: TelemetryEvent[];
 	retryError?: string;
+	/** Compare mode (TUG-109): the previous build's findings, and the output format that matches them. */
+	compare?: { text: string; output: z.ZodType };
 }): Record<string, unknown> {
 	const { config, meta } = a;
 	const text = (t: string) => ({ type: "input_text", text: t });
@@ -61,12 +66,13 @@ export function modelRequest(a: {
 		text(`Session ${meta.id}: ${meta.game}${meta.build ? `, build ${meta.build}` : ""}. It lasts ${meta.duration.toFixed(1)} s.`),
 		...(config.include_transcript ? [text(`Think-aloud transcript, one turn per line, [start–end] in session seconds:\n${transcriptText(a.turns)}`)] : []),
 		...(config.include_telemetry ? [text(`Telemetry, one event per line, [time] type then its data, in session seconds:\n${telemetryText(a.events)}`)] : []),
+		...(a.compare ? [text(a.compare.text)] : []),
 		...(a.retryError ? [text(`Your previous answer was rejected because it did not match the schema:\n${a.retryError}\nAnswer again with JSON that matches the schema exactly.`)] : []),
 	];
 	return {
 		model: MODEL,
 		input: [{ role: "user", content }],
-		text: { format: { type: "json_schema", name: "playtest_findings", strict: true, schema: OUTPUT_SCHEMA } },
+		text: { format: { type: "json_schema", name: "playtest_findings", strict: true, schema: jsonSchema(a.compare?.output ?? ModelOutput) } },
 		max_output_tokens: 32000,
 	};
 }

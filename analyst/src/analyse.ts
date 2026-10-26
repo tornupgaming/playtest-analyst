@@ -5,11 +5,12 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
 import { readSession } from "./bundle.ts";
+import { comparison, compareInput, type Previous } from "./compare.ts";
 import type { AnalysisConfig } from "./config.ts";
 import { finalize, finalized, run } from "./finalize.ts";
 import { ASR_CHUNK_S, chunkStarts, MODEL, modelRequest, sessionTurns } from "./input.ts";
 import { metaFetch, respond, type Responded, uploadFile } from "./meta.ts";
-import { type ModelFinding, ModelOutput, type Report, type TranscriptTurn } from "./schema.ts";
+import { type Finding, ModelOutput, type Report, type TranscriptTurn } from "./schema.ts";
 
 const ASR_MODEL = "muse-voice-transcribe-1.0";
 const AsrResponse = z.object({ turns: z.array(z.object({ startMs: z.number(), endMs: z.number(), transcript: z.string() })) });
@@ -40,7 +41,7 @@ async function transcribe(dir: string, duration: number): Promise<TranscriptTurn
 }
 
 /** The model's findings, or an error saying why the output doesn't match the schema. */
-function findings(response: Responded["response"]): ModelFinding[] {
+function findings(response: Responded["response"], output: z.ZodType<{ findings: Omit<Finding, "id">[] }>): Omit<Finding, "id">[] {
 	if (response.status === "incomplete") throw new Error(`The response is incomplete (${response.incomplete_details?.reason ?? "no reason given"}).`);
 	const text = response.output.flatMap((o) => (o.type === "message" ? o.content : [])).find((c) => c.type === "output_text")?.text;
 	if (text === undefined) throw new Error("The response has no output_text.");
@@ -50,12 +51,13 @@ function findings(response: Responded["response"]): ModelFinding[] {
 	} catch (err) {
 		throw new Error(`The output is not JSON: ${(err as Error).message}`);
 	}
-	const parsed = ModelOutput.safeParse(json);
+	const parsed = output.safeParse(json);
 	if (!parsed.success) throw new Error(z.prettifyError(parsed.error));
 	return parsed.data.findings;
 }
 
-export async function analyse(dir: string, config: AnalysisConfig, out = join(dir, "report.json")): Promise<Report> {
+/** With `previous`, the findings are compared with the previous build's (TUG-109). */
+export async function analyse(dir: string, config: AnalysisConfig, out = join(dir, "report.json"), previous?: Previous): Promise<Report> {
 	if (!finalized(dir)) await finalize(dir);
 	const { meta, events } = await readSession(dir);
 	mkdirSync(join(dir, "analysis"), { recursive: true });
@@ -77,10 +79,11 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	const turns = transcript ?? [];
 
 	const usage = { input_tokens: 0, cached_tokens: 0, output_tokens: 0, cost_usd: 0, latency_s: 0 };
-	let found: ModelFinding[] | undefined;
+	const compare = previous && compareInput(previous);
+	let found: Omit<Finding, "id">[] | undefined;
 	let error: string | undefined;
 	for (let attempt = 1; attempt <= 2 && !found; attempt++) {
-		const body = modelRequest({ config, prompt, meta, fileId, turns, events, retryError: error });
+		const body = modelRequest({ config, prompt, meta, fileId, turns, events, retryError: error, compare });
 		await Bun.write(join(dir, `analysis/request-${attempt}.json`), JSON.stringify(body, null, 2));
 		const { response, costUsd, latencyS } = await respond(body, `analyse ${meta.id} ${config.name} attempt ${attempt}`);
 		await Bun.write(join(dir, `analysis/response-${attempt}.json`), JSON.stringify(response, null, 2));
@@ -90,7 +93,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 		usage.cost_usd += costUsd;
 		usage.latency_s += latencyS;
 		try {
-			found = findings(response);
+			found = findings(response, compare?.output ?? ModelOutput);
 		} catch (err) {
 			error = (err as Error).message;
 			console.error(`Attempt ${attempt}: the output doesn't match the schema:\n${error}`);
@@ -106,6 +109,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 		config: config.name,
 		findings: found.toSorted((a, b) => a.t_start - b.t_start).map((f, i) => ({ id: `f${i + 1}`, ...f })),
 		usage: { ...usage, cost_usd: Math.round(usage.cost_usd * 1e6) / 1e6, latency_s: Math.round(usage.latency_s * 10) / 10 },
+		...(previous && { comparison: comparison(previous.report, found) }),
 	};
 	await Bun.write(out, JSON.stringify(report, null, 2) + "\n");
 	return report;
