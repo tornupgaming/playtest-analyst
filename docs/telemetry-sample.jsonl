@@ -1,0 +1,6 @@
+{"t":0.008,"type":"objective_update","player_pos":[0.0,0.0,-1.0],"data":{"text":"Follow the path."}}
+{"t":0.033,"type":"zone_enter","player_pos":[0.0,0.0,-144.6],"data":{"zone":"drop"}}
+{"t":0.542,"type":"death","player_pos":[0.0,0.0,-146.47],"data":{"cause":"enemy","zone":"drop"}}
+{"t":0.542,"type":"retry","player_pos":[0.0,0.0,-1.0],"data":{}}
+{"t":0.558,"type":"zone_exit","player_pos":[0.0,0.0,-1.0],"data":{"zone":"drop","dwell":0.525}}
+{"t":1.008,"type":"input_idle","player_pos":[0.0,0.0,-3.83],"data":{"duration":7.008}}

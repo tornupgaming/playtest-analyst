@@ -6,7 +6,8 @@ A Godot plugin that records a playtest (screen, think-aloud and telemetry), send
 
 | Path | What it is |
 |---|---|
-| `addons/playtest_analyst/` | The plugin. `telemetry.gd` is the `PlaytestTelemetry` autoload. |
+| `addons/playtest_analyst/` | The plugin. `telemetry.gd` is the `PlaytestTelemetry` autoload ([docs/telemetry.md](docs/telemetry.md)). |
+| `tests/` | GDScript tests, run headless by `tools/test.sh`. |
 | `level/` | The test course (`level.tscn`). It reads every tunable from `level/tuning.tres` at `_ready()`. |
 | `eval/` | Ground truth and the two tuning profiles. Godot ignores this folder (`.gdignore`), so its labels never reach the analysis. |
 | `demo/` | Player and enemy. The player's movement code comes from the Godot 3D platformer demo (see Credits). |
@@ -44,6 +45,7 @@ These run the real game from the command line and write images, so a change can 
 
 ```sh
 tools/check.sh                      # build both profiles headless; fails on script errors or z-fighting blocks
+tools/test.sh                       # GDScript tests in tests/ (telemetry), headless
 tools/shots.sh                      # every named view -> /tmp/shots/sheet.png (one labelled contact sheet)
 tools/shots.sh -p planted beacon    # one view, planted profile
 tools/shots.sh over=50,70,30:0,0,-90                   # a free camera: name=eye:target
