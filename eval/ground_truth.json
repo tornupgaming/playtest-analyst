@@ -1,0 +1,88 @@
+{
+  "level": "res://level/level.tscn",
+  "tuning_file": "res://level/tuning.tres",
+  "profiles": {
+    "planted": "eval/tuning_planted.tres",
+    "clean": "eval/tuning_clean.tres"
+  },
+  "frozen_at": null,
+  "baseline_cold_test": null,
+  "plants": [
+    {
+      "id": 1,
+      "category": "difficulty",
+      "zone": "ledge",
+      "symptom": "The ledge gap is beatable but tight, so most testers need several tries. A bridge appears after ledge_bypass_deaths deaths.",
+      "evidence": {
+        "telemetry": "Several death (cause fall) and retry events inside zone ledge.",
+        "video": "Repeated falls into the pit at the same gap.",
+        "voice": "Frustration at the jump, e.g. 'is this jump even possible?'"
+      },
+      "tunable": { "path": "ledge_gap_width", "planted": 6.6, "fixed": 4.0 }
+    },
+    {
+      "id": 2,
+      "category": "ui",
+      "zone": "plaza",
+      "symptom": "The beacon over the terrace door is the same colour as the wall behind it, so players can't see where to go.",
+      "evidence": {
+        "telemetry": "Supporting only: long time between zone_enter plaza and zone_enter hall.",
+        "video": "The beacon is barely visible against the back wall; the player wanders the plaza.",
+        "voice": "'Where am I going?', 'what beacon?'"
+      },
+      "tunable": [
+        { "path": "marker_color", "planted": "Color(0.62, 0.42, 0.34, 1)", "fixed": "Color(1, 0.78, 0.1, 1)" },
+        { "path": "marker_emission", "planted": 0.0, "fixed": 1.5 }
+      ]
+    },
+    {
+      "id": 3,
+      "category": "confusion",
+      "zone": "hall",
+      "symptom": "The switch on the balcony is visible, but the prompt doesn't point to it.",
+      "evidence": {
+        "telemetry": "Long dwell between zone_enter hall and the objective_update that follows the switch press. Not input_idle: searching players keep moving.",
+        "video": "The player roams the hall and tries the gate before finding the switch.",
+        "voice": "'Find a way through... how?'"
+      },
+      "tunable": { "path": "switch_prompt_text", "planted": "Find a way through.", "fixed": "Press the red switch on the balcony to open the gate." }
+    },
+    {
+      "id": 4,
+      "category": "difficulty",
+      "zone": "drop",
+      "symptom": "An enemy charges the moment the player lands from a blind drop.",
+      "evidence": {
+        "telemetry": "death (cause enemy) within a few seconds of zone_enter drop, often repeated.",
+        "video": "The player lands and is hit before they can react.",
+        "voice": "Surprise or complaints of unfairness, e.g. 'I couldn't even see it'."
+      },
+      "tunable": { "path": "enemy_aggro_delay", "planted": 0.0, "fixed": 2.0 }
+    },
+    {
+      "id": 5,
+      "category": "confusion",
+      "zone": "fork",
+      "symptom": "The EXIT sign at the fork points into a non-lethal dead end.",
+      "evidence": {
+        "telemetry": "Backtracking: zone_enter fork_left, zone_exit fork_left, zone_enter fork, then the right branch. No deaths.",
+        "video": "The player follows the arrow, hits the dead end and turns back.",
+        "voice": "'The sign said exit', 'dead end?'"
+      },
+      "tunable": { "path": "fork_arrow_points_to", "planted": "left", "fixed": "right" }
+    },
+    {
+      "id": 6,
+      "category": "pacing",
+      "zone": "corridor",
+      "symptom": "A long, empty corridor with nothing to do.",
+      "evidence": {
+        "telemetry": "Long dwell between zone_enter corridor and zone_exit corridor (planted is 240 m, about 40 s at full speed).",
+        "video": "Identical walls scroll past for a long time.",
+        "voice": "Boredom, e.g. 'this goes on a while'."
+      },
+      "tunable": { "path": "corridor_segments", "planted": 12, "fixed": 3 }
+    }
+  ],
+  "known_unplanned": []
+}

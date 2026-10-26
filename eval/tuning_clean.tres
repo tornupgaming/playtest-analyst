@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="LevelTuning" format=3]
+
+[ext_resource type="Script" path="res://level/tuning.gd" id="1_tuning"]
+
+[resource]
+script = ExtResource("1_tuning")
+ledge_gap_width = 4.0
+ledge_bypass_deaths = 5
+marker_color = Color(1, 0.78, 0.1, 1)
+marker_emission = 1.5
+switch_prompt_text = "Press the red switch on the balcony to open the gate."
+enemy_aggro_delay = 2.0
+fork_arrow_points_to = "right"
+corridor_segments = 3
