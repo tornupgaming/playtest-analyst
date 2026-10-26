@@ -136,3 +136,13 @@ test("when ASR fails, the video is sent with its audio track and no transcript",
 	expect(sent).toContain("[1.5s] input_idle duration=1");
 	expect((await Bun.file(join(dir, "report.json")).json()).findings).toHaveLength(2);
 });
+
+test("with --out elsewhere, the report and the intermediate files go there, not into the session", async () => {
+	replies = [VALID];
+	const out = join(tmp, `sweep-${n}`, "v0", "report.json");
+	await analyse(dir, config, out);
+
+	expect((await Bun.file(out).json()).findings).toHaveLength(2);
+	expect(await Bun.file(join(tmp, `sweep-${n}`, "v0", "analysis/transcript.json")).json()).toEqual([{ start: 1.2, end: 2, text: "where do I go" }]);
+	expect(existsSync(join(dir, "analysis"))).toBe(false);
+});
