@@ -5,3 +5,5 @@ sessions/**/*.mkv
 sessions/**/*.mp4
 sessions/**/*.wav
 sessions/**/analysis/
+# Sweep intermediates hold the uploaded video and ASR audio.
+eval/sweeps/**/analysis/
