@@ -92,11 +92,12 @@ export function readme(title: string, runs: Run[], gt: GroundTruth): string {
 		);
 	}
 
-	lines.push("", "## Plants found", "", "Planted sessions in which each plant was hit at strict=category.", "", `| plant | ${configs.join(" | ")} |`, `|---|${configs.map(() => "---|").join("")}`);
+	lines.push("", "## Plants found", "", 'Planted sessions in which each plant was hit at strict=category, then at strict=any: "1 (any 2) of 2".', "", `| plant | ${configs.join(" | ")} |`, `|---|${configs.map(() => "---|").join("")}`);
 	for (const p of gt.plants) {
 		const cells = configs.map((config) => {
 			const planted = scored(config).filter((r) => r.session.meta.profile !== "clean");
-			return `${planted.filter((r) => r.strict.hits.some((h) => h.plant === p.id)).length}/${planted.length}`;
+			const hit = (s: (r: (typeof planted)[number]) => Score) => planted.filter((r) => s(r).hits.some((h) => h.plant === p.id)).length;
+			return `${hit((r) => r.strict)} (any ${hit((r) => r.any)}) of ${planted.length}`;
 		});
 		lines.push(`| ${p.id} ${p.category} in ${p.zone} | ${cells.join(" | ")} |`);
 	}
