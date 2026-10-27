@@ -14,7 +14,7 @@ Files:
 - `planted-voice.report.json`: build N−1.
 - `clean-voice.vs-planted.report.json`, `banner-clean.png`: the patched build in the viewer, 1920x1080.
 - `planted-novoice.vs-planted.report.json`, `chips-persisting.png`: the persisting chips on the cards.
-- `clean-voice.vs-planted.request.json`: the compare-mode request as sent. `file_id` has expired.
+- `clean-voice.vs-planted.request.json`: the compare-mode request as sent. Its `file_id` expires 24 h after upload.
 
 Screenshots: `bun src/cli.ts serve <session> --port N`, then
 `google-chrome-stable --headless=new --disable-gpu --hide-scrollbars --window-size=1920,1080 --virtual-time-budget=5000 --screenshot=out.png http://127.0.0.1:N/`.
