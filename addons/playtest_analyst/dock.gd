@@ -181,10 +181,11 @@ func _refresh(select := "") -> void:
 func _update_buttons() -> void:
 	var i := _sessions.selected
 	var complete := i >= 0 and not _sessions.get_item_text(i).ends_with("(incomplete)")
+	var analysed := i >= 0 and FileAccess.file_exists(_sessions.get_item_metadata(i).path_join("report.json"))
 	var running := func(command: String) -> bool: return _jobs.any(func(job: Dictionary) -> bool: return job.command == command)
 	_analyse.disabled = not complete or running.call("analyse")
-	_open.disabled = not complete
-	_propose.disabled = i < 0 or not FileAccess.file_exists(_sessions.get_item_metadata(i).path_join("report.json")) or running.call("patch")
+	_open.disabled = not complete or not analysed
+	_propose.disabled = not analysed or running.call("patch")
 	var patch := _selected_patch()
 	_apply.disabled = patch.is_empty() or not patch.commit.is_empty()
 	_revert.disabled = patch.is_empty() or patch.commit.is_empty()
