@@ -7,3 +7,7 @@ sessions/**/*.wav
 sessions/**/analysis/
 # Sweep intermediates hold the uploaded video and ASR audio.
 eval/sweeps/**/analysis/
+# Local recordings (tools/record_check.sh, ad-hoc playtests); force-add one to keep it.
+sessions/[0-9]*/
+# Obsidian vault state for browsing docs/.
+docs/.obsidian/
