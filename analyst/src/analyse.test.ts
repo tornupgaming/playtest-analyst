@@ -51,6 +51,7 @@ process.env.META_MODEL_API_KEY = "test-key";
 process.env.PLAYTEST_SPEND_LEDGER = join(tmp, "spend.jsonl");
 process.env.PLAYTEST_SPEND_CAP_USD = "100";
 const { analyse } = await import("./analyse.ts");
+const { loadPrevious } = await import("./compare.ts");
 const { run } = await import("./finalize.ts");
 
 const LATE = {
@@ -220,4 +221,25 @@ test("with --out elsewhere, the report and the intermediate files go there, not 
 	// Only annotated key frames live in the session (the viewer serves them from there).
 	expect(existsSync(join(dir, "analysis/transcript.json"))).toBe(false);
 	expect(existsSync(join(dir, "analysis/upload.mp4"))).toBe(false);
+});
+
+test("with a previous report, findings are tagged new or persisting and unmatched previous ones are resolved", async () => {
+	const previous = join(tmp, "previous.json");
+	const patches = join(tmp, "patches.json");
+	const old = (id: string, category: string, zone: string, summary: string) => ({ ...LATE, id, category, zone, summary });
+	await Bun.write(previous, JSON.stringify({
+		schema: 1, session_id: "build-1", created_at: "2026-10-25T00:00:00Z", model: "muse-wonder-1.0", config: "v0",
+		findings: [old("f1", "difficulty", "ledge", "The player falls at the ledge."), old("f2", "confusion", "hub", "The player asks where to go."), old("f3", "pacing", "lift", "The lift is slow.")],
+		usage: { input_tokens: 1, cached_tokens: 0, output_tokens: 1, cost_usd: 0, latency_s: 1 },
+	}));
+	await Bun.write(patches, JSON.stringify({ patches: [{ finding_id: "f1", file: "level/tuning.tres", diff: "-gap = 4\n+gap = 3", rationale: "Too wide.", summary: "Narrow the ledge gap" }] }));
+	replies = [reply(JSON.stringify({ findings: [{ ...LATE, previous_id: "f2" }, { ...EARLY, previous_id: null }] }))];
+	await analyse(dir, config, join(dir, "report.json"), await loadPrevious(previous, patches));
+
+	const sent = JSON.stringify(seen.responses[0]);
+	expect(sent).toContain("- f1 [difficulty, ledge] The player falls at the ledge.");
+	expect(sent).toContain("- for f1, in level/tuning.tres: Narrow the ledge gap");
+	const report = await Bun.file(join(dir, "report.json")).json();
+	expect(report.findings.map((f: { id: string; previous_id: string | null }) => [f.id, f.previous_id])).toEqual([["f1", null], ["f2", "f2"]]);
+	expect(report.comparison).toEqual({ previous_session: "build-1", resolved: ["f1", "f3"], counts: { resolved: 2, new: 1, persisting: 1 } });
 });

@@ -58,7 +58,11 @@ header {
 .session { display: flex; align-items: baseline; gap: 14px; color: var(--muted); font-size: 14px; }
 .session strong { color: var(--text); font-weight: 600; font-size: 15px; }
 .session span + span::before { content: "·"; margin-right: 14px; color: var(--faint); }
-.compare { padding: 6px 12px; border-radius: 6px; background: var(--raised); }
+.compare { padding: 6px 12px; border-radius: 6px; background: var(--raised); color: var(--muted); font-size: 14px; }
+.compare span + span::before { content: "·"; margin: 0 10px; color: var(--faint); }
+.compare b { font: 600 15px var(--mono); }
+.compare .resolved b { color: var(--pacing); }
+.compare .new b, .compare .persisting b { color: var(--text); }
 .usage { display: flex; gap: 26px; margin: 0 0 0 auto; }
 .usage dt { color: var(--faint); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
 .usage dd { margin: 0; font: 500 15px/1.2 var(--mono); }
@@ -146,6 +150,8 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 600px; 
 .severity i:last-of-type { margin-right: 5px; }
 .severity.low i:nth-child(-n + 1), .severity.medium i:nth-child(-n + 2), .severity.high i { background: var(--text); }
 .zone-name { color: var(--muted); font-family: var(--mono); }
+.build { padding: 1px 7px; border-radius: 4px; background: var(--line); color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10.5px; }
+.build.new { color: var(--text); }
 .range { margin-left: auto; color: var(--muted); font-family: var(--mono); }
 .summary { margin: 6px 0 0; font-size: 15.5px; line-height: 1.4; }
 
