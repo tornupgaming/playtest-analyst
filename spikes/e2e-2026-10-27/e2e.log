@@ -1,0 +1,82 @@
+== analyse planted-voice
+f2: no annotated frame: SAM found no match for "the white objective text", "the Reach the beacon text", "the top-left HUD text" at 33, 31, 35 s.
+f3: no annotated frame: SAM found no match for "the red button on platform", "the small red dome button", "the red button on shelf" at 94.5, 92.5, 96.5 s.
+6 findings → /home/psmith/projects/playtest-analyst/sessions/synthetic/planted-voice/report.json
+$0.3856, tokens 26690 in (0 cached) / 13943 out, model 144.5 s, total 208.5 s
+EXIT=0
+== eval
+# Eval: res://level/level.tscn
+
+1 session(s), strict=category, pad=10 s
+
+| session | profile | recall | precision | hits | misses | wrong category | false pos | duplicates | cost $ | latency s |
+|---|---|---|---|---|---|---|---|---|---|---|
+| synthetic-planted-voice | planted | 0.67 | 1.00 | 4 | 2 | 2 | 0 | 0 | 0.39 | 144.5 |
+| **all** | | 0.67 | 1.00 | 4 | 2 | 2 | 0 | 0 | 0.39 | 144.5 mean |
+
+## synthetic-planted-voice
+
+- miss: plant 2 ui in plaza (20.9–81.0 s): The beacon over the terrace door is the same colour as the wall behind it, so players can't see where to go.
+- miss: plant 5 confusion in fork (116.4–156.5 s): The EXIT sign at the fork points into a non-lethal dead end.
+- found, wrong category: plant 2 ui: f2 [30.9–70.9 s] confusion in plaza: The objective says to reach a beacon, but no beacon or marker can be seen in the plaza. The player went in circles for most of the 40 seconds in this zone before finding the corner steps by chance.
+== patch (planted tuning in a scratch worktree)
+47 | 	return JSON.stringify({ id, category, severity, zone, summary, evidence, suggested_fix });
+48 | }
+49 | 
+50 | /** The model's patches, parsed against the schema that limits ids and files to the ones it was given. */
+51 | function parsePatches(response: Responded["response"], schema: z.ZodType<{ patches: ModelPatch[] }>): ModelPatch[] {
+52 | 	if (response.status === "incomplete") throw new Error(`The response is incomplete (${response.incomplete_details?.reason ?? "no reason given"}).`);
+                                                      ^
+error: The response is incomplete (max_output_tokens).
+      at parsePatches (/home/psmith/projects/playtest-analyst/analyst/src/patch.ts:52:50)
+      at patch (/home/psmith/projects/playtest-analyst/analyst/src/patch.ts:98:21)
+
+Bun v1.4.0-canary.1+ae4b17de6 (Linux x64)
+EXIT=1
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json;p=json.load(open('/home/psmith/projects/playtest-analyst/sessions/synthetic/planted-voice/patches.json'));[print(x['id'],x['finding_id'],x['summary']) for x in p['patches']]
+                            ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/psmith/projects/playtest-analyst/sessions/synthetic/planted-voice/patches.json'
+== compare clean-voice vs planted
+12 | export type Previous = { report: Report; patches: z.infer<typeof Patches>["patches"]; prompt: string };
+13 | 
+14 | export async function loadPrevious(reportPath: string, patchesPath?: string): Promise<Previous> {
+15 | 	return {
+16 | 		report: Report.parse(await Bun.file(reportPath).json()),
+17 | 		patches: patchesPath ? Patches.parse(await Bun.file(patchesPath).json()).patches : [],
+                                                                        ^
+ENOENT: no such file or directory, open '/home/psmith/projects/playtest-analyst/sessions/synthetic/planted-voice/patches.json'
+    path: "/home/psmith/projects/playtest-analyst/sessions/synthetic/planted-voice/patches.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+      at async loadPrevious (/home/psmith/projects/playtest-analyst/analyst/src/compare.ts:17:68)
+      at async run (/home/psmith/projects/playtest-analyst/analyst/src/commands/analyse.ts:22:43)
+
+Bun v1.4.0-canary.1+ae4b17de6 (Linux x64)
+EXIT=1
+== metrics
+# Metrics
+
+| session | deaths | by cause | retries | time to complete |
+|---|---|---|---|---|
+| planted-voice | 6 | fall 4, enemy 2 | 6 | 3:10 |
+| clean-voice | 0 | - | 0 | 1:03 |
+
+**planted-voice → clean-voice:** deaths 6→0, retries 6→0, time 3:10→1:03
+
+## Time per zone (s)
+
+| zone | planted-voice | clean-voice |
+|---|---|---|
+| ledge | 24.9 | 4.2 |
+| plaza | 40.1 | 12.8 |
+| hall | 34.5 | 12.1 |
+| drop | 10.6 | 7.3 |
+| fork | 5.9 | 4.1 |
+| fork_left | 14.4 | - |
+| corridor | 40.4 | 10.4 |
+== screenshot
+$7.32 of $20.00

@@ -1,0 +1,33 @@
+== patch
+p1 f1 level/tuning.tres: make opening ledge jump reachable
+p2 f2 level/tuning.tres: make plaza beacon glow brightly
+p3 f3 level/tuning.tres: name red button in gate objective
+p4 f4 level/tuning.tres: give time before drop enemy charges
+p5 f5 level/tuning.tres: point exit sign to corridor branch
+p6 f6 level/tuning.tres: shorten final corridor walk
+6 patches → /home/psmith/projects/playtest-analyst/sessions/synthetic/planted-voice/patches.json
+$0.0748, tokens 9888 in (0 cached) / 14689 out, model 48.8 s, total 48.9 s
+EXIT=0
+p1 f1 make opening ledge jump reachable
+p2 f2 make plaza beacon glow brightly
+p3 f3 name red button in gate objective
+p4 f4 give time before drop enemy charges
+p5 f5 point exit sign to corridor branch
+p6 f6 shorten final corridor walk
+{'input_tokens': 9888, 'cached_tokens': 0, 'output_tokens': 14689, 'cost_usd': 0.074788, 'latency_s': 48.8}
+== apply all with -C0 in scratch, then check.sh
+p1 applied
+p2 applied
+p3 applied
+p4 applied
+p5 applied
+p6 applied
+OK
+ level/tuning.tres        | 12 ++++++------
+ 2 files changed, 13 insertions(+), 13 deletions(-)
+== compare
+0 findings → /home/psmith/projects/playtest-analyst/sessions/synthetic/clean-voice/report.json
+vs synthetic-planted-voice: 6 resolved · 0 new · 0 persisting
+$0.0516, tokens 10512 in (0 cached) / 478 out, model 10.6 s, total 22.1 s
+EXIT=0
+$7.45 of $20.00

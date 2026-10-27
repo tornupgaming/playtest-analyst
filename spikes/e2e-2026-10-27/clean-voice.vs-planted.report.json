@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "session_id": "synthetic-clean-voice",
+  "created_at": "2026-10-27T06:11:00.222Z",
+  "model": "muse-wonder-1.0",
+  "config": "v0",
+  "findings": [],
+  "usage": {
+    "input_tokens": 10512,
+    "cached_tokens": 0,
+    "output_tokens": 478,
+    "cost_usd": 0.051608,
+    "latency_s": 10.6
+  },
+  "comparison": {
+    "previous_session": "synthetic-planted-voice",
+    "resolved": [
+      {
+        "id": "f1",
+        "category": "difficulty",
+        "summary": "The jump across the ledge gap is too demanding for the opening section. The player fell four times, questioned whether the jump was possible, and needed about 24 seconds of retries to cross."
+      },
+      {
+        "id": "f2",
+        "category": "confusion",
+        "summary": "The objective says to reach a beacon, but no beacon or marker can be seen in the plaza. The player went in circles for most of the 40 seconds in this zone before finding the corner steps by chance."
+      },
+      {
+        "id": "f3",
+        "category": "confusion",
+        "summary": "The player did not know how to open the gate. Nothing visibly linked the closed gate to the red button on the high shelf, so the player tried the gate itself and searched the room for about 29 seconds before spotting the button."
+      },
+      {
+        "id": "f4",
+        "category": "difficulty",
+        "summary": "An enemy is placed where the player lands from the drop, where it cannot be seen in advance. It killed the player twice almost immediately after landing before the player got past on the third attempt."
+      },
+      {
+        "id": "f5",
+        "category": "ui",
+        "summary": "The EXIT sign at the fork points the player into a dead end. The player trusted the sign, walked the left branch, hit the dead end and had to backtrack to the fork."
+      },
+      {
+        "id": "f6",
+        "category": "pacing",
+        "summary": "The final corridor is a long, empty straight walk with nothing to do or decide. The player commented on how long it went on while walking its full length for about 40 seconds."
+      }
+    ],
+    "counts": {
+      "resolved": 6,
+      "new": 0,
+      "persisting": 0
+    }
+  }
+}
