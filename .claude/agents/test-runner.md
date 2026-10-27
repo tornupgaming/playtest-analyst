@@ -11,7 +11,7 @@ Run from the directory you're given (the repo root or a worktree of it). The she
 
 | Check | Command (from the repo root) |
 |---|---|
-| TS tests | `(cd analyst && bun test) > /tmp/tr-bun.log 2>&1; echo "EXIT=$?"` |
+| TS tests | `(cd analyst && bun run test) > /tmp/tr-bun.log 2>&1; echo "EXIT=$?"` |
 | Typecheck | `(cd analyst && bunx tsc --noEmit) > /tmp/tr-tsc.log 2>&1; echo "EXIT=$?"` |
 | Level build | `tools/check.sh > /tmp/tr-check.log 2>&1; echo "EXIT=$?"` (it must print `OK`) |
 | Godot tests | `tools/test.sh > /tmp/tr-gd.log 2>&1; echo "EXIT=$?"` (skip it if the file doesn't exist) |

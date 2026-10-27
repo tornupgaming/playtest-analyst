@@ -7,6 +7,7 @@
   },
   "scripts": {
     "playtest": "bun src/cli.ts",
+    "test": "bun test --isolate",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
