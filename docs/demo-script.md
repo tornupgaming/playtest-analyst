@@ -59,4 +59,4 @@ Not in any shot, so it is not demo work. Build it only if it's needed for the pi
 - Install and setup walkthrough, architecture diagram (README, TUG-113)
 - Multiple testers compared side by side; one tester per round on screen
 - Webcam / face-cam of testers
-- Any other Meta model (Muse Spark, Muse Image, Muse Code): no shot needs one
+- Any other Meta model (Muse Image, Muse Code): no shot needs one. Muse Spark now writes the patches (TUG-107), so shot 9 can name it: "Muse Spark writes the fix."
