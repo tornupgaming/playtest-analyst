@@ -19,7 +19,7 @@
         "visual": "Each attempt falls just short of the far platform."
       },
       "suggested_fix": "Narrow the gap or add a visible landing lip on the far side.",
-      "highlight": { "t": 30.5, "prompt": "the gap between the two ledges" }
+      "highlight": { "t": 30.5, "prompts": ["the gap between the two ledges"] }
     },
     {
       "id": "f2",
@@ -35,7 +35,7 @@
         "visual": "The beacon over the door is the same colour as the wall behind it."
       },
       "suggested_fix": "Give the beacon a contrasting colour and an emissive glow.",
-      "highlight": { "t": 100.0, "prompt": "the beacon above the door" }
+      "highlight": { "t": 100.0, "prompts": ["the beacon above the door"] }
     },
     {
       "id": "f3",
@@ -51,7 +51,7 @@
         "visual": "The player walks into the closed gate three times before climbing to the balcony."
       },
       "suggested_fix": "Change the objective to name the red switch on the balcony.",
-      "highlight": { "t": 200.0, "prompt": "the red switch on the balcony" }
+      "highlight": { "t": 200.0, "prompts": ["the red switch on the balcony"] }
     },
     {
       "id": "f4",
@@ -67,7 +67,7 @@
         "visual": "The enemy charges as soon as the player lands."
       },
       "suggested_fix": "Delay the enemy's charge by about 2 seconds after the player lands.",
-      "highlight": { "t": 263.5, "prompt": "the enemy" }
+      "highlight": { "t": 263.5, "prompts": ["the enemy"] }
     },
     {
       "id": "f5",
@@ -83,7 +83,7 @@
         "visual": "The arrow on the sign points left."
       },
       "suggested_fix": "Point the EXIT arrow to the right branch.",
-      "highlight": { "t": 304.0, "prompt": "the exit sign arrow" }
+      "highlight": { "t": 304.0, "prompts": ["the exit sign arrow"] }
     },
     {
       "id": "f6",

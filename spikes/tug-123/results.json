@@ -1,0 +1,101 @@
+[
+  {
+    "frame": "hall-74.png",
+    "prompt": "the red button",
+    "matches": []
+  },
+  {
+    "frame": "hall-74.png",
+    "prompt": "the button",
+    "matches": []
+  },
+  {
+    "frame": "hall-74.png",
+    "prompt": "the wooden shelf",
+    "matches": [
+      {
+        "box": [
+          586,
+          256,
+          822,
+          284
+        ],
+        "c": 0.9259259104728699
+      }
+    ]
+  },
+  {
+    "frame": "hall-74.png",
+    "prompt": "the wooden crate",
+    "matches": [
+      {
+        "box": [
+          935,
+          576,
+          1279,
+          719
+        ],
+        "c": 0.8324607610702515
+      },
+      {
+        "box": [
+          810,
+          294,
+          901,
+          348
+        ],
+        "c": 0.9298245906829834
+      }
+    ]
+  },
+  {
+    "frame": "hall-74-crop4x.png",
+    "prompt": "the small red button",
+    "matches": []
+  },
+  {
+    "frame": "hall-74-crop4x.png",
+    "prompt": "the red button",
+    "matches": [
+      {
+        "box": [
+          566,
+          295,
+          693,
+          333
+        ],
+        "c": 0.5775577425956726
+      }
+    ]
+  },
+  {
+    "frame": "plaza-33.png",
+    "prompt": "the text",
+    "matches": []
+  },
+  {
+    "frame": "plaza-33.png",
+    "prompt": "the white text",
+    "matches": []
+  },
+  {
+    "frame": "ledge-12.png",
+    "prompt": "the floating platform",
+    "matches": []
+  },
+  {
+    "frame": "ledge-12.png",
+    "prompt": "the small green block",
+    "matches": [
+      {
+        "box": [
+          735,
+          550,
+          777,
+          595
+        ],
+        "c": 0.5038759708404541
+      }
+    ]
+  }
+]

@@ -41,7 +41,9 @@
       "suggested_fix": "Move the small middle platform about 1.5 metres closer to the take-off platform and make it about 1 metre wider, so a normal full-speed jump can land on it without near-perfect timing.",
       "highlight": {
         "t": 12,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -114,7 +116,9 @@
       "suggested_fix": "Make the red button twice as large with a pulsing glow, and paint a thick red line on the wall from the gate to the button platform so the player can see that the button controls the gate.",
       "highlight": {
         "t": 100.5,
-        "prompt": "the red round button"
+        "prompts": [
+          "the red round button"
+        ]
       }
     },
     {
@@ -149,7 +153,9 @@
       "suggested_fix": "Move the mushroom creature's starting position to the far side of the green room, at least 4 metres from the drop landing point, so the player lands safely and has time to see it before it can attack.",
       "highlight": {
         "t": 122,
-        "prompt": "the red mushroom creature"
+        "prompts": [
+          "the red mushroom creature"
+        ]
       }
     },
     {
@@ -182,7 +188,9 @@
       "suggested_fix": "Flip the red arrow beneath the EXIT sign so it points toward the branch that leads into the pillar corridor, instead of toward the left dead end.",
       "highlight": {
         "t": 145,
-        "prompt": "the red arrow sign"
+        "prompts": [
+          "the red arrow sign"
+        ]
       }
     },
     {

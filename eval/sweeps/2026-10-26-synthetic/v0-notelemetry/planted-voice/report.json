@@ -38,7 +38,9 @@
       "suggested_fix": "Move the small green landing platform about one metre closer to the take-off edge and make the platform wider, so a normal running jump lands on it without perfect timing.",
       "highlight": {
         "t": 15,
-        "prompt": "small green floating platform"
+        "prompts": [
+          "small green floating platform"
+        ]
       }
     },
     {
@@ -74,7 +76,9 @@
       "suggested_fix": "Add a tall bright yellow beam of light above the green steps on the wall, visible over the brown pillars from the entrance, so the thing the objective calls the beacon can actually be seen and headed towards.",
       "highlight": {
         "t": 64,
-        "prompt": "small green wall platform"
+        "prompts": [
+          "small green wall platform"
+        ]
       }
     },
     {
@@ -106,7 +110,9 @@
       "suggested_fix": "Make the red button twice as large and give it a pulsing white glow, so it stands out on the orange shelf when the player first looks around the room.",
       "highlight": {
         "t": 97,
-        "prompt": "small red round button"
+        "prompts": [
+          "small red round button"
+        ]
       }
     },
     {
@@ -134,7 +140,9 @@
       "suggested_fix": "Move the mushroom creature's starting position to the far corner of the green room, at least five metres from where the player drops in, so the player lands, sees it, and has time to react.",
       "highlight": {
         "t": 121.5,
-        "prompt": "red spotted mushroom creature"
+        "prompts": [
+          "red spotted mushroom creature"
+        ]
       }
     },
     {
@@ -162,7 +170,9 @@
       "suggested_fix": "Flip the red arrow on this EXIT signpost so it points along the open corridor that leads onwards, instead of pointing left into the dead end.",
       "highlight": {
         "t": 129,
-        "prompt": "red arrow exit sign"
+        "prompts": [
+          "red arrow exit sign"
+        ]
       }
     },
     {

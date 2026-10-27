@@ -11,7 +11,7 @@ mkdir -p "$out/session"
 ffmpeg -y -loglevel error -loop 1 -t 2 -i "$frames/beacon.png" -loop 1 -t 2 -i "$frames/drop.png" -loop 1 -t 2 -i "$frames/fork.png" \
   -filter_complex "[0][1][2]concat=n=3:v=1,fps=10,format=yuv420p" -c:v libx264 "$out/session/video.mp4"
 finding() { # id t prompt
-  printf '{"id":"%s","t_start":%s,"t_end":%s,"category":"confusion","severity":"medium","zone":null,"summary":"","evidence":{"quotes":[],"telemetry":[],"visual":""},"suggested_fix":"","highlight":{"t":%s,"prompt":"%s"}}' "$1" "$2" "$2" "$2" "$3"
+  printf '{"id":"%s","t_start":%s,"t_end":%s,"category":"confusion","severity":"medium","zone":null,"summary":"","evidence":{"quotes":[],"telemetry":[],"visual":""},"suggested_fix":"","highlight":{"t":%s,"prompts":["%s"]}}' "$1" "$2" "$2" "$2" "$3"
 }
 cat > "$out/session/report.json" <<JSON
 {"schema":1,"session_id":"tug104-check","created_at":"2026-10-26T00:00:00Z","model":"muse-wonder-1.0","config":"hand",

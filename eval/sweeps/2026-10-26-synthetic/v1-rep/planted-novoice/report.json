@@ -28,7 +28,9 @@
       "suggested_fix": "Widen the small middle floating platform from one tile to two tiles wide and move it closer to the previous ledge, so the first jump in the game does not need a near-perfect landing.",
       "highlight": {
         "t": 12,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -51,7 +53,9 @@
       "suggested_fix": "Add a tall vertical beam of light above the green stepped platforms in the corner of the plaza, visible over the pillars from the entrance, so the stated beacon can actually be seen and matches the real way out.",
       "highlight": {
         "t": 63.5,
-        "prompt": "the small green platform"
+        "prompts": [
+          "the small green platform"
+        ]
       }
     },
     {
@@ -77,7 +81,9 @@
       "suggested_fix": "Move the red mushroom creature several metres to the side of the exit doorway, away from the straight line between the drop landing and the door, so the player can see it and choose to jump it before touching it.",
       "highlight": {
         "t": 109,
-        "prompt": "the red mushroom creature"
+        "prompts": [
+          "the red mushroom creature"
+        ]
       }
     },
     {
@@ -101,7 +107,9 @@
       "suggested_fix": "Rotate the red EXIT arrow 180 degrees so it points away from the fork_left dead end and toward the branch that leads to the corridor, and place the sign facing the player as they arrive at the junction.",
       "highlight": {
         "t": 128.5,
-        "prompt": "the red arrow sign"
+        "prompts": [
+          "the red arrow sign"
+        ]
       }
     },
     {

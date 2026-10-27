@@ -44,7 +44,9 @@
       "suggested_fix": "Shorten each ledge gap by about one third and make the small middle landing platform twice as wide, so a normal running jump lands with room to spare.",
       "highlight": {
         "t": 18,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -117,7 +119,9 @@
       "suggested_fix": "Make the gate mechanism readable: enlarge the red button to twice its size, make it pulse, and paint a thick red line from the button shelf down the wall and across the floor to the gate so the player connects the crate climb, the button and the gate.",
       "highlight": {
         "t": 99.8,
-        "prompt": "the round red button"
+        "prompts": [
+          "the round red button"
+        ]
       }
     },
     {
@@ -154,7 +158,9 @@
       "suggested_fix": "Move the mushroom creature's starting position to the far corner of the drop room, at least several metres from the landing spot, and keep it still for the first 2 seconds after the player lands so the player can see it and choose how to avoid it.",
       "highlight": {
         "t": 121.8,
-        "prompt": "the red mushroom creature"
+        "prompts": [
+          "the red mushroom creature"
+        ]
       }
     },
     {
@@ -187,7 +193,9 @@
       "suggested_fix": "Rotate the EXIT arrow at the fork 180 degrees so it points along the open route instead of into the fork_left dead end, and keep the sign at the junction where both routes are visible.",
       "highlight": {
         "t": 128.7,
-        "prompt": "the red arrow sign"
+        "prompts": [
+          "the red arrow sign"
+        ]
       }
     },
     {

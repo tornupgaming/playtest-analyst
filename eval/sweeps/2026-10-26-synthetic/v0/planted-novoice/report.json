@@ -32,7 +32,9 @@
       "suggested_fix": "Move the small floating platform closer to the take-off edge and make it twice as wide, so this first jump does not require near-perfect distance and landing.",
       "highlight": {
         "t": 18,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -75,7 +77,9 @@
       "suggested_fix": "Make the red button pulse with a bright red glow and increase its size by half, so it stands out on the raised shelf when the player first enters the room.",
       "highlight": {
         "t": 74,
-        "prompt": "the small red round button"
+        "prompts": [
+          "the small red round button"
+        ]
       }
     },
     {
@@ -103,7 +107,9 @@
       "suggested_fix": "Move the mushroom creature's starting position to the far side of the room and halve its walking speed, so the player has time to see it and line up a jump after dropping in.",
       "highlight": {
         "t": 109,
-        "prompt": "red white-spotted mushroom creature"
+        "prompts": [
+          "red white-spotted mushroom creature"
+        ]
       }
     },
     {
@@ -127,7 +133,9 @@
       "suggested_fix": "Rotate the red arrow on the EXIT sign at this junction so it points toward the route that leads to the corridor, not toward the left dead end.",
       "highlight": {
         "t": 128,
-        "prompt": "red arrow EXIT sign"
+        "prompts": [
+          "red arrow EXIT sign"
+        ]
       }
     },
     {

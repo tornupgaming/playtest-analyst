@@ -50,3 +50,7 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 - git-apply.md: added reverting one of five neighbouring-line patches (`git revert` conflicts, `git apply -R -C0` applies).
 - Created godot-os-execute.md: `OS.execute` with output goes through a shell and replaces NULs; `OS.execute_with_pipe` doesn't.
 - index.md: added godot-os-execute.md, extended the git-apply.md line.
+
+## [2026-10-27] ingest | spikes/tug-123 (multi-phrasing SAM run and probe)
+- sam-3-1.md: added the TUG-123 run (3 of 5 highlights matched, one on the wrong platform) and the follow-up probe (button found only on a 4× crop; HUD text never matched). Replaced the phrasing open question with HUD-text and crop questions.
+- muse-wonder-video.md: added that strict `json_schema` accepted `minItems`/`maxItems`.

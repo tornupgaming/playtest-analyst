@@ -28,7 +28,9 @@
       "suggested_fix": "Make the two small floating platforms in the ledge one tile wider and move them closer to the main path, so the landing target is less tight for the first jumps of the game.",
       "highlight": {
         "t": 18,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -52,7 +54,9 @@
       "suggested_fix": "Add a tall bright yellow beam of light above the green stepped platforms in the corner of the plaza, tall enough to be seen over the brown pillars from the plaza entrance, so 'Reach the beacon' points to a place the player can actually see.",
       "highlight": {
         "t": 64.5,
-        "prompt": "the small green stepped platforms"
+        "prompts": [
+          "the small green stepped platforms"
+        ]
       }
     },
     {
@@ -78,7 +82,9 @@
       "suggested_fix": "Add a short prompt the first time the mushroom appears, shown as the player drops in: 'Jump on the mushroom — don't touch its side', so the first creature in the game teaches how it can hurt and be beaten before it kills the player.",
       "highlight": {
         "t": 109.5,
-        "prompt": "the red mushroom creature"
+        "prompts": [
+          "the red mushroom creature"
+        ]
       }
     },
     {
@@ -103,7 +109,9 @@
       "suggested_fix": "Point the red EXIT arrow at the fork toward the branch that leads to the grey-pillared corridor, instead of toward the dead-end left branch the player followed and had to walk back from.",
       "highlight": {
         "t": 128,
-        "prompt": "the red arrow sign"
+        "prompts": [
+          "the red arrow sign"
+        ]
       }
     },
     {

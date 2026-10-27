@@ -1,12 +1,16 @@
 ---
 title: SAM 3.1 segmentation
-updated: 2026-10-26
+updated: 2026-10-27
 sources:
   - spikes/tug-94/FINDINGS.md
   - spikes/tug-94/probe.ts
   - spikes/tug-94/results/
   - spikes/tug-104/check.sh
   - spikes/tug-104/results/run.txt
+  - spikes/tug-123/planted-voice.report.json
+  - spikes/tug-123/probe.ts
+  - spikes/tug-123/results.json
+  - spikes/tug-123/sheet.jpg
   - https://dev.meta.ai/docs/media-segmentation
   - https://dev.meta.ai/docs/sam/overview
   - https://dev.meta.ai/docs/sam/segmenting
@@ -64,9 +68,37 @@ How `sam-3.1` on the Meta Model API (`https://api.meta.ai/v1`) takes an image an
 | "the exit sign" on the drop frame returned no match, where it matched (c 0.51, 17×8 px) on the source PNG in both probe runs. | [measured](../../spikes/tug-104/results/run.txt) |
 | All five calls with 4 in flight succeeded; the whole command, including ffmpeg and drawing, took 3.7 s wall-clock. | [measured](../../spikes/tug-104/results/run.txt) |
 
+### Several phrasings and nearby frames (TUG-123)
+
+**Conditions:** 2026-10-27, one `playtest analyse` run (config v0) on the rebuilt synthetic `planted-voice` session (1280×720 H.264). Muse Wonder gave each of 5 highlights 3 phrasings. `annotate` tried each phrasing at the key frame, then 2 s before and after it, and kept the first match with `c` ≥ 0.5. ([report](../../spikes/tug-123/planted-voice.report.json), [contact sheet](../../spikes/tug-123/sheet.jpg))
+
+| Finding | Phrasings | Result |
+|---|---|---|
+| f1 ledge, t 12 | "small green floating platform", "isolated green square platform", "small green platform island" | 1st and 2nd: no match. 3rd matched at t 12, on the large platform under the player, not the small floating platform ahead of it. |
+| f2 plaza, t 33 | "the white objective text", "Reach the beacon text", "top-left white text label" | No match at 33, 31 or 35 s (9 calls). The frame's HUD text reads "Reach the beacon." |
+| f3 hall, t 74 | "the small red button", "the red oval button", "the button on orange shelf" | No match at 74, 72 or 76 s (9 calls). In the 74 s frame the button is unobstructed; the crop match below puts its box at about 32×10 px of the full frame. |
+| f4 drop, t 109 | "the red mushroom character", … | 1st phrasing matched at t 109, on the mushroom hat. |
+| f5 fork, t 128.5 | "the red arrow signpost", … | 1st phrasing matched at t 128.5, on the arrow board. |
+
+The run made 23 SAM calls ($0.0575). The model call cost $0.405.
+
+**Probe on the same frames** ([probe](../../spikes/tug-123/probe.ts), [frames](../../spikes/tug-123/frames/), [results](../../spikes/tug-123/results.json)), one call each:
+
+| Frame | Prompt | Result |
+|---|---|---|
+| hall 74 s | "the red button", "the button" | No match. |
+| hall 74 s | "the wooden shelf" | 1 match (c 0.93), the shelf under the button. |
+| hall 74 s | "the wooden crate" | 2 matches (c 0.93, 0.83). |
+| hall 74 s, 320×180 crop around the shelf scaled 4× to 1280×720 | "the red button" | 1 match (c 0.58), on the button. |
+| same crop | "the small red button" | No match. |
+| plaza 33 s | "the text", "the white text" | No match. |
+| ledge 12 s | "the floating platform" | No match. |
+| ledge 12 s | "the small green block" | 1 match (c 0.50), a 42×45 px grass tuft. |
+
 ## Open questions
 
 - Whether streaming changes latency.
 - Whether `file_id` input is accepted for images, and any image size limit.
 - Whether JPEG input changes results, and whether the H.264 re-encode or chance explains the "the exit sign" miss (one run).
-- How phrasing affects matches, beyond the few variants above.
+- Whether HUD text can be matched by any phrasing (none of 5 matched on one frame, TUG-123).
+- Whether cropping around an expected location raises matches on small objects beyond the one probe above.

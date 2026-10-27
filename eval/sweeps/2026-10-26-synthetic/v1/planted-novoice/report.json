@@ -32,7 +32,9 @@
       "suggested_fix": "Make the intermediate floating platform two tiles wider and move it one tile closer to the takeoff edge, so the jump does not require near-perfect distance and landing precision.",
       "highlight": {
         "t": 18,
-        "prompt": "small green floating platform"
+        "prompts": [
+          "small green floating platform"
+        ]
       }
     },
     {
@@ -55,7 +57,9 @@
       "suggested_fix": "Add a tall, bright vertical beam of light above the raised exit reached by the green side-wall steps in the plaza, visible over the pillars from the plaza entrance, so the objective text 'Reach the beacon' matches something the player can actually see.",
       "highlight": {
         "t": 64,
-        "prompt": "green platform against wall"
+        "prompts": [
+          "green platform against wall"
+        ]
       }
     },
     {
@@ -78,7 +82,9 @@
       "suggested_fix": "Paint a bright red stripe along the wall and floor connecting the red button's platform to the closed gate, and make the button pulse with light, so the player can see that the button and the gate are linked.",
       "highlight": {
         "t": 99.5,
-        "prompt": "small red round button"
+        "prompts": [
+          "small red round button"
+        ]
       }
     },
     {
@@ -106,7 +112,9 @@
       "suggested_fix": "Move the mushroom's starting position to the far wall of the drop room, at least four tiles from the landing spot, and add black spikes to its red cap, so the player lands safely, can see it is dangerous, and has time to plan the jump over it.",
       "highlight": {
         "t": 122.5,
-        "prompt": "red spotted mushroom creature"
+        "prompts": [
+          "red spotted mushroom creature"
+        ]
       }
     },
     {
@@ -131,7 +139,9 @@
       "suggested_fix": "Rotate the red arrow on the EXIT sign so it points down the passage that actually leads to the corridor, not into the fork_left dead end, and move the sign to stand in the mouth of that correct passage.",
       "highlight": {
         "t": 128,
-        "prompt": "red arrow exit sign"
+        "prompts": [
+          "red arrow exit sign"
+        ]
       }
     },
     {

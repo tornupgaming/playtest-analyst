@@ -32,7 +32,9 @@
       "suggested_fix": "Move the small mid-gap green platform closer to the take-off path and make it twice as wide, so this first jump can be made without a near-perfect landing.",
       "highlight": {
         "t": 18,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -55,7 +57,9 @@
       "suggested_fix": "Add a tall bright light beam above the high doorway at the top of the green stepped platforms, visible over the plaza pillars from the entrance, so the 'Reach the beacon' objective has a visible target.",
       "highlight": {
         "t": 70,
-        "prompt": "the rectangular brown doorway opening"
+        "prompts": [
+          "the rectangular brown doorway opening"
+        ]
       }
     },
     {
@@ -83,7 +87,9 @@
       "suggested_fix": "Move this first mushroom creature away from the exit doorway into open floor and slow it down, and add a one-line prompt before the room such as 'Jump on enemies to squash them.'",
       "highlight": {
         "t": 122,
-        "prompt": "the red spotted mushroom creature"
+        "prompts": [
+          "the red spotted mushroom creature"
+        ]
       }
     },
     {
@@ -108,7 +114,9 @@
       "suggested_fix": "Rotate the red arrow on the EXIT sign at the fork so it points towards the grey-pillar corridor route, and remove or move any EXIT sign that faces the dead-end left branch.",
       "highlight": {
         "t": 128,
-        "prompt": "the red EXIT arrow sign"
+        "prompts": [
+          "the red EXIT arrow sign"
+        ]
       }
     },
     {
