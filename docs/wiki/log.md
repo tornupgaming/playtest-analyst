@@ -45,3 +45,7 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 
 ## [2026-10-26] ingest | eval/sweeps/2026-10-26-synthetic (TUG-121 first sweep)
 - muse-wonder-video.md: added tokens, cost and latency for 24 sweep runs on the 190 s and 63 s synthetic sessions, the input tokens added by telemetry and transcript, and run-to-run variation on identical input. index.md: updated the line.
+
+## [2026-10-27] ingest | spikes/tug-123 (multi-phrasing SAM run and probe)
+- sam-3-1.md: added the TUG-123 run (3 of 5 highlights matched, one on the wrong platform) and the follow-up probe (button found only on a 4× crop; HUD text never matched). Replaced the phrasing open question with HUD-text and crop questions.
+- muse-wonder-video.md: added that strict `json_schema` accepted `minItems`/`maxItems`.

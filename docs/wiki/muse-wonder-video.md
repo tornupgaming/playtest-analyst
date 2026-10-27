@@ -1,12 +1,13 @@
 ---
 title: Muse Wonder video input
-updated: 2026-10-26
+updated: 2026-10-27
 sources:
   - eval/sweeps/2026-10-26-synthetic/README.md
   - spikes/tug-93/FINDINGS.md
   - spikes/tug-93/probe.py
   - spikes/tug-93/results/
   - spikes/tug-99/results/
+  - spikes/tug-123/planted-voice.report.json
   - https://dev.meta.ai/docs/file-handling
   - https://dev.meta.ai/docs/models
   - https://dev.meta.ai/docs/api-reference/responses/schemas
@@ -68,6 +69,7 @@ These runs show that:
 | Voiced | 6,566 | 8,560 (8,213) | $0.197 | 78.0 s | 1 | [report](../../spikes/tug-99/results/voiced-report.json) |
 
 - The API accepted the strict schema with a nullable object written as `anyOf: [object, null]`, and `max_output_tokens` 32000. [report](../../spikes/tug-99/results/voiced-report.json)
+- The API accepted a strict schema with `minItems` 1 and `maxItems` 3 on an array (`highlight.prompts`), and every returned array had 3 items (one run, 2026-10-27, synthetic planted-voice, config v0). [report](../../spikes/tug-123/planted-voice.report.json)
 - Output tokens ranged 636–8,560 on about 6.5k input tokens, almost all of it reasoning.
 
 ### Synthetic sessions through `playtest sweep`
