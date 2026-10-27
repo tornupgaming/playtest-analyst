@@ -49,7 +49,9 @@
       "suggested_fix": "Move the small floating platform about a third closer to the take-off ledge and widen it by about half, so a normal running jump lands on it without perfect timing.",
       "highlight": {
         "t": 17,
-        "prompt": "small green floating platform"
+        "prompts": [
+          "small green floating platform"
+        ]
       }
     },
     {
@@ -89,7 +91,9 @@
       "suggested_fix": "Add a tall vertical beam of light above the green steps on the side wall of the plaza, visible from the plaza entrance, and keep it on until the player climbs the steps.",
       "highlight": {
         "t": 63,
-        "prompt": "small green wall platforms"
+        "prompts": [
+          "small green wall platforms"
+        ]
       }
     },
     {
@@ -125,7 +129,9 @@
       "suggested_fix": "Move the red button off the high side shelf onto a knee-high pedestal in the middle of the hall facing the gate, so the player sees the button and its link to the gate on entering the room.",
       "highlight": {
         "t": 99,
-        "prompt": "small red round button"
+        "prompts": [
+          "small red round button"
+        ]
       }
     },
     {
@@ -162,7 +168,9 @@
       "suggested_fix": "Move the red mushroom creature's starting position to the far corner of the drop room, at least five metres from the landing spot, so the player lands in a clear space and can see it before it reaches them.",
       "highlight": {
         "t": 109.5,
-        "prompt": "red spotted mushroom creature"
+        "prompts": [
+          "red spotted mushroom creature"
+        ]
       }
     },
     {
@@ -195,7 +203,9 @@
       "suggested_fix": "Flip the red arrow on the EXIT sign 180 degrees so it points along the route that leads to the corridor, instead of into the fork_left dead end.",
       "highlight": {
         "t": 130,
-        "prompt": "red arrow exit sign"
+        "prompts": [
+          "red arrow exit sign"
+        ]
       }
     },
     {

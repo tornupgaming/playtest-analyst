@@ -45,7 +45,9 @@
       "suggested_fix": "Move the far landing platform one tile closer to the take-off platform and make it one tile wider, so a normal running jump lands with a clear margin.",
       "highlight": {
         "t": 18,
-        "prompt": "the small floating platform"
+        "prompts": [
+          "the small floating platform"
+        ]
       }
     },
     {
@@ -85,7 +87,9 @@
       "suggested_fix": "Add a tall, bright vertical beacon beam above the green steps at the exit side of the plaza, tall enough to be seen over the brown pillars from the plaza entrance.",
       "highlight": {
         "t": 33,
-        "prompt": "the Reach the beacon text"
+        "prompts": [
+          "the Reach the beacon text"
+        ]
       }
     },
     {
@@ -121,7 +125,9 @@
       "suggested_fix": "Make the red button twice as large, add a pulsing light ring around it, and paint a red line on the wall from the button shelf to the gate so the player can see what the button controls.",
       "highlight": {
         "t": 74,
-        "prompt": "the red round button"
+        "prompts": [
+          "the red round button"
+        ]
       }
     },
     {
@@ -156,7 +162,9 @@
       "suggested_fix": "Move the red mushroom creature's starting position at least three tiles away from the drop landing point, to the far side of the room, so the player can see it and react after landing.",
       "highlight": {
         "t": 109,
-        "prompt": "the red mushroom creature"
+        "prompts": [
+          "the red mushroom creature"
+        ]
       }
     },
     {
@@ -189,7 +197,9 @@
       "suggested_fix": "Rotate the red arrow sign at the junction so it points along the route that leads to the corridor, not toward the left-hand dead end.",
       "highlight": {
         "t": 129,
-        "prompt": "the red arrow sign"
+        "prompts": [
+          "the red arrow sign"
+        ]
       }
     },
     {

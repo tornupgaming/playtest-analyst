@@ -21,7 +21,9 @@
       "suggested_fix": "Move the small floating platform about one character-width closer to the main green path and widen it by about 50%, so this jump is no harder than the earlier gaps the player cleared first time.",
       "highlight": {
         "t": 18,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -40,7 +42,9 @@
       "suggested_fix": "Add a tall, bright yellow vertical beam of light above the doorway at the end of the upper green walkway, visible over the pillars from the entrance, so the player has a clear target matching the 'Reach the beacon' objective.",
       "highlight": {
         "t": 64,
-        "prompt": "the small green step platform"
+        "prompts": [
+          "the small green step platform"
+        ]
       }
     },
     {
@@ -59,7 +63,9 @@
       "suggested_fix": "Move one crate directly in front of the raised button platform as an obvious step, and add a thick red cable running from that platform to the wooden door so the player can see the button opens the door.",
       "highlight": {
         "t": 74,
-        "prompt": "the small red oval button"
+        "prompts": [
+          "the small red oval button"
+        ]
       }
     },
     {
@@ -78,7 +84,9 @@
       "suggested_fix": "Move the red mushroom creature's starting position to the left side wall, well away from the exit doorway, so the player meets it with room and time to jump it instead of head-on at the doorway.",
       "highlight": {
         "t": 109,
-        "prompt": "the red mushroom creature"
+        "prompts": [
+          "the red mushroom creature"
+        ]
       }
     },
     {

@@ -44,7 +44,9 @@
       "suggested_fix": "Move the small landing platform about one third closer to the take-off edge, so the first gap is clearly shorter than it is now.",
       "highlight": {
         "t": 12,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -121,7 +123,9 @@
       "suggested_fix": "Make the red button about twice as large and add a pulsing white glow ring around it so it can be spotted from the room entrance.",
       "highlight": {
         "t": 99.5,
-        "prompt": "the small red button"
+        "prompts": [
+          "the small red button"
+        ]
       }
     },
     {
@@ -156,7 +160,9 @@
       "suggested_fix": "Move the mushroom creature's starting position to the far corner of the room opposite the drop, so the player has a few seconds to land and see it before it can reach them.",
       "highlight": {
         "t": 122.5,
-        "prompt": "the red mushroom creature"
+        "prompts": [
+          "the red mushroom creature"
+        ]
       }
     },
     {
@@ -188,7 +194,9 @@
       "suggested_fix": "Rotate the red arrow on the EXIT sign 180 degrees so it points toward the route that leads to the corridor instead of the dead end.",
       "highlight": {
         "t": 128.5,
-        "prompt": "the red EXIT arrow sign"
+        "prompts": [
+          "the red EXIT arrow sign"
+        ]
       }
     },
     {

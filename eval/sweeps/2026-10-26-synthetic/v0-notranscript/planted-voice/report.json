@@ -32,7 +32,9 @@
       "suggested_fix": "Move the small floating platform about one character-width closer to the takeoff platform and make its landing area about twice as wide, so a normal running jump lands on it reliably.",
       "highlight": {
         "t": 12,
-        "prompt": "the small green floating platform"
+        "prompts": [
+          "the small green floating platform"
+        ]
       }
     },
     {
@@ -55,7 +57,9 @@
       "suggested_fix": "Add a tall, bright light beam above the green stepped platforms in the corner of the plaza, visible over the brown pillars, so the 'Reach the beacon' objective points to a place the player can actually see.",
       "highlight": {
         "t": 63,
-        "prompt": "the small green stepped platform"
+        "prompts": [
+          "the small green stepped platform"
+        ]
       }
     },
     {
@@ -78,7 +82,9 @@
       "suggested_fix": "Make the red button larger and pulsing, and paint a thick red line on the floor and wall from the button shelf to the closed door, so the player can see that the button opens that door.",
       "highlight": {
         "t": 72,
-        "prompt": "the small red button"
+        "prompts": [
+          "the small red button"
+        ]
       }
     },
     {
@@ -106,7 +112,9 @@
       "suggested_fix": "Move the red mushroom creature's starting position and patrol to the far side of the green room, well away from the drop landing, so the player lands safely and has time to see it before it can reach them.",
       "highlight": {
         "t": 109,
-        "prompt": "the red mushroom creature"
+        "prompts": [
+          "the red mushroom creature"
+        ]
       }
     },
     {
@@ -131,7 +139,9 @@
       "suggested_fix": "Turn the red arrow on the EXIT sign to point toward the branch that leads to the grey-pillar corridor instead of the left dead-end branch, or remove this sign and place EXIT signs only on the correct route.",
       "highlight": {
         "t": 128.5,
-        "prompt": "the red arrow sign"
+        "prompts": [
+          "the red arrow sign"
+        ]
       }
     },
     {
