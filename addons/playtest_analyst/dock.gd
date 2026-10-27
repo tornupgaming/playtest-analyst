@@ -31,7 +31,8 @@ var debugger := Debugger.new()
 ## The bundle the running game is recording, "" when it isn't.
 var _recording := ""
 var _was_playing := false
-## The project's own run args, put back once the game has launched with ours.
+## The project's own run args, put back once the game has launched with ours. Non-null
+## while a start is pending, so Record is disabled then.
 var _saved_run_args: Variant = null
 ## CLI processes whose output is streaming into the log: execute_with_pipe() results
 ## plus `command`, and for `serve`, whether its URL has been opened.
@@ -125,6 +126,7 @@ func _process(_delta: float) -> void:
 		_refresh()
 	_was_playing = playing
 	_record.text = "Stop recording" if not _recording.is_empty() else "Record session"
+	_record.disabled = _saved_run_args != null
 	for job in _jobs.duplicate():
 		_read(job)
 
@@ -134,6 +136,8 @@ func _on_record() -> void:
 		debugger.send("stop")
 		_status.text = "Stopping…"
 		return
+	if _saved_run_args != null:
+		return  # a second click before the game launched: the run args are ours by now
 	var args := "-- --record"
 	if not _tester.text.strip_edges().is_empty():
 		args += " --tester=" + _tester.text.strip_edges().uri_encode()
