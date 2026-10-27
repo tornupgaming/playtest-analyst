@@ -1,6 +1,6 @@
-// The SAM step (DECISIONS.md §5): for each finding with a highlight, segment its phrase on the
-// key frame with sam-3.1 and draw the top match onto analysis/frames/<config>/<id>.png. A finding SAM
-// can't annotate gets no annotated_frame, so the viewer shows the plain frame instead.
+// The SAM step (DECISIONS.md §5): for each finding with a highlight, segment its phrasings on the
+// key frame with sam-3.1 and draw the first confident match onto analysis/frames/<config>/<id>.png.
+// A finding SAM can't annotate gets no annotated_frame, so the viewer shows the plain frame instead.
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { decodeMaskToRaster, parseImageStream, recordsOfKind, type ResponsesEvent } from "@meta-sam/parser";
@@ -8,6 +8,10 @@ import { respond } from "./meta.ts";
 import type { Finding, Report } from "./schema.ts";
 
 const CONCURRENCY = 4;
+/** Every match in the TUG-118 probe scored 0.50–0.94 and covered the thing it was named for. */
+const MIN_CONFIDENCE = 0.5;
+/** When no phrasing matches at the key frame, try this far either side of it. At most 3 × 3 calls. */
+const NEARBY_S = 2;
 /** The viewer's highlight yellow, a translucent fill over the match and a solid stroke around it. */
 const ACCENT = [255, 212, 0] as const;
 const FILL_ALPHA = 0.2;
@@ -84,31 +88,44 @@ function drawHighlight(rgb: Uint8Array, width: number, height: number, mask: Mas
 	return out;
 }
 
-/** Writes the annotated key frame to `out`, or throws saying why there is none. */
-async function annotateFinding(video: string, highlight: NonNullable<Finding["highlight"]>, out: string, note: string): Promise<void> {
-	const png = await ffmpeg(["-ss", String(highlight.t), "-i", video, "-frames:v", "1", "-c:v", "png", "-f", "image2pipe", "-"]);
-	if (png.length === 0) throw new Error(`the video has no frame at ${highlight.t} s.`);
+/** SAM's most confident mask for `prompt` on `png`, if it reaches MIN_CONFIDENCE. */
+async function segment(png: Uint8Array, prompt: string, note: string) {
 	const { response } = await respond(
 		{
 			model: "sam-3.1",
 			metadata: { include_confidence: "true" },
 			input: [{ type: "message", role: "user", content: [
-				{ type: "input_text", text: highlight.prompt },
+				{ type: "input_text", text: prompt },
 				{ type: "input_image", image_url: `data:image/png;base64,${Buffer.from(png).toString("base64")}` },
 			] }],
 		},
 		note,
 	);
 	const masks = recordsOfKind((await parseImageStream(replay(response.output_text)).finalResult).records, "mask");
-	const top = masks.toSorted((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0))[0];
-	if (!top) throw new Error(`SAM found no match for "${highlight.prompt}".`);
+	return masks.filter((m) => (m.confidence ?? 0) >= MIN_CONFIDENCE).toSorted((a, b) => b.confidence! - a.confidence!)[0];
+}
 
-	// PNG IHDR: width and height are the big-endian u32s at bytes 16 and 20.
-	const header = new DataView(png.buffer, png.byteOffset);
-	const [width, height] = [header.getUint32(16), header.getUint32(20)];
-	const rgb = await ffmpeg(["-f", "png_pipe", "-i", "-", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], png);
-	const mask = { raster: decodeMaskToRaster(top.mask), left: top.bounds.left, top: top.bounds.top, width: top.mask.width, height: top.mask.height };
-	await ffmpeg(["-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", `${width}x${height}`, "-i", "-", out], drawHighlight(rgb, width, height, mask));
+/** Tries each phrasing at `t`, then at t − 2 s and t + 2 s, and draws the first match to `out`.
+ * Returns the phrasing and time that matched, or throws saying why there is none. */
+async function annotateFinding(video: string, highlight: NonNullable<Finding["highlight"]>, out: string, note: string) {
+	const times = [...new Set([highlight.t, highlight.t - NEARBY_S, highlight.t + NEARBY_S].map((t) => Math.max(t, 0)))];
+	for (const t of times) {
+		// Past the video's end there is no frame, so nothing to match.
+		const png = await ffmpeg(["-ss", String(t), "-i", video, "-frames:v", "1", "-c:v", "png", "-f", "image2pipe", "-"]);
+		if (png.length === 0) continue;
+		for (const prompt of highlight.prompts) {
+			const top = await segment(png, prompt, note);
+			if (!top) continue;
+			// PNG IHDR: width and height are the big-endian u32s at bytes 16 and 20.
+			const header = new DataView(png.buffer, png.byteOffset);
+			const [width, height] = [header.getUint32(16), header.getUint32(20)];
+			const rgb = await ffmpeg(["-f", "png_pipe", "-i", "-", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], png);
+			const mask = { raster: decodeMaskToRaster(top.mask), left: top.bounds.left, top: top.bounds.top, width: top.mask.width, height: top.mask.height };
+			await ffmpeg(["-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", `${width}x${height}`, "-i", "-", out], drawHighlight(rgb, width, height, mask));
+			return { prompt, t };
+		}
+	}
+	throw new Error(`SAM found no match for ${highlight.prompts.map((p) => `"${p}"`).join(", ")} at ${times.join(", ")} s.`);
 }
 
 /** Runs `fn` over `items`, at most `limit` at a time, keeping their order. */
@@ -125,17 +142,18 @@ async function mapLimit<T, R>(items: readonly T[], limit: number, fn: (item: T) 
 	return results;
 }
 
-/** The report with `annotated_frame` set on each finding SAM could annotate, and cleared on the rest. */
+/** The report with `annotated_frame`, `annotated_prompt` and `annotated_t` set on each finding SAM
+ * could annotate, and cleared on the rest. */
 export async function annotate(dir: string, report: Report): Promise<Report> {
 	// One folder per config, so reports from different configs on one session keep their own frames.
 	const frames = `analysis/frames/${report.config.replace(/[^\w.-]/g, "_")}`;
 	mkdirSync(join(dir, frames), { recursive: true });
-	const findings = await mapLimit(report.findings, CONCURRENCY, async ({ annotated_frame: _, ...f }): Promise<Finding> => {
+	const findings = await mapLimit(report.findings, CONCURRENCY, async ({ annotated_frame: _f, annotated_prompt: _p, annotated_t: _t, ...f }): Promise<Finding> => {
 		if (!f.highlight) return f;
 		const frame = `${frames}/${f.id}.png`;
 		try {
-			await annotateFinding(join(dir, "video.mp4"), f.highlight, join(dir, frame), `annotate ${report.session_id} ${f.id}`);
-			return { ...f, annotated_frame: frame };
+			const { prompt, t } = await annotateFinding(join(dir, "video.mp4"), f.highlight, join(dir, frame), `annotate ${report.session_id} ${f.id}`);
+			return { ...f, annotated_frame: frame, annotated_prompt: prompt, annotated_t: t };
 		} catch (err) {
 			console.error(`${f.id}: no annotated frame: ${(err as Error).message}`);
 			return f;

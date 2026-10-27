@@ -202,6 +202,8 @@ const cards = new Map<Finding, HTMLElement>();
 for (const f of findings) {
 	const stamp = (t: number) => h("button", { class: "stamp", onclick: (e: Event) => (e.stopPropagation(), seek(t)) }, clock(t));
 	const frameSrc = f.annotated_frame ? `/files/${f.annotated_frame}` : `/frame?t=${f.highlight?.t ?? f.t_start}`;
+	// The phrasing SAM matched, else the model's first.
+	const phrase = f.highlight && (f.annotated_prompt ?? f.highlight.prompts[0]!);
 	const evidence = (name: "telemetry" | "visual", items: string[]) =>
 		items.length > 0 && h("div", { class: "evidence" }, icon(name), h("ul", {}, ...items.map((t) => h("li", {}, t))));
 
@@ -224,12 +226,12 @@ for (const f of findings) {
 			h(
 				"figure",
 				{ class: "frame" },
-				h("img", { src: frameSrc, alt: f.highlight?.prompt ?? "key frame" }),
+				h("img", { src: frameSrc, alt: phrase || "key frame" }),
 				h(
 					"figcaption",
 					{},
-					f.highlight && h("span", { class: "prompt" }, `“${f.highlight.prompt}”`),
-					h("span", { class: "source" }, f.annotated_frame ? "SAM 3.1" : `key frame ${clock(f.highlight?.t ?? f.t_start)}`),
+					phrase && h("span", { class: "prompt" }, `“${phrase}”`),
+					h("span", { class: "source" }, `${f.annotated_frame ? "SAM 3.1" : "key frame"} ${clock(f.annotated_t ?? f.highlight?.t ?? f.t_start)}`),
 				),
 			),
 			...f.evidence.quotes.map((q) => h("blockquote", {}, stamp(q.t), h("span", {}, `“${q.text}”`))),

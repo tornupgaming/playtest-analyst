@@ -64,8 +64,9 @@ export const ModelFinding = z.object({
 		visual: z.string(),
 	}),
 	suggested_fix: z.string(),
-	/** Key frame and the noun phrase SAM should segment in it, e.g. "the glowing beacon". */
-	highlight: z.object({ t: z.number(), prompt: z.string() }).nullable(),
+	/** Key frame and 1–3 noun phrases for SAM to segment in it, best first, each saying how one
+	 * element looks, e.g. ["the blue treasure chest", "the wooden chest"]. */
+	highlight: z.object({ t: z.number(), prompts: z.array(z.string()).min(1).max(3) }).nullable(),
 });
 export type ModelFinding = z.infer<typeof ModelFinding>;
 
@@ -73,8 +74,11 @@ export const ModelOutput = z.object({ findings: z.array(ModelFinding) });
 
 export const Finding = ModelFinding.extend({
 	id: z.string(),
-	/** Path relative to the bundle, added by the SAM step (TUG-104). */
+	/** Path relative to the bundle, added by the SAM step (TUG-104), with the phrasing that matched
+	 * and the session time of the frame it was drawn on (TUG-123). */
 	annotated_frame: z.string().optional(),
+	annotated_prompt: z.string().optional(),
+	annotated_t: z.number().optional(),
 	/** Compare mode (TUG-109): the previous build's finding this one matches, or null if it is new. */
 	previous_id: z.string().nullable().optional(),
 });
