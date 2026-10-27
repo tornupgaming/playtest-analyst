@@ -83,7 +83,8 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 				model: PATCH_MODEL,
 				input: [{ role: "user", content: attempt === 1 ? context : [...context, text(`Your patches below were rejected. Answer with corrected patches for these findings only, or none for a finding you can't patch.\n\n${retry.join("\n\n")}`)] }],
 				text: { format: { type: "json_schema", name: "playtest_patches", strict: true, schema } },
-				max_output_tokens: 16000,
+				// Spark reasons at length: a 6-finding report ran past 16000 (TUG-124 e2e).
+				max_output_tokens: 32000,
 			};
 			await Bun.write(join(dir, `analysis/patch-request-${attempt}.json`), JSON.stringify(body, null, 2));
 			const { response, costUsd, latencyS } = await respond(body, `patch ${report.session_id} attempt ${attempt}`);
