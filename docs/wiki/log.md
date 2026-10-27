@@ -45,3 +45,8 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 
 ## [2026-10-26] ingest | eval/sweeps/2026-10-26-synthetic (TUG-121 first sweep)
 - muse-wonder-video.md: added tokens, cost and latency for 24 sweep runs on the 190 s and 63 s synthetic sessions, the input tokens added by telemetry and transcript, and run-to-run variation on identical input. index.md: updated the line.
+
+## [2026-10-27] ingest | spikes/tug-108/README.md (patch dock runs)
+- git-apply.md: added reverting one of five neighbouring-line patches (`git revert` conflicts, `git apply -R -C0` applies).
+- Created godot-os-execute.md: `OS.execute` with output goes through a shell and replaces NULs; `OS.execute_with_pipe` doesn't.
+- index.md: added godot-os-execute.md, extended the git-apply.md line.

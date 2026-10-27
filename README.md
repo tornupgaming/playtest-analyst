@@ -47,7 +47,7 @@ These run the real game from the command line and write images, so a change can 
 
 ```sh
 tools/check.sh                      # build both profiles headless; fails on script errors or z-fighting blocks
-tools/test.sh                       # GDScript tests in tests/ (telemetry), headless
+tools/test.sh                       # GDScript tests in tests/ (telemetry, patch apply), headless
 tools/record_check.sh 60            # record a real 60 s session with a loopback mic; check the bundle and mic lag
 tools/shots.sh                      # every named view -> /tmp/shots/sheet.png (one labelled contact sheet)
 tools/shots.sh -p planted beacon    # one view, planted profile
