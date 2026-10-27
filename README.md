@@ -86,7 +86,7 @@ These numbers come from **synthetic** sessions: a scripted bot plays the test co
 
 - In every configuration tried, Muse Wonder located all 6 planted problems on the voiced session, and 5–6 of 6 with no voice at all.
 - At strict scoring (right place and right category), recall is 0.67–0.83. Almost every loss is the ui/confusion boundary, e.g. a misleading EXIT sign filed as `ui`.
-- No false positives on the clean (fixed) level in 12 runs.
+- No false positives in 24 runs: every finding was one of the planted problems, and the clean (fixed) level produced none.
 - Cost: about $0.30 per 3-minute session; latency 1–2 minutes.
 
 
