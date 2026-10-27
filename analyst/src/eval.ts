@@ -22,6 +22,9 @@ export type Score = {
 	duplicates: { plant: number; finding: string }[];
 	/** Plant ids. */
 	misses: number[];
+	/** Findings that would hit a missed plant if they named its category: found, wrong category.
+	 * The plant stays a miss, and the finding is not a false positive. */
+	mislabelled: { plant: number; finding: string }[];
 	/** Findings in a known_unplanned zone that hit no plant. Not false positives. */
 	excused: string[];
 	false_positives: string[];
@@ -89,26 +92,43 @@ export function score(report: Report, gt: GroundTruth, events: TelemetryEvent[],
 
 	const hits: Score["hits"] = [];
 	const duplicates: Score["duplicates"] = [];
+	const mislabelled: Score["mislabelled"] = [];
 	const excused: string[] = [];
 	const false_positives: string[] = [];
 
-	for (const f of report.findings) {
+	/** The plant `f` shares most time with, among those it passes for. With `relabel`, as if it
+	 * named each plant's own category. */
+	const nearest = (f: Finding, among: Plant[], relabel = false) => {
 		let best: { plant: number; size: number } | undefined;
-		for (const p of plants) {
-			const size = passes(f, p, strict) ? overlap(f, wins.get(p.id) ?? []) : null;
+		for (const p of among) {
+			const size = passes(relabel ? { ...f, category: p.category } : f, p, strict) ? overlap(f, wins.get(p.id) ?? []) : null;
 			if (size !== null && (!best || size > best.size)) best = { plant: p.id, size };
 		}
-		if (best) (hits.some((h) => h.plant === best.plant) ? duplicates : hits).push({ plant: best.plant, finding: f.id });
+		return best?.plant;
+	};
+
+	const unmatched: Finding[] = [];
+	for (const f of report.findings) {
+		const plant = nearest(f, plants);
+		if (plant === undefined) unmatched.push(f);
+		else (hits.some((h) => h.plant === plant) ? duplicates : hits).push({ plant, finding: f.id });
+	}
+	// Only a missed plant can be mislabelled: next to a hit plant, another category is another problem.
+	const missed = plants.filter((p) => !hits.some((h) => h.plant === p.id));
+	for (const f of unmatched) {
+		const plant = nearest(f, missed, true);
+		if (plant !== undefined) mislabelled.push({ plant, finding: f.id });
 		else if (f.zone !== null && excusedZones.has(f.zone)) excused.push(f.id);
 		else false_positives.push(f.id);
 	}
 
-	const misses = plants.filter((p) => !hits.some((h) => h.plant === p.id)).map((p) => p.id);
+	const misses = missed.map((p) => p.id);
 	return {
 		session_id: report.session_id,
 		profile,
 		hits,
 		duplicates,
+		mislabelled,
 		misses,
 		excused,
 		false_positives,
