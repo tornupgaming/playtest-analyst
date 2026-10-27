@@ -13,4 +13,5 @@ Facts established so far, each with a source. Rules: [CLAUDE.md](CLAUDE.md). His
 - [Synthetic sessions](synthetic-sessions.md): measured speed and determinism of scripted SubViewport capture, Piper TTS on Python 3.14.
 
 ## Tools
-- [git apply on overlapping patches](git-apply.md): `-C<n>`, `--check`, `--numstat` from the docs; measured that patches to neighbouring lines of one file fail plain `git apply` in sequence and apply with `-C0`.
+- [git apply on overlapping patches](git-apply.md): `-C<n>`, `--check`, `--numstat` from the docs; measured that patches to neighbouring lines of one file fail plain `git apply` in sequence and apply with `-C0`, and that `git revert` of one of them conflicts where `git apply -R -C0` does not.
+- [Running processes from GDScript](godot-os-execute.md): `OS.execute` with output runs through a shell and mangles NULs; `OS.execute_with_pipe` passes arguments unchanged.

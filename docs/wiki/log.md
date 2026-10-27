@@ -42,3 +42,8 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 
 ## [2026-10-26] ingest | docs/recorder.md, tools/record_check.sh (TUG-98 recorder runs)
 - capture-sync.md: added the in-process ffmpeg mic on loopback (60 s and 30 s runs, 13–25 ms including paplay start-up), ffmpeg orphaned by SIGKILL of Godot, SIGTERM finalising the file, run args from a plugin needing `settings_changed`, and the editor's Stop button leaving bundles incomplete. Narrowed the in-process mic open question to real mics and runs over 60 s.
+
+## [2026-10-27] ingest | spikes/tug-108/README.md (patch dock runs)
+- git-apply.md: added reverting one of five neighbouring-line patches (`git revert` conflicts, `git apply -R -C0` applies).
+- Created godot-os-execute.md: `OS.execute` with output goes through a shell and replaces NULs; `OS.execute_with_pipe` doesn't.
+- index.md: added godot-os-execute.md, extended the git-apply.md line.

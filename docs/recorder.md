@@ -6,6 +6,7 @@ The editor plugin (`addons/playtest_analyst/`) records a playtest into a session
 |---|---|
 | `plugin.cfg`, `plugin.gd` | The editor plugin. Enabling it adds the dock and the two autoloads. |
 | `dock.gd` | The **Playtest** dock |
+| `patches.gd`, `diff_view.gd` | The dock's patch list: apply and revert a bundle's `patches.json` as git commits, and show a diff |
 | `recorder.gd` | The `PlaytestRecorder` autoload. It runs in the game and writes the bundle. |
 | `telemetry.gd` | The `PlaytestTelemetry` autoload. It writes `events.jsonl` ([telemetry.md](telemetry.md)). |
 
@@ -16,6 +17,10 @@ The editor plugin (`addons/playtest_analyst/`) records a playtest into a session
 3. Stop the recording in any of these ways: **Stop recording** in the dock, **F9** in the game, or closing the game window. Don't use the editor's Stop button: it kills the game, so the bundle is left incomplete (see below).
 4. Pick the session in the list and click **Analyse**. This runs `bun analyst/src/cli.ts analyse <dir>` and streams its output into the dock.
 5. Click **Open report**. This runs `bun analyst/src/cli.ts serve <dir>` and opens the first URL it prints. Only one server runs at a time, and it is stopped when the editor closes.
+6. Click **Propose fixes**. This runs `bun analyst/src/cli.ts patch <dir> --project <project root>` (DECISIONS.md §8), which writes `patches.json` into the bundle. The dock lists its patches; pick one to see its finding, rationale and diff.
+7. Click **Apply**. The dock runs `git apply -C0 --index` and commits only that file as `playtest-fix: <summary>`. The body holds the rationale and `Finding:`, `Patch:` and `Session:` lines, which is how the list knows the patch is applied. The editor then rescans the filesystem, so it reloads the changed resource. **Revert** commits the reverse as `Revert "playtest-fix: <summary>"`, in `git revert`'s message format. It doesn't use `git revert` itself, because that conflicts when a neighbouring line has since been patched ([wiki](wiki/git-apply.md)).
+
+   Both refuse while any tracked file has uncommitted changes, and Apply refuses a patch whose diff touches anything but its own file or whose file isn't in `playtest.json`'s `patch_allow`. Refusals and git errors appear under the buttons. Opening the project in the editor can itself rewrite `.import` files; commit those first.
 
 You can also record without the editor. Run `godot --path . --display-driver x11 -- --record`, or press F9 in any running build.
 

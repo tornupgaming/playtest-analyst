@@ -1,10 +1,13 @@
 @tool
 extends EditorDock
 ## The Playtest dock. Record session plays the main scene with --record; the game's
-## PlaytestRecorder reports back over the debugger. Analyse and Open report run the
-## analyst CLI on the selected bundle in sessions/ and stream its output here.
+## PlaytestRecorder reports back over the debugger. Analyse, Open report and Propose
+## fixes run the analyst CLI on the selected bundle in sessions/ and stream its output
+## here. The bundle's patches.json is listed below them, to read, apply and revert.
 
 const Recorder := preload("res://addons/playtest_analyst/recorder.gd")
+const Patches := preload("res://addons/playtest_analyst/patches.gd")
+const DiffView := preload("res://addons/playtest_analyst/diff_view.gd")
 
 
 ## Relays PlaytestRecorder messages between the dock and the running game.
@@ -41,7 +44,16 @@ var _status := Label.new()
 var _sessions := OptionButton.new()
 var _analyse := Button.new()
 var _open := Button.new()
+var _propose := Button.new()
 var _log := TextEdit.new()
+## The selected bundle's patches.json, null when it has none.
+var _patches: Patches
+var _patch_list := Tree.new()
+var _rationale := Label.new()
+var _diff := DiffView.new()
+var _apply := Button.new()
+var _revert := Button.new()
+var _patch_status := Label.new()
 
 
 func _init() -> void:
@@ -54,19 +66,43 @@ func _init() -> void:
 	_record.pressed.connect(_on_record)
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_status.text = "Not recording."
-	_sessions.item_selected.connect(func(_i: int) -> void: _update_buttons())
+	_sessions.item_selected.connect(func(_i: int) -> void: _load_patches())
 	_analyse.text = "Analyse"
 	_analyse.pressed.connect(_run.bind("analyse"))
 	_open.text = "Open report"
 	_open.pressed.connect(_run.bind("serve"))
+	_propose.text = "Propose fixes"
+	_propose.pressed.connect(func() -> void: _run("patch", ["--project", _project_root()]))
 	var actions := HBoxContainer.new()
-	for button in [_analyse, _open]:
+	for button in [_analyse, _open, _propose]:
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		actions.add_child(button)
+	_patch_list.hide_root = true
+	_patch_list.custom_minimum_size.y = 190
+	_patch_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_patch_list.item_selected.connect(_show_patch)
+	_rationale.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_diff.custom_minimum_size.y = 300
+	_apply.text = "Apply"
+	_apply.pressed.connect(_on_patch.bind(true))
+	_revert.text = "Revert"
+	_revert.pressed.connect(_on_patch.bind(false))
+	var patch_actions := HBoxContainer.new()
+	for button in [_apply, _revert]:
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		patch_actions.add_child(button)
+	_patch_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var patches := VBoxContainer.new()
+	patches.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	for control in [_patch_list, _rationale, _diff, patch_actions, _patch_status]:
+		patches.add_child(control)
 	_log.editable = false
-	_log.custom_minimum_size.y = 200
-	_log.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	for control in [_tester, _record, _status, _sessions, actions, _log]:
+	_log.custom_minimum_size.y = 120
+	var split := VSplitContainer.new()
+	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	split.add_child(patches)
+	split.add_child(_log)
+	for control in [_tester, _record, _status, _sessions, actions, split]:
 		box.add_child(control)
 	debugger.message.connect(_on_game_message)
 	_refresh()
@@ -139,23 +175,28 @@ func _refresh(select := "") -> void:
 		_sessions.set_item_metadata(_sessions.item_count - 1, dir)
 		if dir == select:
 			_sessions.select(_sessions.item_count - 1)
-	_update_buttons()
+	_load_patches()
 
 
 func _update_buttons() -> void:
 	var i := _sessions.selected
 	var complete := i >= 0 and not _sessions.get_item_text(i).ends_with("(incomplete)")
-	_analyse.disabled = not complete or _jobs.any(func(job: Dictionary) -> bool: return job.command == "analyse")
+	var running := func(command: String) -> bool: return _jobs.any(func(job: Dictionary) -> bool: return job.command == command)
+	_analyse.disabled = not complete or running.call("analyse")
 	_open.disabled = not complete
+	_propose.disabled = i < 0 or not FileAccess.file_exists(_sessions.get_item_metadata(i).path_join("report.json")) or running.call("patch")
+	var patch := _selected_patch()
+	_apply.disabled = patch.is_empty() or not patch.commit.is_empty()
+	_revert.disabled = patch.is_empty() or patch.commit.is_empty()
 
 
-func _run(command: String) -> void:
+func _run(command: String, args: Array = []) -> void:
 	var dir: String = _sessions.get_selected_metadata()
 	if command == "serve":
 		for job in _jobs:
 			if job.command == "serve":
 				OS.kill(job.pid)  # one report server at a time
-	var line := Recorder.analyst(command, dir)
+	var line := Recorder.analyst(command, dir) + PackedStringArray(args)
 	var job := OS.execute_with_pipe(line[0], line.slice(1), false)
 	_append("$ playtest %s %s\n" % [command, dir.get_file()])
 	if job.is_empty():
@@ -190,3 +231,62 @@ func _append(text: String) -> void:
 		return
 	_log.text += text
 	_log.scroll_vertical = _log.get_line_count()
+
+
+func _project_root() -> String:
+	return ProjectSettings.globalize_path("res://").trim_suffix("/")
+
+
+## Lists the selected bundle's patches, keeping the selected patch selected.
+func _load_patches() -> void:
+	var keep: String = _selected_patch().get("id", "")
+	var i := _sessions.selected
+	var path: String = _sessions.get_item_metadata(i).path_join("patches.json") if i >= 0 else ""
+	_patches = Patches.new(_project_root(), path) if FileAccess.file_exists(path) else null
+	_patch_list.clear()
+	var root := _patch_list.create_item()
+	_show_status("" if _patches else "No patches yet. Analyse, then Propose fixes.")
+	if _patches and not _patches.error.is_empty():
+		_show_status(_patches.error, true)
+	for patch: Dictionary in _patches.list() if _patches else []:
+		var applied: bool = not patch.commit.is_empty()
+		var item := root.create_child()
+		item.set_text(0, "%s\n%s%s" % [patch.summary, patch.file, "  ·  ✓ Applied" if applied else ""])
+		item.set_autowrap_mode(0, TextServer.AUTOWRAP_WORD_SMART)
+		item.set_metadata(0, patch)
+		if applied:
+			item.set_custom_color(0, EditorInterface.get_editor_theme().get_color("success_color", "Editor"))
+		if patch.id == keep:
+			item.select(0)
+	_show_patch()
+
+
+func _selected_patch() -> Dictionary:
+	var item := _patch_list.get_selected()
+	return item.get_metadata(0) if item else {}
+
+
+func _show_patch() -> void:
+	var patch := _selected_patch()
+	_rationale.text = "" if patch.is_empty() else "%s, for finding %s: %s" % [patch.id, patch.finding_id, patch.rationale]
+	_diff.show_diff("" if patch.is_empty() else "%s\n%s" % [patch.file, patch.diff])
+	_update_buttons()
+
+
+func _on_patch(apply: bool) -> void:
+	var patch := _selected_patch()
+	var error: String = _patches.apply(patch.id) if apply else _patches.revert(patch.id)
+	_load_patches()
+	if not error.is_empty():
+		_show_status(error, true)
+		return
+	_show_status("Committed %s%s." % ["" if apply else "the revert of ", Patches.SUBJECT + patch.summary])
+	EditorInterface.get_resource_filesystem().scan()  # reloads the changed file in the editor
+
+
+func _show_status(text: String, error := false) -> void:
+	_patch_status.text = text
+	if error:
+		_patch_status.add_theme_color_override("font_color", EditorInterface.get_editor_theme().get_color("error_color", "Editor"))
+	else:
+		_patch_status.remove_theme_color_override("font_color")

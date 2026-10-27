@@ -89,7 +89,7 @@ Every Meta API call goes through `analyst/src/meta.ts`, which appends its cost t
 
 **Why Spark.** About a quarter of Muse Wonder's price per token, and the task needs no video. First run: 5 patches for 6 findings, all passing first time, $0.05 ([wiki](docs/wiki/muse-spark.md)). It also puts a second Meta model in the pipeline.
 
-**Apply with `git apply -C0`.** Each diff is made against the same tree. In `tuning.tres` the tunables sit on neighbouring lines, so after one patch the next one's context no longer matches and plain `git apply` fails. `-C0` lets the context differ while the changed lines must still match ([wiki](docs/wiki/git-apply.md)). The TUG-108 dock applies with it.
+**Apply with `git apply -C0`.** Each diff is made against the same tree. In `tuning.tres` the tunables sit on neighbouring lines, so after one patch the next one's context no longer matches and plain `git apply` fails. `-C0` lets the context differ while the changed lines must still match ([wiki](docs/wiki/git-apply.md)). The TUG-108 dock applies with it, one commit per patch, and reverts with `git apply -R -C0` rather than `git revert`, whose 3-way merge conflicts on the same neighbouring lines.
 
 **Fallback.** If Spark's diffs start failing, set `PATCH_MODEL` in `analyst/src/patch.ts` to `muse-wonder-1.0`.
 
