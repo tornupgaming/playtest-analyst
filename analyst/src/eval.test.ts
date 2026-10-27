@@ -91,12 +91,32 @@ describe("score", () => {
 	test("a finding that matches no plant is a false positive and lowers precision", () => {
 		const r = report([
 			finding("a", 15, 35, "difficulty", "ledge"),
-			finding("wrong-cat", 15, 35, "ui", "ledge"),
+			finding("wrong-zone", 15, 35, "difficulty", "hall"),
 			finding("wrong-time", 150, 170, "difficulty", "ledge"),
 		]);
 		const s = score(r, gt, events);
-		expect(s.false_positives).toEqual(["wrong-cat", "wrong-time"]);
+		expect(s.false_positives).toEqual(["wrong-zone", "wrong-time"]);
 		expect(s.precision).toBeCloseTo(1 / 3);
+	});
+
+	test("a finding in a missed plant's time and zone with the wrong category is mislabelled: the plant stays a miss, and it is not a false positive", () => {
+		const r = report([
+			finding("a", 15, 35, "difficulty", "ledge"),
+			finding("wrong-cat", 101, 118, "ui", "fork"),
+			finding("next-to-hit", 15, 35, "ui", "ledge"),
+			finding("wrong-time", 150, 170, "difficulty", "ledge"),
+		]);
+		const s = score(r, gt, events);
+		expect(s.hits).toEqual([{ plant: 1, finding: "a" }]);
+		expect(s.mislabelled).toEqual([{ plant: 5, finding: "wrong-cat" }]);
+		expect(s.misses).toEqual([5, 6]);
+		expect(s.false_positives).toEqual(["next-to-hit", "wrong-time"]);
+		expect(s.recall).toBeCloseTo(1 / 3);
+		expect(s.precision).toBeCloseTo(1 / 3);
+		expect(score(r, gt, events, { strict: "any" }).hits).toEqual([
+			{ plant: 1, finding: "a" },
+			{ plant: 5, finding: "wrong-cat" },
+		]);
 	});
 
 	test("a finding in a known_unplanned zone is excused, not a false positive", () => {

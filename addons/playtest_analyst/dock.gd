@@ -31,8 +31,12 @@ var debugger := Debugger.new()
 ## The bundle the running game is recording, "" when it isn't.
 var _recording := ""
 var _was_playing := false
-## The project's own run args, put back once the game has launched with ours.
+## The project's own run args, put back once the game has launched with ours. Non-null
+## while a start is pending, so Record is disabled then.
 var _saved_run_args: Variant = null
+## Ticks (ms) when Record asked the editor to play; the run args are given back if the game
+## hasn't started 10 s later (no main scene, a cancelled dialog, a launch error).
+var _play_requested_ms := 0
 ## CLI processes whose output is streaming into the log: execute_with_pipe() results
 ## plus `command`, and for `serve`, whether its URL has been opened.
 var _jobs: Array[Dictionary] = []
@@ -116,15 +120,20 @@ func _exit_tree() -> void:
 
 func _process(_delta: float) -> void:
 	var playing := EditorInterface.is_playing_scene()
-	if playing and _saved_run_args != null:
+	var gave_up := not playing and _play_requested_ms > 0 and Time.get_ticks_msec() - _play_requested_ms > 10000
+	if (playing or gave_up) and _saved_run_args != null:
 		ProjectSettings.set_setting("editor/run/main_run_args", _saved_run_args)
 		_saved_run_args = null
+		_play_requested_ms = 0
+		if gave_up:
+			_status.text = "The game didn't start, so nothing is recording. Check the project's main scene."
 	if _was_playing and not playing and not _recording.is_empty():
 		_status.text = "The game was stopped while recording, so %s is incomplete. Stop from this dock, F9 or by closing the game window." % _recording.get_file()
 		_recording = ""
 		_refresh()
 	_was_playing = playing
 	_record.text = "Stop recording" if not _recording.is_empty() else "Record session"
+	_record.disabled = _saved_run_args != null
 	for job in _jobs.duplicate():
 		_read(job)
 
@@ -134,6 +143,8 @@ func _on_record() -> void:
 		debugger.send("stop")
 		_status.text = "Stopping…"
 		return
+	if _saved_run_args != null:
+		return  # a second click before the game launched: the run args are ours by now
 	var args := "-- --record"
 	if not _tester.text.strip_edges().is_empty():
 		args += " --tester=" + _tester.text.strip_edges().uri_encode()
@@ -144,6 +155,7 @@ func _on_record() -> void:
 	ProjectSettings.set_setting("editor/run/main_run_args", args)
 	await ProjectSettings.settings_changed  # the editor rereads run args on this signal
 	EditorInterface.play_main_scene()
+	_play_requested_ms = Time.get_ticks_msec()
 	_status.text = "Starting the game…"
 
 
@@ -158,13 +170,12 @@ func _on_game_message(name: String, data: Array) -> void:
 		_refresh(data[0])
 
 
-## Lists bundles newest first, selecting `select` if given.
+## Lists bundles newest first, then those one folder down (e.g. synthetic/planted-voice),
+## selecting `select` if given, else the newest.
 func _refresh(select := "") -> void:
 	_sessions.clear()
 	var root := Recorder.sessions_root()
-	var ids := Array(DirAccess.get_directories_at(root)) if DirAccess.dir_exists_absolute(root) else []
-	ids.reverse()
-	for id: String in ids:
+	for id in _bundles(root):
 		var dir := root.path_join(id)
 		var label := id
 		if FileAccess.file_exists(dir.path_join(Recorder.INCOMPLETE)) or not FileAccess.file_exists(dir.path_join("session.json")):
@@ -178,13 +189,36 @@ func _refresh(select := "") -> void:
 	_load_patches()
 
 
+## Bundle paths under `root`, relative to it. A bundle is a folder holding session.json or
+## INCOMPLETE; any other folder is searched one level down.
+static func _bundles(root: String) -> Array[String]:
+	var is_bundle := func(dir: String) -> bool:
+		return FileAccess.file_exists(dir.path_join("session.json")) or FileAccess.file_exists(dir.path_join(Recorder.INCOMPLETE))
+	var newest_first := func(dir: String) -> Array:
+		var ids := Array(DirAccess.get_directories_at(dir)) if DirAccess.dir_exists_absolute(dir) else []
+		ids.sort()
+		ids.reverse()
+		return ids
+	var top: Array[String] = []
+	var nested: Array[String] = []
+	for id: String in newest_first.call(root):
+		if is_bundle.call(root.path_join(id)):
+			top.append(id)
+		else:
+			for sub: String in newest_first.call(root.path_join(id)):
+				if is_bundle.call(root.path_join(id).path_join(sub)):
+					nested.append(id.path_join(sub))
+	return top + nested
+
+
 func _update_buttons() -> void:
 	var i := _sessions.selected
 	var complete := i >= 0 and not _sessions.get_item_text(i).ends_with("(incomplete)")
+	var analysed := i >= 0 and FileAccess.file_exists(_sessions.get_item_metadata(i).path_join("report.json"))
 	var running := func(command: String) -> bool: return _jobs.any(func(job: Dictionary) -> bool: return job.command == command)
 	_analyse.disabled = not complete or running.call("analyse")
-	_open.disabled = not complete
-	_propose.disabled = i < 0 or not FileAccess.file_exists(_sessions.get_item_metadata(i).path_join("report.json")) or running.call("patch")
+	_open.disabled = not complete or not analysed
+	_propose.disabled = not analysed or running.call("patch")
 	var patch := _selected_patch()
 	_apply.disabled = patch.is_empty() or not patch.commit.is_empty()
 	_revert.disabled = patch.is_empty() or patch.commit.is_empty()

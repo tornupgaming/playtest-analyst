@@ -1,7 +1,7 @@
 // `playtest finalize`: puts the raw capture on the session clock (DECISIONS.md §2).
 // Writes video.mp4 (H.264 ≤720p + AAC mic) and mic16k.wav (16 kHz mono s16), both with
 // t=0 at session t=0, so nothing downstream handles offsets again.
-import { existsSync, renameSync } from "node:fs";
+import { existsSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { SessionMeta } from "./schema.ts";
 
@@ -48,7 +48,9 @@ async function ptsStart(path: string, kind: "v" | "a"): Promise<number | null> {
 export const finalized = (dir: string) => existsSync(join(dir, "video.mp4")) && existsSync(join(dir, "mic16k.wav"));
 
 /** Re-encodes from the raw capture every time, so running it twice gives the same files.
- * Outputs are written under temporary names and renamed, so a failed run leaves no partial bundle. */
+ * Outputs are written under temporary names and renamed, so a failed run leaves no partial bundle.
+ * The names are per process: the recorder finalizes on stop and Analyse may too, and two runs
+ * sharing one temp file corrupt it. Each run writes a whole file and the last rename wins. */
 export async function finalize(dir: string): Promise<void> {
 	const meta = SessionMeta.parse(await Bun.file(join(dir, "session.json")).json());
 	const { capture, duration, t0_unix } = meta;
@@ -75,14 +77,17 @@ export async function finalize(dir: string): Promise<void> {
 		`[0:v]${alignVideo(videoStart)},scale=-2:'trunc(min(720,ih)/2)*2',format=yuv420p[v]`,
 		`${audio},aresample=48000,apad,atrim=end=${duration},asplit=2[a1][a2]`,
 	].join(";");
-	const video = join(dir, "video.tmp.mp4");
-	const mic = join(dir, "mic16k.tmp.wav");
+	const video = join(dir, `video.${process.pid}.tmp.mp4`);
+	const mic = join(dir, `mic16k.${process.pid}.tmp.wav`);
 	await run([
 		"ffmpeg", "-y", "-loglevel", "error", ...inputs, "-filter_complex", graph,
 		"-map", "[v]", "-map", "[a1]", "-t", String(duration), "-c:v", "libx264", "-preset", "veryfast",
 		"-b:v", "2M", "-maxrate", "2.5M", "-bufsize", "4M", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart", video,
 		"-map", "[a2]", "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", "-map_metadata", "-1", "-bitexact", mic,
-	]);
+	]).catch((err) => {
+		for (const f of [video, mic]) rmSync(f, { force: true }); // else every failed run leaves its own
+		throw err;
+	});
 	renameSync(video, join(dir, "video.mp4"));
 	renameSync(mic, join(dir, "mic16k.wav"));
 }

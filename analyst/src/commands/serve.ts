@@ -17,8 +17,13 @@ export async function run(argv: string[]) {
 		return 2;
 	}
 	const dir = resolve(positionals[0]!);
+	const reportFile = Bun.file(join(dir, "report.json"));
+	if (!(await reportFile.exists())) {
+		console.error(`No report.json in ${dir}; run \`playtest analyse\` first.`);
+		return 1;
+	}
 	const { meta, events } = await readSession(dir);
-	const report = Report.parse(await Bun.file(join(dir, "report.json")).json());
+	const report = Report.parse(await reportFile.json());
 	const video = join(dir, "video.mp4");
 	if (!(await Bun.file(video).exists())) console.warn(`No video.mp4 in ${dir}; run \`playtest finalize\` first.`);
 
