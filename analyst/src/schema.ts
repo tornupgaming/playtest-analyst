@@ -46,8 +46,13 @@ export type TranscriptTurn = z.infer<typeof TranscriptTurn>;
 
 // --- Report -----------------------------------------------------------------
 
-export const Category = z.enum(["confusion", "difficulty", "pacing", "ui", "bug"]);
+/** What in the game caused the problem, i.e. what the developer would change. Scored by eval. */
+export const Category = z.enum(["difficulty", "pacing", "ui", "bug"]);
 export type Category = z.infer<typeof Category>;
+
+/** How the player felt, from what they said and did. Reported, not scored (TUG-125). */
+export const Reaction = z.enum(["confused", "frustrated", "bored", "surprised"]);
+export type Reaction = z.infer<typeof Reaction>;
 
 /** A finding as the model writes it. Every field is required (nullable instead of optional)
  * so the schema works as a strict json_schema output format. */
@@ -55,6 +60,7 @@ export const ModelFinding = z.object({
 	t_start: z.number(),
 	t_end: z.number(),
 	category: Category,
+	reaction: Reaction.nullable(),
 	severity: z.enum(["low", "medium", "high"]),
 	zone: z.string().nullable(),
 	summary: z.string(),

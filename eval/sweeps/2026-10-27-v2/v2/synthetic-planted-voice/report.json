@@ -1,0 +1,257 @@
+{
+  "schema": 1,
+  "session_id": "synthetic-planted-voice",
+  "created_at": "2026-10-27T23:09:12.394Z",
+  "model": "muse-wonder-1.0",
+  "config": "v2",
+  "findings": [
+    {
+      "id": "f1",
+      "t_start": 6.2,
+      "t_end": 30.9,
+      "category": "difficulty",
+      "reaction": "frustrated",
+      "severity": "high",
+      "zone": "ledge",
+      "summary": "The jump to the small floating platform is too far for this point in the game. The player fell four times in the ledge zone before finally making it across.",
+      "evidence": {
+        "quotes": [
+          {
+            "t": 15.3,
+            "text": "Is this jump even possible?"
+          },
+          {
+            "t": 20.9,
+            "text": "Come on, that's that's way too far."
+          }
+        ],
+        "telemetry": [
+          "zone_enter at 6.2 s zone=\"ledge\"",
+          "death at 9.6 s cause=\"fall\" zone=\"ledge\"",
+          "death at 14.0 s cause=\"fall\" zone=\"ledge\"",
+          "death at 19.9 s cause=\"fall\" zone=\"ledge\"",
+          "death at 24.6 s cause=\"fall\" zone=\"ledge\"",
+          "zone_enter at 30.9 s zone=\"plaza\""
+        ],
+        "visual": "The player repeatedly runs and jumps from the green path toward a small floating platform ahead, falls into the sky four times, and respawns behind the same gap before finally reaching it."
+      },
+      "suggested_fix": "Move the small floating landing platform about 30% closer to the take-off platform and make it wider, so this early jump is clearly shorter than the maximum jump distance.",
+      "highlight": {
+        "t": 7,
+        "prompts": [
+          "small green floating platform",
+          "tiny green square platform",
+          "green island platform"
+        ]
+      },
+      "annotated_frame": "analysis/frames/v2/f1.png",
+      "annotated_prompt": "green island platform",
+      "annotated_t": 7
+    },
+    {
+      "id": "f2",
+      "t_start": 30.9,
+      "t_end": 70.9,
+      "category": "ui",
+      "reaction": "confused",
+      "severity": "high",
+      "zone": "plaza",
+      "summary": "The objective says to reach a beacon, but no beacon or direction marker is visible in the plaza. The player spent about 40 seconds walking in circles before finding the steps up.",
+      "evidence": {
+        "quotes": [
+          {
+            "t": 31.9,
+            "text": "Reach the beacon. What beacon?"
+          },
+          {
+            "t": 40.2,
+            "text": "Where am I going?"
+          },
+          {
+            "t": 52.4,
+            "text": "I'm just going in circles here."
+          },
+          {
+            "t": 60.2,
+            "text": "Oh, steps. Maybe up there?"
+          }
+        ],
+        "telemetry": [
+          "zone_enter at 30.9 s zone=\"plaza\"",
+          "objective_update at 30.9 s text=\"Reach the beacon.\"",
+          "zone_enter at 70.9 s zone=\"hall\""
+        ],
+        "visual": "The player wanders around the sandy plaza between tall brown pillars and crates, repeatedly turning back and circling the same area. No beacon, beam, or marker is visible in the player's view before the player eventually finds small green steps at the side."
+      },
+      "suggested_fix": "Add a tall, pulsing light beam above the correct exit from the plaza and an on-screen direction marker labelled \"Beacon\", both visible from the plaza entrance.",
+      "highlight": null
+    },
+    {
+      "id": "f3",
+      "t_start": 70.9,
+      "t_end": 100.1,
+      "category": "ui",
+      "reaction": "confused",
+      "severity": "medium",
+      "zone": "hall",
+      "summary": "The button that opens the gate is small and sits high on a shelf, so the player did not notice it for most of the room. The player tried the closed gate first and wandered for about 29 seconds before spotting the button.",
+      "evidence": {
+        "quotes": [
+          {
+            "t": 72.6,
+            "text": "Find a way through how?"
+          },
+          {
+            "t": 84.9,
+            "text": "this gate won't budge."
+          },
+          {
+            "t": 93.9,
+            "text": "Is that a button up there?"
+          }
+        ],
+        "telemetry": [
+          "zone_enter at 70.9 s zone=\"hall\"",
+          "objective_update at 70.9 s text=\"Find a way through.\"",
+          "objective_update at 100.1 s text=\"The gate is open. Find the exit.\""
+        ],
+        "visual": "The player circles the pale-floored room, walks up to the closed wooden gate in the wall and jumps at it, and only much later notices the small red button on a high shelf. The player then climbs a crate to reach the shelf and press it."
+      },
+      "suggested_fix": "Make the red button twice as large, add a pulsing yellow outline around it, and paint a matching red line from the gate to the button shelf so the connection is clear from the room entrance.",
+      "highlight": {
+        "t": 98.5,
+        "prompts": [
+          "small red round button",
+          "red button on shelf",
+          "red circular button"
+        ]
+      }
+    },
+    {
+      "id": "f4",
+      "t_start": 108.2,
+      "t_end": 126.4,
+      "category": "difficulty",
+      "reaction": "frustrated",
+      "severity": "medium",
+      "zone": "drop",
+      "summary": "An enemy reaches the player almost as soon as the player lands in the drop room, before the player can see and react to it. This caused two quick enemy deaths in the same place.",
+      "evidence": {
+        "quotes": [
+          {
+            "t": 111.1,
+            "text": "What? I couldn't even see it."
+          },
+          {
+            "t": 118.3,
+            "text": "That's not fair. It gets you the second you land."
+          }
+        ],
+        "telemetry": [
+          "zone_enter at 108.2 s zone=\"drop\"",
+          "death at 110.0 s cause=\"enemy\" zone=\"drop\"",
+          "zone_enter at 113.9 s zone=\"drop\"",
+          "death at 117.5 s cause=\"enemy\" zone=\"drop\"",
+          "zone_enter at 121.2 s zone=\"drop\"",
+          "zone_exit at 126.4 s zone=\"drop\""
+        ],
+        "visual": "The player drops through a narrow brown shaft into a small green room where a red spotted mushroom character is close to the landing area. The player is killed soon after landing twice, then gets past on the third attempt."
+      },
+      "suggested_fix": "Move the mushroom enemy's starting position to the far side of the drop room and stop it moving for the first 2 seconds after the player lands, giving the player time to see it and react.",
+      "highlight": {
+        "t": 109,
+        "prompts": [
+          "red spotted mushroom character",
+          "small red mushroom creature",
+          "red and white mushroom"
+        ]
+      },
+      "annotated_frame": "analysis/frames/v2/f4.png",
+      "annotated_prompt": "red spotted mushroom character",
+      "annotated_t": 109
+    },
+    {
+      "id": "f5",
+      "t_start": 126.4,
+      "t_end": 146.5,
+      "category": "ui",
+      "reaction": "confused",
+      "severity": "medium",
+      "zone": "fork",
+      "summary": "The EXIT sign at the fork points left, but that route is a dead end. The player followed the sign, had to backtrack to the fork, and lost about 16 seconds.",
+      "evidence": {
+        "quotes": [
+          {
+            "t": 129.2,
+            "text": "Exit sign points left. Okay,"
+          },
+          {
+            "t": 136.8,
+            "text": "Dead end, but the the sign said exit."
+          }
+        ],
+        "telemetry": [
+          "zone_enter at 126.4 s zone=\"fork\"",
+          "zone_enter at 130.4 s zone=\"fork_left\"",
+          "zone_enter at 144.7 s zone=\"fork\"",
+          "zone_exit at 144.8 s zone=\"fork_left\"",
+          "zone_exit at 146.5 s zone=\"fork\""
+        ],
+        "visual": "An EXIT sign with a red arrow pointing left stands at the green maze junction. The player follows it left, reaches a dead end, then turns around and walks back to the junction before taking the other way."
+      },
+      "suggested_fix": "Turn the red arrow on the EXIT sign so it points toward the route that leads to the corridor, instead of pointing left into the dead end.",
+      "highlight": {
+        "t": 128.5,
+        "prompts": [
+          "white EXIT text sign",
+          "red arrow direction sign",
+          "brown wooden exit signpost"
+        ]
+      },
+      "annotated_frame": "analysis/frames/v2/f5.png",
+      "annotated_prompt": "red arrow direction sign",
+      "annotated_t": 128.5
+    },
+    {
+      "id": "f6",
+      "t_start": 149.1,
+      "t_end": 189.5,
+      "category": "pacing",
+      "reaction": "bored",
+      "severity": "medium",
+      "zone": "corridor",
+      "summary": "The final corridor is a long, empty straight walk with nothing to do or decide. The player spent about 40 seconds just walking to the flag.",
+      "evidence": {
+        "quotes": [
+          {
+            "t": 165.2,
+            "text": "this goes on a while"
+          },
+          {
+            "t": 181,
+            "text": "Still walking."
+          },
+          {
+            "t": 187.5,
+            "text": "There's the flag. Finally."
+          }
+        ],
+        "telemetry": [
+          "zone_enter at 149.1 s zone=\"corridor\"",
+          "zone_exit at 189.5 s zone=\"corridor\"",
+          "objective_update at 190.1 s text=\"Course complete!\""
+        ],
+        "visual": "The player walks in a straight line down a very long bright-green corridor between green walls, passing repeated grey pillars with no turns, obstacles, or other things to do, until a small red flag finally appears at the far end."
+      },
+      "suggested_fix": "Shorten this corridor by about half by moving the flag platform closer to the entrance, cutting the empty walk while keeping the same final view.",
+      "highlight": null
+    }
+  ],
+  "usage": {
+    "input_tokens": 27097,
+    "cached_tokens": 0,
+    "output_tokens": 9230,
+    "cost_usd": 0.292988,
+    "latency_s": 89.4
+  }
+}

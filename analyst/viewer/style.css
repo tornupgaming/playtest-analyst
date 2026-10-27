@@ -15,7 +15,6 @@
 	--faint: #59616d;
 	/* Category accents from the Kenney Platformer Kit palette. */
 	--difficulty: #ec3f5f; /* berry red */
-	--confusion: #ffc425; /* sun yellow */
 	--ui: #3fa9f5; /* sky blue */
 	--pacing: #62c83c; /* grass green */
 	--bug: #f2843f; /* clay orange */
@@ -53,7 +52,7 @@ header {
 .brand { display: flex; align-items: center; gap: 10px; font: 600 21px/1 "Fredoka", var(--sans); letter-spacing: 0.01em; }
 .logo {
 	width: 22px; height: 22px; border-radius: 6px;
-	background: conic-gradient(var(--difficulty) 0 20%, var(--confusion) 0 40%, var(--pacing) 0 60%, var(--ui) 0 80%, var(--bug) 0);
+	background: conic-gradient(var(--difficulty) 0 25%, var(--pacing) 0 50%, var(--ui) 0 75%, var(--bug) 0);
 }
 .session { display: flex; align-items: baseline; gap: 14px; color: var(--muted); font-size: 14px; }
 .session strong { color: var(--text); font-weight: 600; font-size: 15px; }
@@ -145,6 +144,7 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 600px; 
 .card.active { background: var(--raised); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent), 0 8px 30px rgb(0 0 0 / 0.4); cursor: default; }
 .card-head { display: flex; align-items: center; gap: 14px; font-size: 12px; }
 .category { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.reaction { color: var(--muted); font-style: italic; }
 .severity { display: flex; align-items: center; gap: 2px; color: var(--muted); text-transform: capitalize; }
 .severity i { width: 4px; height: 11px; border-radius: 1px; background: var(--line); }
 .severity i:last-of-type { margin-right: 5px; }

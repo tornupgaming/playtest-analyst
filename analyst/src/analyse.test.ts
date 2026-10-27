@@ -59,7 +59,7 @@ const { loadPrevious } = await import("./compare.ts");
 const { run } = await import("./finalize.ts");
 
 const LATE = {
-	t_start: 2.0, t_end: 2.8, category: "confusion", severity: "medium", zone: null,
+	t_start: 2.0, t_end: 2.8, category: "ui", reaction: "confused", severity: "medium", zone: null,
 	summary: "The player asks where to go.",
 	evidence: { quotes: [{ t: 1.2, text: "where do I go" }], telemetry: ["input_idle 1.0 s at 1.5 s"], visual: "The player stands still." },
 	suggested_fix: "Point the camera at the exit.",
@@ -252,7 +252,7 @@ test("with a previous report, findings are tagged new or persisting and unmatche
 	const old = (id: string, category: string, zone: string, summary: string) => ({ ...LATE, id, category, zone, summary });
 	await Bun.write(previous, JSON.stringify({
 		schema: 1, session_id: "build-1", created_at: "2026-10-25T00:00:00Z", model: "muse-wonder-1.0", config: "v0",
-		findings: [old("f1", "difficulty", "ledge", "The player falls at the ledge."), old("f2", "confusion", "hub", "The player asks where to go."), old("f3", "pacing", "lift", "The lift is slow.")],
+		findings: [old("f1", "difficulty", "ledge", "The player falls at the ledge."), old("f2", "ui", "hub", "The player asks where to go."), old("f3", "pacing", "lift", "The lift is slow.")],
 		usage: { input_tokens: 1, cached_tokens: 0, output_tokens: 1, cost_usd: 0, latency_s: 1 },
 	}));
 	await Bun.write(patches, JSON.stringify({ patches: [{ finding_id: "f1", file: "level/tuning.tres", diff: "-gap = 4\n+gap = 3", rationale: "Too wide.", summary: "Narrow the ledge gap" }] }));

@@ -3,6 +3,7 @@ title: Muse Wonder video input
 updated: 2026-10-27
 sources:
   - eval/sweeps/2026-10-26-synthetic/README.md
+  - eval/sweeps/2026-10-27-v2/README.md
   - spikes/tug-93/FINDINGS.md
   - spikes/tug-93/probe.py
   - spikes/tug-93/results/
@@ -84,6 +85,7 @@ These runs show that:
 - On the 190 s sessions, the telemetry timeline added about 480 input tokens and the transcript about 370. [sweep](../../eval/sweeps/2026-10-26-synthetic/README.md)
 - On planted-novoice, v0 and its repeat (identical input) reported five of the same problems with identical windows, to 0.1 s. One run labelled the plaza problem `ui` and the other `confusion`, and the repeat left out a sixth finding (the hall) that the first run had. [v0](../../eval/sweeps/2026-10-26-synthetic/v0/planted-novoice/report.json), [repeat](../../eval/sweeps/2026-10-26-synthetic/v0-rep/planted-novoice/report.json)
 - Between a planted run and its repeat with identical input, output tokens differed by a factor of 1.12–1.47 (v1 planted-novoice: 12,142 then 8,270). [sweep](../../eval/sweeps/2026-10-26-synthetic/README.md)
+- 2026-10-27, prompt v2 (categories `difficulty`, `pacing`, `ui`, `bug` plus a separate `reaction` field; TUG-125), same sessions and settings, v2 and a repeat (8 runs): every finding that matched a plant had the key's category, so strict recall equalled recall-any (1.00 and 0.92). The one miss was the hall plant in the repeat on planted-novoice. No false positives. Output tokens on planted runs: 9,230–13,665. [sweep](../../eval/sweeps/2026-10-27-v2/README.md)
 
 ### Token counting endpoint
 

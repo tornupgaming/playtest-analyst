@@ -25,4 +25,4 @@ export async function loadConfig(path: string): Promise<AnalysisConfig> {
 	return { ...config, prompt: resolve(dirname(path), config.prompt) };
 }
 
-export const DEFAULT_CONFIG = resolve(import.meta.dir, "../configs/v0.json");
+export const DEFAULT_CONFIG = resolve(import.meta.dir, "../configs/v2.json");

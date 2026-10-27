@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "session_id": "synthetic-planted-novoice",
+  "created_at": "2026-10-27T23:11:28.150Z",
+  "model": "muse-wonder-1.0",
+  "config": "v2-rep",
+  "findings": [
+    {
+      "id": "f1",
+      "t_start": 6.2,
+      "t_end": 30.9,
+      "category": "difficulty",
+      "reaction": null,
+      "severity": "medium",
+      "zone": "ledge",
+      "summary": "The player fell to their death four times in the first ledge section while trying to cross to the small platform before the entrance, making an early jump much harder than the straight path before it.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 6.2 s zone=\"ledge\"",
+          "death at 9.6 s cause=\"fall\" zone=\"ledge\"",
+          "retry at 9.6 s",
+          "death at 14.0 s cause=\"fall\" zone=\"ledge\"",
+          "retry at 14.0 s",
+          "death at 19.9 s cause=\"fall\" zone=\"ledge\"",
+          "retry at 19.9 s",
+          "death at 24.6 s cause=\"fall\" zone=\"ledge\"",
+          "retry at 24.6 s",
+          "zone_enter at 30.9 s zone=\"plaza\""
+        ],
+        "visual": "The player runs along the green path and narrow bridge toward the brown entrance, repeatedly attempts the jump involving the small isolated green platform in front of that entrance, falls into the sky below, and respawns to attempt it again."
+      },
+      "suggested_fix": "Widen the small isolated green landing platform to twice its current width and move it one tile closer to the end of the narrow bridge so the jump is shorter.",
+      "highlight": {
+        "t": 7,
+        "prompts": [
+          "the small green floating platform",
+          "the tiny green platform block",
+          "the floating green square platform"
+        ]
+      },
+      "annotated_frame": "analysis/frames/v2-rep/f1.png",
+      "annotated_prompt": "the small green floating platform",
+      "annotated_t": 9
+    },
+    {
+      "id": "f2",
+      "t_start": 30.9,
+      "t_end": 70.9,
+      "category": "ui",
+      "reaction": "confused",
+      "severity": "medium",
+      "zone": "plaza",
+      "summary": "The objective says 'Reach the beacon,' but no beacon or direction marker is visible in the plaza, so the player wandered and backtracked for 40 seconds before finding the climbing platforms to the exit.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 30.9 s zone=\"plaza\"",
+          "objective_update at 30.9 s text=\"Reach the beacon.\"",
+          "zone_enter at 70.9 s zone=\"hall\""
+        ],
+        "visual": "The player loops around the orange pillars and wooden crates on the beige floor, runs into brown walls and dead ends, and turns back several times. No beacon, light beam, or marker is visible in the plaza. After about 40 seconds the player finds and climbs green-topped platforms on a side wall to reach the raised doorway."
+      },
+      "suggested_fix": "Add a tall, bright blue light beam above the raised doorway at the top of the green wall platforms, visible from the plaza entrance over the pillars.",
+      "highlight": null
+    },
+    {
+      "id": "f3",
+      "t_start": 108.2,
+      "t_end": 126.4,
+      "category": "difficulty",
+      "reaction": null,
+      "severity": "medium",
+      "zone": "drop",
+      "summary": "The mushroom enemy killed the player twice shortly after they dropped into the room, because it was already close to the landing spot before the player could react or get clear.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 108.2 s zone=\"drop\"",
+          "death at 110.0 s cause=\"enemy\" zone=\"drop\"",
+          "retry at 110.0 s",
+          "zone_enter at 113.9 s zone=\"drop\"",
+          "death at 117.5 s cause=\"enemy\" zone=\"drop\"",
+          "retry at 117.5 s",
+          "zone_enter at 121.2 s zone=\"drop\"",
+          "zone_exit at 126.4 s zone=\"drop\""
+        ],
+        "visual": "The player drops through a narrow enclosed shaft into a green room where the red-capped mushroom is close to the landing area. The player is killed shortly after landing on the first two attempts and only gets past on the third attempt."
+      },
+      "suggested_fix": "Move the mushroom's starting position to the far side of the green drop room, at least six tiles from where the player lands, so the player has time to see it and jump over it after landing.",
+      "highlight": {
+        "t": 109,
+        "prompts": [
+          "the red mushroom character",
+          "the red spotted mushroom figure",
+          "the small red mushroom figure"
+        ]
+      },
+      "annotated_frame": "analysis/frames/v2-rep/f3.png",
+      "annotated_prompt": "the red mushroom character",
+      "annotated_t": 109
+    },
+    {
+      "id": "f4",
+      "t_start": 126.4,
+      "t_end": 146.5,
+      "category": "ui",
+      "reaction": "confused",
+      "severity": "low",
+      "zone": null,
+      "summary": "The EXIT sign at the fork directed the player into the left branch, which is a dead end, costing about 16 seconds of travel and backtracking before they took the correct route.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 126.4 s zone=\"fork\"",
+          "zone_enter at 130.4 s zone=\"fork_left\"",
+          "zone_exit at 130.5 s zone=\"fork\"",
+          "zone_enter at 144.7 s zone=\"fork\"",
+          "zone_exit at 144.8 s zone=\"fork_left\"",
+          "zone_exit at 146.5 s zone=\"fork\"",
+          "zone_enter at 149.1 s zone=\"corridor\""
+        ],
+        "visual": "At the fork the player passes a sign marked EXIT with a red arrow and follows the left branch through the green-walled maze. That branch ends without an exit, so the player turns around, retraces the branch to the fork, and then takes the other route toward the corridor."
+      },
+      "suggested_fix": "Rotate the red EXIT arrow at the fork so it points toward the branch that leads to the corridor, not toward the fork_left dead end.",
+      "highlight": {
+        "t": 128,
+        "prompts": [
+          "the red arrow signpost",
+          "the wooden exit signpost",
+          "the red directional arrow sign"
+        ]
+      },
+      "annotated_frame": "analysis/frames/v2-rep/f4.png",
+      "annotated_prompt": "the red arrow signpost",
+      "annotated_t": 128
+    },
+    {
+      "id": "f5",
+      "t_start": 149.1,
+      "t_end": 189.5,
+      "category": "pacing",
+      "reaction": null,
+      "severity": "medium",
+      "zone": "corridor",
+      "summary": "The final corridor is a 40-second straight run through a repeating green passage with nothing to do, decide, or avoid, making the end of the course drag after the fork.",
+      "evidence": {
+        "quotes": [],
+        "telemetry": [
+          "zone_enter at 149.1 s zone=\"corridor\"",
+          "zone_exit at 189.5 s zone=\"corridor\"",
+          "objective_update at 190.1 s text=\"Course complete!\""
+        ],
+        "visual": "For the whole corridor section the player runs straight down one long green-walled passage. Identical grey pillars pass on both sides, with no turns, enemies, obstacles, items, or other decisions until the end of the run."
+      },
+      "suggested_fix": "Shorten the corridor by about two-thirds, removing the repeated middle pillar sections so the run from the fork to the finish takes about 15 seconds instead of 40 seconds.",
+      "highlight": null
+    }
+  ],
+  "usage": {
+    "input_tokens": 26756,
+    "cached_tokens": 26726,
+    "output_tokens": 13227,
+    "cost_usd": 0.270005,
+    "latency_s": 146
+  }
+}

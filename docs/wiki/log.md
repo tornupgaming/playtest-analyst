@@ -62,3 +62,6 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 ## [2026-10-27] ingest | docs/recorder.md#measured (TUG-95 real-mic run)
 - capture-sync.md: added the 120 s real-mic run of the in-process ffmpeg mic (39/39 beeps, 14–21 ms, −0.8 ms/min); removed the open question it answers.
 - index.md: updated the capture-sync.md line.
+
+## [2026-10-27] ingest | eval/sweeps/2026-10-27-v2/README.md (TUG-129 prompt v2 sweep)
+- muse-wonder-video.md: added the v2 sweep result (strict recall equals recall-any, 1.00 and 0.92) under synthetic sessions.

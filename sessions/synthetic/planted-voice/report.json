@@ -1,22 +1,23 @@
 {
   "schema": 1,
   "session_id": "synthetic-planted-voice",
-  "created_at": "2026-10-27T06:07:57.644Z",
+  "created_at": "2026-10-27T23:14:15.206Z",
   "model": "muse-wonder-1.0",
-  "config": "v0",
+  "config": "v2",
   "findings": [
     {
       "id": "f1",
       "t_start": 6.2,
       "t_end": 30.9,
       "category": "difficulty",
+      "reaction": "frustrated",
       "severity": "high",
       "zone": "ledge",
-      "summary": "The jump across the ledge gap is too demanding for the opening section. The player fell four times, questioned whether the jump was possible, and needed about 24 seconds of retries to cross.",
+      "summary": "The gap jump in the ledge zone is too demanding for this early point in the course. The player fell four times over about 24 seconds before making it across.",
       "evidence": {
         "quotes": [
           {
-            "t": 10.3,
+            "t": 10.4,
             "text": "Oh, missed it."
           },
           {
@@ -24,57 +25,58 @@
             "text": "Is this jump even possible?"
           },
           {
-            "t": 20.9,
+            "t": 21.2,
             "text": "Come on, that's way too far."
           },
           {
-            "t": 29.3,
-            "text": "Finally,"
+            "t": 29.4,
+            "text": "Finally."
           }
         ],
         "telemetry": [
-          "zone_enter at 6.2 s",
-          "death at 9.6 s",
+          "zone_enter at 6.2 s, zone=\"ledge\"",
+          "death at 9.6 s, cause=\"fall\", zone=\"ledge\"",
           "retry at 9.6 s",
-          "death at 14.0 s",
+          "death at 14.0 s, cause=\"fall\", zone=\"ledge\"",
           "retry at 14.0 s",
-          "death at 19.9 s",
+          "death at 19.9 s, cause=\"fall\", zone=\"ledge\"",
           "retry at 19.9 s",
-          "death at 24.6 s",
+          "death at 24.6 s, cause=\"fall\", zone=\"ledge\"",
           "retry at 24.6 s",
-          "zone_enter at 30.9 s"
+          "zone_enter at 30.9 s, zone=\"plaza\""
         ],
-        "visual": "The character runs along the opening green path, jumps towards the next small green platform, falls into the gap below, returns to the path and repeats the same jump several times before finally landing and continuing into the brown-walled area."
+        "visual": "The player runs along the green path and repeatedly tries to jump a gap to a small floating green platform. The character falls into the sky below four times and respawns on the path before finally landing the jump."
       },
-      "suggested_fix": "Move the landing platform about one tile closer to the take-off edge and make it twice as wide, so this opening jump can be made without a near-perfect run-up.",
+      "suggested_fix": "Move the small landing platform about one tile closer to the take-off ledge and widen it by one tile, so a normal running jump lands with room to spare.",
       "highlight": {
-        "t": 17,
+        "t": 7,
         "prompts": [
           "the small green floating platform",
-          "the green square platform ahead",
-          "the small floating island platform"
+          "the green square landing platform",
+          "the small green platform ahead"
         ]
       },
-      "annotated_frame": "analysis/frames/v0/f1.png",
-      "annotated_prompt": "the small green floating platform",
-      "annotated_t": 19
+      "annotated_frame": "analysis/frames/v2/f1.png",
+      "annotated_prompt": "the small green platform ahead",
+      "annotated_t": 7
     },
     {
       "id": "f2",
       "t_start": 30.9,
       "t_end": 70.9,
-      "category": "confusion",
+      "category": "ui",
+      "reaction": "confused",
       "severity": "high",
       "zone": "plaza",
-      "summary": "The objective says to reach a beacon, but no beacon or marker can be seen in the plaza. The player went in circles for most of the 40 seconds in this zone before finding the corner steps by chance.",
+      "summary": "The objective says 'Reach the beacon' but no beacon or marker is visible in the plaza. The player wandered and circled the area for about 40 seconds before finding the steps that lead onward.",
       "evidence": {
         "quotes": [
           {
-            "t": 32,
-            "text": "Reach the beacon what beacon?"
+            "t": 31.9,
+            "text": "Reach the beacon. What beacon?"
           },
           {
-            "t": 40.2,
+            "t": 40.1,
             "text": "Where am I going?"
           },
           {
@@ -82,35 +84,29 @@
             "text": "I'm just going in circles here."
           },
           {
-            "t": 60.3,
+            "t": 60.1,
             "text": "Oh, steps. Maybe up there?"
           }
         ],
         "telemetry": [
-          "zone_enter at 30.9 s",
-          "objective_update at 30.9 s",
-          "zone_enter at 70.9 s"
+          "zone_enter at 30.9 s, zone=\"plaza\"",
+          "objective_update at 30.9 s, text=\"Reach the beacon.\"",
+          "zone_enter at 70.9 s, zone=\"hall\""
         ],
-        "visual": "No beacon is visible from ground level in the sandy plaza. The player loops among tall brown pillars and crates, checks walls and dead ends, passes the same places again, and only after about 30 seconds of wandering finds the small green-topped steps in a far corner and climbs them."
+        "visual": "The player enters a sandy plaza with tall brown pillars and crates. No beacon, light beam, or marker is visible on screen. The player loops around the pillars, runs along walls, and passes the same crates several times before noticing low green-topped steps in a corner and climbing to the upper walkway."
       },
-      "suggested_fix": "Add a tall, bright column of light over the raised exit reached by the corner steps, tall enough to be seen above the plaza pillars from the plaza entrance, and keep the objective wording as 'Reach the beacon'.",
-      "highlight": {
-        "t": 33,
-        "prompts": [
-          "the white objective text",
-          "the Reach the beacon text",
-          "the top-left HUD text"
-        ]
-      }
+      "suggested_fix": "Add a tall pulsing light beam above the steps on the plaza wall and an objective marker pointing to it, so 'Reach the beacon' matches something the player can actually see from the plaza entrance.",
+      "highlight": null
     },
     {
       "id": "f3",
       "t_start": 70.9,
       "t_end": 100.1,
-      "category": "confusion",
+      "category": "ui",
+      "reaction": "confused",
       "severity": "medium",
       "zone": "hall",
-      "summary": "The player did not know how to open the gate. Nothing visibly linked the closed gate to the red button on the high shelf, so the player tried the gate itself and searched the room for about 29 seconds before spotting the button.",
+      "summary": "The button that opens the gate is small and easy to miss on its high shelf. The player spent about 29 seconds circling the room and trying the closed gate before spotting it.",
       "evidence": {
         "quotes": [
           {
@@ -118,33 +114,28 @@
             "text": "Find a way through how?"
           },
           {
-            "t": 84.6,
+            "t": 84.8,
             "text": "This gate won't budge."
           },
           {
             "t": 94,
             "text": "Is that a button up there?"
-          },
-          {
-            "t": 101.4,
-            "text": "Gates open."
           }
         ],
         "telemetry": [
-          "zone_enter at 70.9 s",
-          "objective_update at 70.9 s",
-          "objective_update at 100.1 s",
-          "zone_exit at 105.3 s"
+          "zone_enter at 70.9 s, zone=\"hall\"",
+          "objective_update at 70.9 s, text=\"Find a way through.\"",
+          "objective_update at 100.1 s, text=\"The gate is open. Find the exit.\""
         ],
-        "visual": "The player enters a checkered room with a closed wooden gate in the brown far wall, walks into the gate and tries to move it, circles the crates, and only at about 94 s looks up at the raised shelf. The player then climbs a crate to the shelf and stands on the red button, after which the gate opens."
+        "visual": "The player enters an enclosed room with a closed wooden gate, several crates, and a small red button on a high orange shelf on the left wall. The player circles the room, runs and jumps at the closed gate, and only notices the small button after about 23 seconds, then climbs a crate to reach and press it."
       },
-      "suggested_fix": "Paint one thick red line on the wall and floor from the gate to the crate and up to the button shelf, and give the red button a steady pulsing glow, so the player can connect the gate with the button while still solving the crate climb.",
+      "suggested_fix": "Make the button twice as large, set it on a dark base with a pulsing white outline, and paint a red line on the wall from the gate to the button shelf so the connection is clear.",
       "highlight": {
-        "t": 94.5,
+        "t": 75,
         "prompts": [
-          "the red button on platform",
-          "the small red dome button",
-          "the red button on shelf"
+          "the small red round button",
+          "the red button on orange shelf",
+          "the round red button platform"
         ]
       }
     },
@@ -153,53 +144,55 @@
       "t_start": 108.2,
       "t_end": 126.4,
       "category": "difficulty",
+      "reaction": "frustrated",
       "severity": "medium",
       "zone": "drop",
-      "summary": "An enemy is placed where the player lands from the drop, where it cannot be seen in advance. It killed the player twice almost immediately after landing before the player got past on the third attempt.",
+      "summary": "The mushroom enemy in the drop zone reaches the player almost the moment they land, giving them no time to see it or react. It killed the player twice in about 18 seconds.",
       "evidence": {
         "quotes": [
           {
             "t": 111,
-            "text": "What? I couldn't even see it."
+            "text": "What, I couldn't even see it. it"
           },
           {
-            "t": 118.1,
+            "t": 118.3,
             "text": "That's not fair. It gets you the second you land."
           }
         ],
         "telemetry": [
-          "zone_enter at 108.2 s",
-          "death at 110.0 s",
+          "zone_enter at 108.2 s, zone=\"drop\"",
+          "death at 110.0 s, cause=\"enemy\", zone=\"drop\"",
           "retry at 110.0 s",
-          "zone_enter at 113.9 s",
-          "death at 117.5 s",
+          "zone_enter at 113.9 s, zone=\"drop\"",
+          "death at 117.5 s, cause=\"enemy\", zone=\"drop\"",
           "retry at 117.5 s",
-          "zone_enter at 121.2 s",
-          "zone_exit at 126.4 s"
+          "zone_enter at 121.2 s, zone=\"drop\"",
+          "zone_exit at 126.4 s, zone=\"drop\""
         ],
-        "visual": "The player drops down a narrow chute into a green-floored room where a red-spotted mushroom is waiting close to the landing and the exit doorway. The player is killed shortly after landing on the first two drops and only gets through on the third drop."
+        "visual": "The player drops down a narrow chute into a green room where a red-capped mushroom character is right in the landing area. It reaches the player almost immediately after landing on the first two attempts, killing them twice. On the third attempt the player jumps over it and escapes."
       },
-      "suggested_fix": "Move the mushroom's starting position to the far side of the drop room, several tiles away from the landing square, so the player lands safely, sees it, and has time to react.",
+      "suggested_fix": "Move the mushroom's starting position at least 4 metres away from the drop landing and make it wait 2 seconds after the player lands before it starts moving.",
       "highlight": {
-        "t": 108.7,
+        "t": 109.2,
         "prompts": [
           "the red spotted mushroom",
-          "the red and white mushroom",
-          "the small mushroom character"
+          "the red mushroom with white spots",
+          "the red capped mushroom character"
         ]
       },
-      "annotated_frame": "analysis/frames/v0/f4.png",
+      "annotated_frame": "analysis/frames/v2/f4.png",
       "annotated_prompt": "the red spotted mushroom",
-      "annotated_t": 108.7
+      "annotated_t": 109.2
     },
     {
       "id": "f5",
       "t_start": 126.4,
-      "t_end": 146.5,
+      "t_end": 149.1,
       "category": "ui",
+      "reaction": "confused",
       "severity": "medium",
       "zone": "fork",
-      "summary": "The EXIT sign at the fork points the player into a dead end. The player trusted the sign, walked the left branch, hit the dead end and had to backtrack to the fork.",
+      "summary": "The EXIT sign at the fork points left, but the left branch is a dead end. The player followed the sign, hit the end of the branch, and had to backtrack for about 15 seconds.",
       "evidence": {
         "quotes": [
           {
@@ -208,38 +201,40 @@
           },
           {
             "t": 136.9,
-            "text": "dead end but the sign said exit"
+            "text": "Dead end, but the sign said exit."
           }
         ],
         "telemetry": [
-          "zone_enter at 126.4 s",
-          "zone_enter at 130.4 s",
-          "zone_enter at 144.7 s",
-          "zone_exit at 146.5 s"
+          "zone_enter at 126.4 s, zone=\"fork\"",
+          "zone_enter at 130.4 s, zone=\"fork_left\"",
+          "zone_enter at 144.7 s, zone=\"fork\"",
+          "zone_exit at 146.5 s, zone=\"fork\"",
+          "zone_enter at 149.1 s, zone=\"corridor\""
         ],
-        "visual": "The player reaches a white EXIT sign with a red arrow pointing left, follows the left branch through the green-walled maze, reaches a dead end, turns around and retraces the route to the fork before taking the other branch towards the corridor."
+        "visual": "The player reaches a green hedge junction with an EXIT sign and a red arrow pointing left. The player follows the arrow into the left branch, which ends at a blank hedge wall, then turns around, retraces the branch, and takes the other route at the junction."
       },
-      "suggested_fix": "Rotate the red arrow on this EXIT sign so it points along the branch that leads to the corridor instead of into the fork_left dead end.",
+      "suggested_fix": "Rotate the red arrow on the EXIT signpost 180 degrees so it points toward the corridor route, not into the dead-end branch.",
       "highlight": {
-        "t": 128,
+        "t": 127.8,
         "prompts": [
-          "the red arrow exit sign",
-          "the wooden exit arrow sign",
-          "the red left-pointing signpost"
+          "the red arrow signpost",
+          "the wooden exit signpost",
+          "the sign with red arrow"
         ]
       },
-      "annotated_frame": "analysis/frames/v0/f5.png",
-      "annotated_prompt": "the red arrow exit sign",
-      "annotated_t": 130
+      "annotated_frame": "analysis/frames/v2/f5.png",
+      "annotated_prompt": "the red arrow signpost",
+      "annotated_t": 127.8
     },
     {
       "id": "f6",
       "t_start": 149.1,
       "t_end": 189.5,
       "category": "pacing",
+      "reaction": "bored",
       "severity": "medium",
       "zone": "corridor",
-      "summary": "The final corridor is a long, empty straight walk with nothing to do or decide. The player commented on how long it went on while walking its full length for about 40 seconds.",
+      "summary": "The final corridor is a single straight walk of about 40 seconds with nothing to do or look at along the way. The player commented twice that it was still going before finally reaching the flag.",
       "evidence": {
         "quotes": [
           {
@@ -247,30 +242,30 @@
             "text": "This goes on a while."
           },
           {
-            "t": 181,
-            "text": "still walking"
+            "t": 181.1,
+            "text": "Still walking."
           },
           {
             "t": 187.4,
-            "text": "There's the flag finally."
+            "text": "There's the flag. Finally."
           }
         ],
         "telemetry": [
-          "zone_enter at 149.1 s",
-          "zone_exit at 189.5 s",
-          "objective_update at 190.1 s"
+          "zone_enter at 149.1 s, zone=\"corridor\"",
+          "zone_exit at 189.5 s, zone=\"corridor\"",
+          "objective_update at 190.1 s, text=\"Course complete!\""
         ],
-        "visual": "For about 40 seconds the character simply walks straight down a long green corridor lined with repeated grey slabs, with no choice, obstacle or new sight, until the red flag on its yellow base finally appears near the end."
+        "visual": "The player walks in a straight line down a long, narrow green corridor between green walls lined with identical grey pillars. Nothing else appears and there are no turns or obstacles for about 40 seconds until the red flag at the end comes into view."
       },
-      "suggested_fix": "Cut the corridor to half its current length by removing the middle section of repeated slabs and reconnecting the entrance to the flag end, reducing the straight walk to about 20 seconds.",
+      "suggested_fix": "Shorten the corridor by roughly half, removing about 20 seconds of straight walking, so the flag is reached in around 15-20 seconds after entering.",
       "highlight": null
     }
   ],
   "usage": {
-    "input_tokens": 26690,
+    "input_tokens": 27097,
     "cached_tokens": 0,
-    "output_tokens": 13943,
-    "cost_usd": 0.38562,
-    "latency_s": 144.5
+    "output_tokens": 8947,
+    "cost_usd": 0.287328,
+    "latency_s": 90.9
   }
 }

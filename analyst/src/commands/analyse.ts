@@ -14,7 +14,7 @@ export async function run(argv: string[]) {
 	});
 	const [dir] = positionals;
 	if (!dir || (values.patches && !values.previous)) {
-		console.error("Usage: playtest analyse <session> [--config analyst/configs/v0.json] [--out report.json] [--previous <previous report.json> [--patches patches.json]]");
+		console.error("Usage: playtest analyse <session> [--config analyst/configs/v2.json] [--out report.json] [--previous <previous report.json> [--patches patches.json]]");
 		return 2;
 	}
 	const out = values.out ?? join(dir, "report.json");
