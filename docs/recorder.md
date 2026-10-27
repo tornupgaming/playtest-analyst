@@ -22,6 +22,8 @@ The editor plugin (`addons/playtest_analyst/`) records a playtest into a session
 
    Both refuse while any tracked file has uncommitted changes, and Apply refuses a patch whose diff touches anything but its own file or whose file isn't in `playtest.json`'s `patch_allow`. Refusals and git errors appear under the buttons. Opening the project in the editor can itself rewrite `.import` files; commit those first.
 
+The dock, and the recorder's background `finalize`, run the CLI through your login shell (`$SHELL -lc 'exec "$@"'`, with the arguments passed separately), so it sees variables exported only in shell startup files, such as `META_MODEL_API_KEY` in `~/.zshenv`, even when the editor was started from a desktop launcher. With `SHELL` unset, bun runs directly.
+
 You can also record without the editor. Run `godot --path . --display-driver x11 -- --record`, or press F9 in any running build.
 
 Sessions go in `<project>/sessions/<id>/` when the game runs from the editor or a source checkout, and in `user://sessions/<id>/` in an exported game. `<id>` is the UTC start time, e.g. `2026-10-26T23-24-13`. The recorder puts a `.gdignore` in `sessions/` so Godot doesn't import the media.

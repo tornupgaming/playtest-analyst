@@ -54,13 +54,18 @@ static func sessions_root() -> String:
 	return ProjectSettings.globalize_path("user://sessions")
 
 
-## The command line for `playtest <command> <dir>` (analyst/src/cli.ts) through bun.
+## The command line for `playtest <command> <dir>` (analyst/src/cli.ts) through bun, run by
+## the user's login shell: an editor started from a desktop launcher lacks what is exported
+## only in shell startup files, such as META_MODEL_API_KEY in ~/.zshenv. The arguments reach
+## bun through "$@", never the script text. Runs bun directly when SHELL is unset.
 static func analyst(command: String, dir: String) -> PackedStringArray:
 	var bun := "bun"
 	var home_bun := OS.get_environment("HOME").path_join(".bun/bin/bun")
 	if FileAccess.file_exists(home_bun):
 		bun = home_bun  # the editor may be launched without ~/.bun/bin on PATH
-	return [bun, ProjectSettings.globalize_path(CLI), command, dir]
+	var line := PackedStringArray([bun, ProjectSettings.globalize_path(CLI), command, dir])
+	var shell := OS.get_environment("SHELL")
+	return line if shell.is_empty() else PackedStringArray([shell, "-lc", 'exec "$@"', "playtest"]) + line
 
 
 func is_recording() -> bool:
@@ -203,7 +208,7 @@ func _mark_incomplete(reason: String) -> void:
 ## the game; a missing bun or analyst is not an error.
 func _finalize() -> void:
 	var command := analyst("finalize", _dir)
-	if not FileAccess.file_exists(command[1]) or OS.create_process(command[0], command.slice(1)) == -1:
+	if not FileAccess.file_exists(ProjectSettings.globalize_path(CLI)) or OS.create_process(command[0], command.slice(1)) == -1:
 		print("PlaytestRecorder: skipped `playtest finalize` (no bun or %s)" % CLI)
 
 
