@@ -7,6 +7,7 @@ Facts established so far, each with a source. Rules: [CLAUDE.md](CLAUDE.md). His
 - [SAM 3.1 segmentation](sam-3-1.md): `sam-3.1` request and response shape, mask encoding, per-image price and limits from the docs; measured latency and which noun phrases matched on four level frames, and on key frames with several phrasings per finding (TUG-123).
 - [Muse Spark text and code](muse-spark.md): Spark ids, standard vs contributor mode, prices, reasoning effort and strict `json_schema` rules from the docs; tokens, cost and latency of one `playtest patch` run on `muse-spark-1.3`.
 - [Meta ASR](meta-asr.md): `muse-voice-transcribe-1.0` limits (10 min, 32 MB, WAV), modes, request shape and measured timestamp accuracy.
+- [Hackathon API credits](hackathon-credits.md): the $150 Meta Model API credit terms (claim deadline, expiry, billing after credits run out, and where the rules and Credit Terms disagree on validity); partner credit offers for open-weights models.
 
 ## Capture
 - [Screen, mic and telemetry sync](capture-sync.md): measured offsets and drift for Godot + ffmpeg x11grab on Linux, Godot vs ffmpeg mic lag on a real mic, the mix-rate drift, the in-process ffmpeg mic on loopback and a real mic, how ffmpeg and the editor behave when a recording game dies; alignment after `playtest finalize`; an ffmpeg `adelay` pitfall.
