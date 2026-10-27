@@ -158,13 +158,12 @@ func _on_game_message(name: String, data: Array) -> void:
 		_refresh(data[0])
 
 
-## Lists bundles newest first, selecting `select` if given.
+## Lists bundles newest first, then those one folder down (e.g. synthetic/planted-voice),
+## selecting `select` if given, else the newest.
 func _refresh(select := "") -> void:
 	_sessions.clear()
 	var root := Recorder.sessions_root()
-	var ids := Array(DirAccess.get_directories_at(root)) if DirAccess.dir_exists_absolute(root) else []
-	ids.reverse()
-	for id: String in ids:
+	for id in _bundles(root):
 		var dir := root.path_join(id)
 		var label := id
 		if FileAccess.file_exists(dir.path_join(Recorder.INCOMPLETE)) or not FileAccess.file_exists(dir.path_join("session.json")):
@@ -176,6 +175,28 @@ func _refresh(select := "") -> void:
 		if dir == select:
 			_sessions.select(_sessions.item_count - 1)
 	_load_patches()
+
+
+## Bundle paths under `root`, relative to it. A bundle is a folder holding session.json or
+## INCOMPLETE; any other folder is searched one level down.
+static func _bundles(root: String) -> Array[String]:
+	var is_bundle := func(dir: String) -> bool:
+		return FileAccess.file_exists(dir.path_join("session.json")) or FileAccess.file_exists(dir.path_join(Recorder.INCOMPLETE))
+	var newest_first := func(dir: String) -> Array:
+		var ids := Array(DirAccess.get_directories_at(dir)) if DirAccess.dir_exists_absolute(dir) else []
+		ids.sort()
+		ids.reverse()
+		return ids
+	var top: Array[String] = []
+	var nested: Array[String] = []
+	for id: String in newest_first.call(root):
+		if is_bundle.call(root.path_join(id)):
+			top.append(id)
+		else:
+			for sub: String in newest_first.call(root.path_join(id)):
+				if is_bundle.call(root.path_join(id).path_join(sub)):
+					nested.append(id.path_join(sub))
+	return top + nested
 
 
 func _update_buttons() -> void:
