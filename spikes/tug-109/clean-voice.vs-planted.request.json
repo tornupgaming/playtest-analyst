@@ -1,0 +1,189 @@
+{
+  "model": "muse-wonder-1.0",
+  "input": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "You are an experienced games user researcher reviewing one playtest session for a solo developer who cannot afford to watch the footage themselves. Your job is to find the moments where the game failed the player, explain why using evidence from the session, and suggest a concrete change the developer could make.\n\n## What you are given\n\n- **The screen recording** of the session, with no sound.\n- **The think-aloud transcript.** The player was asked to say what they were thinking as they played. Each line is one spoken turn, `[start–end]` in seconds.\n- **The telemetry**, one game event per line: `[time] type` followed by the event's data. Common types: `death`, `retry`, `zone_enter`, `zone_exit`, `input_idle`, `ui_open`, `ui_close`, `objective_update`. Games may log others.\n\n**Every time is in seconds on one session clock.** The video's first frame is t = 0, and the transcript and telemetry use the same clock. Use it for every time you write. Do not use timestamps shown on screen, if any.\n\nUse each source for what it is good at. Telemetry says exactly **when** things happened and where the player was. The video shows **what** the player saw and did. The transcript says **why**: what the player understood, expected, wanted or felt. The strongest findings are where two or three sources agree.\n\n## What counts as a finding\n\nA finding is a stretch of play where the game's design got in the player's way. Report each problem once. If the same problem recurs (several attempts at the same obstacle, several returns to the same place), make it one finding whose window spans the repeats, and say how many times it happened.\n\nUse exactly one category:\n\n- **confusion**: the player doesn't know what to do, where to go, or how something works. Signs: questions in the think-aloud, backtracking, trying the same wrong thing, long searches, acting on a wrong belief about the goal.\n- **difficulty**: the player knows what to do but can't do it, or fails in a way they feel is unfair. Signs: repeated deaths or retries in one place, frustration, a challenge far harder than what came before it, failures the player didn't see coming.\n- **pacing**: the rhythm of play is off. Long stretches with little to do, decide or look at, waiting, repetition that outstays its welcome, or the opposite: too much at once. Signs: boredom or impatience in the think-aloud, long time in one zone with little happening.\n- **ui**: the interface fails to communicate. HUD, menus, prompts, objective text, icons, and anything in the world the game relies on to tell the player something: it is missing, unreadable, hard to notice, ambiguous or misleading. Use **ui** when the cause is how information is presented, and **confusion** when the cause is the design of the task or the space.\n- **bug**: something behaves in a way the developer clearly did not intend: clipping, falling through geometry, a camera stuck in a wall, a control that does nothing, a broken state.\n\nSeverity, from the player's side:\n\n- **high**: blocks progress, costs a lot of time, or makes the player want to quit.\n- **medium**: clearly slows or frustrates the player, but they recover.\n- **low**: a noticeable rough edge that costs little.\n\nThings that are not findings: challenge the player enjoys and overcomes, brief pauses to look around, and the player's general comments that don't point to a moment in this session.\n\n## Evidence\n\nFill every field from what is actually in the session.\n\n- **t_start, t_end**: the window in which the problem affects the player.\n- **zone**: the zone name from the telemetry when the problem happens in one zone, else null.\n- **summary**: one or two sentences saying what happened to the player and why, in plain language a developer can act on.\n- **evidence.quotes**: the player's own words, copied from the transcript, each with its turn's start time. Use an empty list if the player said nothing relevant. Never paraphrase into a quote and never write words the player didn't say.\n- **evidence.telemetry**: the events that support the finding, each written with its time and type as they appear in the timeline, e.g. \"ui_open at 41.2 s, ui_close at 43.0 s\". Empty if none apply.\n- **evidence.visual**: what the video shows during the window: what the player did and what was on screen.\n- **suggested_fix**: one concrete change to the game, specific enough to try in an afternoon: a value to tune, a line of text to rewrite, something to move, add, remove, recolour or resize. Tie it to the cause you found.\n- **highlight**: the single frame that best shows the cause, and the thing in it to outline. `t` is a time inside the window when that thing is clearly on screen. `prompt` is a short noun phrase, two to six words, naming one visible object or interface element as it looks on screen, so a segmentation model can find it in that frame. Name the thing the developer should change, not the player. Describe it by what it looks like (its shape, colour or object type, e.g. \"the red mushroom creature\", \"the star above the door\", \"the arrow sign\"), not by its role in the game (\"the enemy\", \"the objective marker\"). The segmentation model can't find large flat surfaces (floors, walls, ledges, paths) or spatial phrases (\"the gap between…\"), so for those name a distinct object at that spot, or use null. Use null if the cause isn't a visible thing (for example a pacing problem over a long stretch).\n\n## Rules\n\n- Don't invent anything. Every claim must come from the video, the transcript or the telemetry. If you are unsure whether something happened, leave it out.\n- Report only what this session shows. Don't guess at problems another player might have.\n- If the session shows no friction, return an empty list of findings.\n- Write in English, in plain sentences, without jargon.\n"
+        },
+        {
+          "type": "input_video",
+          "file_id": "file-1131401412719611",
+          "fps": 1
+        },
+        {
+          "type": "input_text",
+          "text": "Session synthetic-clean-voice: Playtest Analyst Test Level. It lasts 63.1 s."
+        },
+        {
+          "type": "input_text",
+          "text": "Think-aloud transcript, one turn per line, [start–end] in session seconds:\n[0.2–2.9s] Okay, let's see. Follow the path.\n[4.9–5.7s] Easy enough.\n[9.1–10.1s] Nice, made it.\n[10.4–12.2s] There's the beacon, up on the terrace.\n[22.3–24.1s] Press the red switch. Got it.\n[31.1–31.9s] Gates Gates open.\n[35.5–36.9s] A hole. Down we go.\n[38.0–40.1s] Whoa, an enemy. Jump on it.\n[42.9–44.1s] Ha, squashed him.\n[47.8–49.2s] Exits this way.\n[52.0–53.0s] Nearly there.\n[60.1–62.0s] There's the the flag. That was fun."
+        },
+        {
+          "type": "input_text",
+          "text": "Telemetry, one event per line, [time] type then its data, in session seconds:\n[0.0s] objective_update text=\"Follow the path.\"\n[6.2s] zone_enter zone=\"ledge\"\n[10.2s] zone_enter zone=\"plaza\"\n[10.2s] objective_update text=\"Reach the beacon.\"\n[10.3s] zone_exit zone=\"ledge\"\n[22.9s] zone_enter zone=\"hall\"\n[22.9s] objective_update text=\"Press the red switch on the balcony to open the gate.\"\n[23.0s] zone_exit zone=\"plaza\"\n[29.7s] objective_update text=\"The gate is open. Find the exit.\"\n[34.9s] zone_exit zone=\"hall\"\n[37.8s] zone_enter zone=\"drop\"\n[45.1s] zone_exit zone=\"drop\"\n[45.1s] zone_enter zone=\"fork\"\n[49.2s] zone_exit zone=\"fork\"\n[51.7s] zone_enter zone=\"corridor\"\n[62.1s] zone_exit zone=\"corridor\"\n[62.8s] objective_update text=\"Course complete!\""
+        },
+        {
+          "type": "input_text",
+          "text": "## The previous build\n\nThis session is a playtest of a newer build of the same game. Below are the findings from the previous build's playtest, each with its id, and the patches the developer applied since then, if any.\n\nReport this session's findings exactly as described above, from this session's evidence alone. Then, for each finding, set **previous_id**:\n\n- the id of the previous finding that describes the same problem, meaning the same cause in the same place, even if it is milder now;\n- null if the problem is new in this build.\n\nDon't report a previous finding again unless this session shows it. Don't assume a patch worked or failed: judge only from what the player does and says in this session.\n\n\nPrevious build: session synthetic-planted-voice. Its findings, one per line:\n- f1 [difficulty, ledge] The gap between platforms in the ledge section is too far for the player's jump. The player fell four times and questioned whether the jump was possible before finally crossing. Suggested fix: Move the far landing platform one tile closer to the take-off platform and make it one tile wider, so a normal running jump lands with a clear margin.\n- f2 [confusion, plaza] The player is told to reach a beacon, but no beacon or marker can be seen in the plaza. They loop among the similar brown pillars for about 40 seconds before spotting the steps that lead onward. Suggested fix: Add a tall, bright vertical beacon beam above the green steps at the exit side of the plaza, tall enough to be seen over the brown pillars from the plaza entrance.\n- f3 [ui, hall] The button that opens the gate is small, high on a side shelf, and has nothing linking it to the gate. The player spends about 30 seconds circling the room and trying the gate before noticing the button. Suggested fix: Make the red button twice as large, add a pulsing light ring around it, and paint a red line on the wall from the button shelf to the gate so the player can see what the button controls.\n- f4 [difficulty, drop] A creature is waiting too close to where the player lands in the drop room and kills the player before they can see or react to it. The player died this way twice and called it unfair before getting past on the third attempt. Suggested fix: Move the red mushroom creature's starting position at least three tiles away from the drop landing point, to the far side of the room, so the player can see it and react after landing.\n- f5 [ui, fork] The exit sign at the fork points left, but that route leads to a dead end. The player followed the sign, had to backtrack to the junction, and lost about 15 seconds. Suggested fix: Rotate the red arrow sign at the junction so it points along the route that leads to the corridor, not toward the left-hand dead end.\n- f6 [pacing, corridor] The final corridor is a long, straight, empty walk with nothing to do or decide for about 40 seconds. The player comments on how long it goes on before the flag finally appears. Suggested fix: Shorten the corridor by half: move the end flag and finish trigger to the corridor's midpoint so the straight walk takes about 20 seconds instead of 40.\n\nPatches applied since:\n(none recorded)"
+        }
+      ]
+    }
+  ],
+  "text": {
+    "format": {
+      "type": "json_schema",
+      "name": "playtest_findings",
+      "strict": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "t_start": {
+                  "type": "number"
+                },
+                "t_end": {
+                  "type": "number"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "confusion",
+                    "difficulty",
+                    "pacing",
+                    "ui",
+                    "bug"
+                  ]
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high"
+                  ]
+                },
+                "zone": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "evidence": {
+                  "type": "object",
+                  "properties": {
+                    "quotes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "t": {
+                            "type": "number"
+                          },
+                          "text": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "t",
+                          "text"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "telemetry": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "visual": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "quotes",
+                    "telemetry",
+                    "visual"
+                  ],
+                  "additionalProperties": false
+                },
+                "suggested_fix": {
+                  "type": "string"
+                },
+                "highlight": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "t": {
+                          "type": "number"
+                        },
+                        "prompt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "t",
+                        "prompt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "previous_id": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "f1",
+                        "f2",
+                        "f3",
+                        "f4",
+                        "f5",
+                        "f6"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "t_start",
+                "t_end",
+                "category",
+                "severity",
+                "zone",
+                "summary",
+                "evidence",
+                "suggested_fix",
+                "highlight",
+                "previous_id"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "findings"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "max_output_tokens": 32000
+}

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "session_id": "synthetic-clean-voice",
+  "created_at": "2026-10-26T23:25:57.384Z",
+  "model": "muse-wonder-1.0",
+  "config": "v0",
+  "findings": [],
+  "usage": {
+    "input_tokens": 10281,
+    "cached_tokens": 0,
+    "output_tokens": 1392,
+    "cost_usd": 0.068964,
+    "latency_s": 16.2
+  },
+  "comparison": {
+    "previous_session": "synthetic-planted-voice",
+    "resolved": [
+      "f1",
+      "f2",
+      "f3",
+      "f4",
+      "f5",
+      "f6"
+    ],
+    "counts": {
+      "resolved": 6,
+      "new": 0,
+      "persisting": 0
+    }
+  }
+}
