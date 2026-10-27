@@ -57,7 +57,8 @@ static func sessions_root() -> String:
 ## The command line for `playtest <command> <dir>` (analyst/src/cli.ts) through bun, run by
 ## the user's login shell: an editor started from a desktop launcher lacks what is exported
 ## only in shell startup files, such as META_MODEL_API_KEY in ~/.zshenv. The arguments reach
-## bun through "$@", never the script text. Runs bun directly when SHELL is unset.
+## bun through "$@", never the script text. Runs bun directly when SHELL is unset or isn't
+## a POSIX-style shell (fish, for one, rejects "$@").
 static func analyst(command: String, dir: String) -> PackedStringArray:
 	var bun := "bun"
 	var home_bun := OS.get_environment("HOME").path_join(".bun/bin/bun")
@@ -65,7 +66,9 @@ static func analyst(command: String, dir: String) -> PackedStringArray:
 		bun = home_bun  # the editor may be launched without ~/.bun/bin on PATH
 	var line := PackedStringArray([bun, ProjectSettings.globalize_path(CLI), command, dir])
 	var shell := OS.get_environment("SHELL")
-	return line if shell.is_empty() else PackedStringArray([shell, "-lc", 'exec "$@"', "playtest"]) + line
+	if not shell.get_file() in ["sh", "bash", "zsh", "dash", "ksh"]:
+		return line
+	return PackedStringArray([shell, "-lc", 'exec "$@"', "playtest"]) + line
 
 
 func is_recording() -> bool:

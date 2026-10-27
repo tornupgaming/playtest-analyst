@@ -34,6 +34,9 @@ var _was_playing := false
 ## The project's own run args, put back once the game has launched with ours. Non-null
 ## while a start is pending, so Record is disabled then.
 var _saved_run_args: Variant = null
+## Ticks (ms) when Record asked the editor to play; the run args are given back if the game
+## hasn't started 10 s later (no main scene, a cancelled dialog, a launch error).
+var _play_requested_ms := 0
 ## CLI processes whose output is streaming into the log: execute_with_pipe() results
 ## plus `command`, and for `serve`, whether its URL has been opened.
 var _jobs: Array[Dictionary] = []
@@ -117,9 +120,13 @@ func _exit_tree() -> void:
 
 func _process(_delta: float) -> void:
 	var playing := EditorInterface.is_playing_scene()
-	if playing and _saved_run_args != null:
+	var gave_up := not playing and _play_requested_ms > 0 and Time.get_ticks_msec() - _play_requested_ms > 10000
+	if (playing or gave_up) and _saved_run_args != null:
 		ProjectSettings.set_setting("editor/run/main_run_args", _saved_run_args)
 		_saved_run_args = null
+		_play_requested_ms = 0
+		if gave_up:
+			_status.text = "The game didn't start, so nothing is recording. Check the project's main scene."
 	if _was_playing and not playing and not _recording.is_empty():
 		_status.text = "The game was stopped while recording, so %s is incomplete. Stop from this dock, F9 or by closing the game window." % _recording.get_file()
 		_recording = ""
@@ -148,6 +155,7 @@ func _on_record() -> void:
 	ProjectSettings.set_setting("editor/run/main_run_args", args)
 	await ProjectSettings.settings_changed  # the editor rereads run args on this signal
 	EditorInterface.play_main_scene()
+	_play_requested_ms = Time.get_ticks_msec()
 	_status.text = "Starting the game…"
 
 
