@@ -52,16 +52,16 @@ func apply(id: String) -> String:
 	if err.is_empty():
 		err = _git_apply(patch.diff, ["-C0"])
 	if err.is_empty():
-		err = _commit(patch.diff, patch.file, SUBJECT + patch.summary, [
+		err = _commit(patch.diff, ["-R", "-C0"], patch.file, SUBJECT + patch.summary, [
 			patch.rationale,
 			"Finding: %s\nPatch: %s\nSession: %s" % [patch.finding_id, id, session_id],
 		])
 	return err
 
 
-## Commits the reverse of the commit that applied the patch, in `git revert`'s message
-## format. Not `git revert` itself: its 3-way merge conflicts when a later patch changed
-## a neighbouring line, which `git apply -R -C0` tolerates.
+## Commits the patch's reverse, in `git revert`'s message format. Not `git revert` itself:
+## its 3-way merge conflicts when a later patch changed a neighbouring line, which
+## `git apply -R -C0` tolerates.
 func revert(id: String) -> String:
 	var patch := _find(id)
 	if patch.is_empty():
@@ -72,12 +72,11 @@ func revert(id: String) -> String:
 	var err := _check_clean()
 	if not err.is_empty():
 		return err
-	var shown := _git(["diff", commit + "^", commit])
-	if shown.code != 0:
-		return shown.out
-	err = _git_apply(shown.out, ["-R", "-C0"])
+	# The patch's own diff, reversed. Not `git diff <commit>`: git-style diffs name files from
+	# the repository root, so they'd be skipped when the project is a subfolder of the repo.
+	err = _git_apply(patch.diff, ["-R", "-C0"])
 	if err.is_empty():
-		err = _commit(shown.out, patch.file, 'Revert "%s%s"' % [SUBJECT, patch.summary], ["This reverts commit %s." % commit])
+		err = _commit(patch.diff, ["-C0"], patch.file, 'Revert "%s%s"' % [SUBJECT, patch.summary], ["This reverts commit %s." % commit])
 	return err
 
 
@@ -129,8 +128,10 @@ func _check_allowed(patch: Dictionary) -> String:
 	var numstat := _with_diff_file(patch.diff, func(path: String) -> Dictionary: return _git(["apply", "--numstat", path]))
 	if numstat.code != 0:
 		return numstat.out
+	# git reports paths from the repository root; the project may be a subfolder of it.
+	var prefix: String = _git(["rev-parse", "--show-prefix"]).out.strip_edges()
 	for line: String in numstat.out.split("\n", false):  # "added\tdeleted\tpath"; git quotes odd paths
-		var path := line.get_slice("\t", 2)
+		var path := line.get_slice("\t", 2).trim_prefix(prefix)
 		if path != patch.file:
 			return "%s's diff changes %s, not only %s." % [patch.id, path, patch.file]
 	if not globs.any(func(glob: Variant) -> bool: return glob is String and _glob_match(patch.file, glob)):
@@ -138,16 +139,30 @@ func _check_allowed(patch: Dictionary) -> String:
 	return ""
 
 
-## Like Bun.Glob, which the analyst uses: `*` and `?` stay within one path segment.
+## Like Bun.Glob, which `playtest patch` uses: `*` and `?` stay within one path segment,
+## `**` spans segments and `{a,b}` is a choice.
 static func _glob_match(path: String, glob: String) -> bool:
-	var parts := path.split("/")
-	var globs := glob.split("/")
-	if parts.size() != globs.size():
-		return false
-	for i in parts.size():
-		if not parts[i].match(globs[i]):
-			return false
-	return true
+	var pattern := "^"
+	var i := 0
+	while i < glob.length():
+		var c := glob[i]
+		if glob.substr(i, 3) == "**/":
+			pattern += "(?:.*/)?"
+			i += 3
+			continue
+		if glob.substr(i, 2) == "**":
+			pattern += ".*"
+			i += 2
+			continue
+		match c:
+			"*": pattern += "[^/]*"
+			"?": pattern += "[^/]"
+			"{": pattern += "(?:"
+			"}": pattern += ")"
+			",": pattern += "|"
+			_: pattern += c if c.is_valid_identifier() or c.is_valid_int() or c in "/-_" else "\\" + c
+		i += 1
+	return RegEx.create_from_string(pattern + "$").search(path) != null
 
 
 func _git_apply(diff: String, flags: Array) -> String:
@@ -155,20 +170,23 @@ func _git_apply(diff: String, flags: Array) -> String:
 	return "" if result.code == 0 else result.out
 
 
-## Commits `file`; on failure undoes `diff`, which was applied to the index and the tree.
-func _commit(diff: String, file: String, subject: String, paragraphs: Array) -> String:
+## Commits `file`. On failure, applies `diff` with `undo_flags` to take the index and the
+## tree back to HEAD.
+func _commit(diff: String, undo_flags: Array, file: String, subject: String, paragraphs: Array) -> String:
 	var args := ["commit", "-q", "-m", subject]
 	for paragraph: String in paragraphs:
 		args += ["-m", paragraph]
 	var result := _git(args + ["--", file])
 	if result.code == 0:
 		return ""
-	_git_apply(diff, ["-R", "-C0"])
+	var undo := _git_apply(diff, undo_flags)
+	if not undo.is_empty():
+		return "git commit failed, and undoing the change also failed, so %s is left staged:\n%s\n%s" % [file, result.out, undo]
 	return "git commit failed, so nothing was changed:\n" + result.out
 
 
 func _with_diff_file(diff: String, run: Callable) -> Dictionary:
-	var file := FileAccess.create_temp(FileAccess.WRITE_READ, "playtest-patch", "diff", true)
+	var file := FileAccess.create_temp(FileAccess.WRITE_READ, "playtest-patch", "diff")  # deleted when freed
 	file.store_string(diff)
 	file.flush()
 	return run.call(file.get_path_absolute())

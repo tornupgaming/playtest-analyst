@@ -23,6 +23,7 @@ corridor_segments = 12
 
 var _repo: DirAccess  # a temp dir, deleted with this suite
 var _root := ""
+var _project := ""  # the Godot project inside the repo: _root, or a subfolder of it
 
 
 func test_apply_commits_the_patch_as_playtest_fix() -> String:
@@ -133,7 +134,44 @@ func test_model_text_reaches_the_commit_message_verbatim() -> String:
 
 
 ## A repo with the planted tuning, playtest.json and a README committed; the fixture patches.
-func _fixture_repo() -> RefCounted:
+func test_a_project_in_a_subfolder_of_the_repo_applies_and_reverts() -> String:
+	var patches = _fixture_repo("game")
+	var errors := [patches.apply("p1"), patches.apply("p2"), patches.revert("p1")]
+	return _expect({errors = errors, lines = _tuning().get_slice("\n", 6) + " / " + _tuning().get_slice("\n", 8), applied = _applied(patches)}, {
+		errors = ["", "", ""],
+		lines = "ledge_gap_width = 6.6 / marker_color = Color(0.2, 0.85, 1, 1)",
+		applied = ["p2"],
+	})
+
+
+func test_the_allowlist_matches_globs_the_way_the_cli_does() -> String:
+	var spans: String = _fixture_repo("", "{ \"patch_allow\": [\"**/*.tres\"] }\n").apply("p1")
+	var choice: String = _fixture_repo("", "{ \"patch_allow\": [\"level/{tuning,other}.tres\"] }\n").apply("p1")
+	var other: String = _fixture_repo("", "{ \"patch_allow\": [\"level/**/*.gd\"] }\n").apply("p1")
+	return _expect([spans, choice, other], ["", "", "level/tuning.tres is not in playtest.json's patch_allow."])
+
+
+func test_a_rejected_commit_leaves_the_tree_as_it_was() -> String:
+	var patches = _fixture_repo()
+	patches.apply("p1")
+	_hook("#!/bin/sh\nexit 1\n")
+	var errors := [patches.apply("p2").get_slice("\n", 0), patches.revert("p1").get_slice("\n", 0)]
+	return _expect({errors = errors, lines = _tuning().get_slice("\n", 6) + " / " + _tuning().get_slice("\n", 8), status = _git(["status", "--porcelain"]), applied = _applied(patches)}, {
+		errors = ["git commit failed, so nothing was changed:", "git commit failed, so nothing was changed:"],
+		lines = "ledge_gap_width = 4.0 / marker_color = Color(0.816, 0.486, 0.337, 1)",
+		status = "",
+		applied = ["p1"],
+	})
+
+
+## A pre-commit hook in the temp repo, e.g. one that rejects every commit.
+func _hook(script: String) -> void:
+	var path := _root.path_join(".git/hooks/pre-commit")
+	FileAccess.open(path, FileAccess.WRITE).store_string(script)
+	OS.execute("chmod", ["+x", path])
+
+
+func _fixture_repo(subfolder := "", allow := ALLOW) -> RefCounted:
 	for name in ["GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE"]:
 		OS.unset_environment(name)  # they would point git away from the temp repo
 	_repo = DirAccess.create_temp("playtest-patches-test")
@@ -143,13 +181,14 @@ func _fixture_repo() -> RefCounted:
 		OS.crash("patches_test: git is not working in the temp repo %s" % _root)
 	for setting in [["user.name", "Test"], ["user.email", "test@example.com"], ["commit.gpgsign", "false"]]:
 		_git(["config"] + setting)
-	DirAccess.make_dir_absolute(_root.path_join("level"))
+	_project = _root.path_join(subfolder)
+	DirAccess.make_dir_recursive_absolute(_project.path_join("level"))
 	_write("level/tuning.tres", PLANTED)
-	_write("playtest.json", ALLOW)
+	_write("playtest.json", allow)
 	_write("README.md", "fixture\n")
 	_git(["add", "."])
 	_git(["commit", "-q", "-m", "fixture"])
-	return PATCHES.new(_root, ProjectSettings.globalize_path(FIXTURE))
+	return PATCHES.new(_project, ProjectSettings.globalize_path(FIXTURE))
 
 
 func _applied(patches: RefCounted) -> Array:
@@ -161,11 +200,11 @@ func _tuning() -> String:
 
 
 func _read(path: String) -> String:
-	return FileAccess.get_file_as_string(_root.path_join(path))
+	return FileAccess.get_file_as_string(_project.path_join(path))
 
 
 func _write(path: String, text: String) -> void:
-	FileAccess.open(_root.path_join(path), FileAccess.WRITE).store_string(text)
+	FileAccess.open(_project.path_join(path), FileAccess.WRITE).store_string(text)
 
 
 func _git(args: Array) -> String:
