@@ -37,7 +37,7 @@
     },
     {
       "id": 3,
-      "category": "confusion",
+      "category": "ui",
       "zone": "hall",
       "symptom": "The switch on the balcony is visible, but the prompt doesn't point to it.",
       "evidence": {
@@ -61,7 +61,7 @@
     },
     {
       "id": 5,
-      "category": "confusion",
+      "category": "ui",
       "zone": "fork",
       "symptom": "The EXIT sign at the fork points into a non-lethal dead end.",
       "evidence": {

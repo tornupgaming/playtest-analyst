@@ -37,7 +37,7 @@ flowchart LR
 ```
 
 1. **Record.** The **Playtest** dock records the game window and the mic with one ffmpeg process, and the `PlaytestTelemetry` autoload logs deaths, retries, zone changes, idle periods and objective updates. All three share one session clock ([docs/recorder.md](docs/recorder.md), [docs/telemetry.md](docs/telemetry.md)).
-2. **Analyse.** One Muse Wonder request gets the silent video at 1 fps, the think-aloud as a timestamped transcript (from Meta's ASR, because Wonder places speech it hears 5–245 s off but places what it sees within 2 s), and the telemetry as a timeline. It returns findings in five categories (confusion, difficulty, pacing, ui, bug), each with evidence and a suggested fix ([DECISIONS.md §4](DECISIONS.md)).
+2. **Analyse.** One Muse Wonder request gets the silent video at 1 fps, the think-aloud as a timestamped transcript (from Meta's ASR, because Wonder places speech it hears 5–245 s off but places what it sees within 2 s), and the telemetry as a timeline. It returns findings, each with a cause (difficulty, pacing, ui or bug), the player's reaction (confused, frustrated, bored or surprised), evidence and a suggested fix ([DECISIONS.md §4](DECISIONS.md)).
 3. **Annotate.** For each finding, Muse Wonder names the on-screen element to change, described by how it looks. SAM 3.1 segments it on the key frame, and the report shows the outline.
 4. **Fix.** Muse Spark turns each finding into a minimal diff to the files the project allowlists (here, the level's tuning resource). The dock previews the diff and applies it as a `playtest-fix:` commit you can revert.
 5. **Compare.** Analyse the next build with `--previous`, and each finding is tagged new or persisting, with the rest listed as resolved.
@@ -85,8 +85,8 @@ What we measured about each one is in the [wiki](docs/wiki/index.md).
 These numbers come from **synthetic** sessions: a scripted bot plays the test course, and Piper TTS speaks think-aloud lines ([eval/sweeps/2026-10-26-synthetic](eval/sweeps/2026-10-26-synthetic/README.md)). The voice lines were written from the answer key, so treat these as a smoke test. Real playtests come next.
 
 - In every configuration tried, Muse Wonder located all 6 planted problems on the voiced session, and 5–6 of 6 with no voice at all.
-- At strict scoring (right place and right category), recall is 0.67–0.83. Almost every loss is the ui/confusion boundary, e.g. a misleading EXIT sign filed as `ui`.
-- No false positives in 24 runs: every finding was one of the planted problems, and the clean (fixed) level produced none.
+- At strict scoring (right place and right category), prompt v2 gets recall 1.00 and 0.92 over two runs, the same as when the category is ignored ([eval/sweeps/2026-10-27-v2](eval/sweeps/2026-10-27-v2/README.md)). Before v2, strict recall was 0.50–0.75, and almost every loss was a problem labelled `confusion` in one place and `ui` in the other. v2 labels the cause (what to change) and records the player's feeling separately (TUG-125).
+- No false positives in 32 runs: every finding was one of the planted problems, and the clean (fixed) level produced none.
 - Cost: about $0.30 per 3-minute session; latency 1–2 minutes.
 
 

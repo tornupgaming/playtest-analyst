@@ -80,6 +80,8 @@ The probe (TUG-118, [wiki](docs/wiki/sam-3-1.md)) matched distinct objects named
 
 Six planted friction points on a dedicated test level, with the answer key frozen before analysis ([`eval/ground_truth.json`](eval/ground_truth.json), TUG-90). A plant's time window comes from the session's own telemetry (time spent in its zone), so the key holds no timestamps. Synthetic sessions (TUG-120) are a smoke test only, because their voice lines are written from the key.
 
+**Category is the cause; reaction is the feeling (TUG-125).** A finding's `category` names what the developer would change: `difficulty`, `pacing`, `ui` or `bug`. Eval scores it. Its `reaction` is how the player felt (`confused`, `frustrated`, `bored`, `surprised`, or null), which is reported but not scored. We used to have a `confusion` category, but one problem was often both confusing and a UI fault, so the model's label and the key's disagreed on defensible readings. Plants 3 (goal text) and 5 (EXIT sign) became `ui` before the key froze, because the change planted in each is information the game shows.
+
 ## 7. Spend
 
 Every Meta API call goes through `analyst/src/meta.ts`, which appends its cost to a ledger at `$XDG_STATE_HOME/playtest-analyst/spend.jsonl` (shared by all worktrees) and refuses to call once `PLAYTEST_SPEND_CAP_USD` is reached.

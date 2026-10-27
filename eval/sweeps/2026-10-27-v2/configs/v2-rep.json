@@ -1,0 +1,8 @@
+{
+  "name": "v2-rep",
+  "prompt": "../../../../analyst/prompts/v2.md",
+  "fps": 1,
+  "include_transcript": true,
+  "include_telemetry": true,
+  "video_audio": false
+}

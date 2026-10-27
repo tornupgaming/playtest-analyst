@@ -28,6 +28,7 @@ const finding = (id: string, t_start: number, t_end: number, category: Category,
 	t_start,
 	t_end,
 	category,
+	reaction: null,
 	severity: "medium",
 	zone,
 	summary: id,
@@ -63,11 +64,11 @@ const events = [
 	enter(200, "corridor"),
 	exit(260, "corridor"),
 ];
-const gt = truth([plant(1, "difficulty", "ledge"), plant(5, "confusion", "fork"), plant(6, "pacing", "corridor")]);
+const gt = truth([plant(1, "difficulty", "ledge"), plant(5, "ui", "fork"), plant(6, "pacing", "corridor")]);
 
 describe("score", () => {
 	test("a finding inside a plant's zone time with the right category is a hit; a plant with no such finding is a miss", () => {
-		const r = report([finding("a", 15, 35, "difficulty", "ledge"), finding("b", 101, 118, "confusion", "fork")]);
+		const r = report([finding("a", 15, 35, "difficulty", "ledge"), finding("b", 101, 118, "ui", "fork")]);
 		const s = score(r, gt, events);
 		expect(s.hits).toEqual([
 			{ plant: 1, finding: "a" },
@@ -102,7 +103,7 @@ describe("score", () => {
 	test("a finding in a missed plant's time and zone with the wrong category is mislabelled: the plant stays a miss, and it is not a false positive", () => {
 		const r = report([
 			finding("a", 15, 35, "difficulty", "ledge"),
-			finding("wrong-cat", 101, 118, "ui", "fork"),
+			finding("wrong-cat", 101, 118, "pacing", "fork"),
 			finding("next-to-hit", 15, 35, "ui", "ledge"),
 			finding("wrong-time", 150, 170, "difficulty", "ledge"),
 		]);
@@ -130,8 +131,8 @@ describe("score", () => {
 
 	test("time in fork_left counts as time in zone fork", () => {
 		const deadEndOnly = [enter(105.1, "fork_left"), exit(115, "fork_left")];
-		const inDeadEnd = report([finding("a", 108, 112, "confusion", "fork_left")]);
-		const elsewhere = report([finding("b", 130, 140, "confusion", "fork_left")]);
+		const inDeadEnd = report([finding("a", 108, 112, "ui", "fork_left")]);
+		const elsewhere = report([finding("b", 130, 140, "ui", "fork_left")]);
 		expect(score(inDeadEnd, gt, deadEndOnly, { padS: 0 }).hits).toEqual([{ plant: 5, finding: "a" }]);
 		expect(score(inDeadEnd, gt, deadEndOnly, { padS: 0, strict: "zone" }).hits).toEqual([{ plant: 5, finding: "a" }]);
 		expect(score(elsewhere, gt, deadEndOnly, { padS: 0 }).false_positives).toEqual(["b"]);
@@ -173,7 +174,7 @@ describe("score", () => {
 	});
 
 	test("clean profile: no plants, so recall is null and every unexcused finding is a false positive", () => {
-		const r = report([finding("a", 15, 35, "difficulty", "ledge"), finding("b", 101, 118, "confusion", "fork")]);
+		const r = report([finding("a", 15, 35, "difficulty", "ledge"), finding("b", 101, 118, "ui", "fork")]);
 		const s = score(r, gt, events, { profile: "clean" });
 		expect(s.hits).toEqual([]);
 		expect(s.misses).toEqual([]);

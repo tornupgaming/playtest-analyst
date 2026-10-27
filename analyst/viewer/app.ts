@@ -214,6 +214,7 @@ for (const f of findings) {
 			"div",
 			{ class: "card-head" },
 			h("span", { class: "category" }, label(f.category)),
+			f.reaction && h("span", { class: "reaction" }, f.reaction),
 			h("span", { class: `severity ${f.severity}`, title: `${f.severity} severity` }, h("i"), h("i"), h("i"), f.severity),
 			build(f),
 			f.zone && h("span", { class: "zone-name" }, f.zone),

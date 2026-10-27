@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "session_id": "synthetic-planted-voice",
-  "created_at": "2026-10-27T06:10:30.230Z",
+  "created_at": "2026-10-27T23:18:49.841Z",
   "model": "muse-spark-1.3",
   "patches": [
     {
@@ -9,55 +9,47 @@
       "finding_id": "f1",
       "file": "level/tuning.tres",
       "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -4,7 +4,7 @@\n\n [resource]\n script = ExtResource(\"1_tuning\")\n-ledge_gap_width = 6.6\n+ledge_gap_width = 3.0\n ledge_bypass_deaths = 5\n marker_color = Color(0.816, 0.486, 0.337, 1)\n marker_emission = 0.0\n",
-      "rationale": "Player fell four times questioning if the jump was possible, so narrowing the gap from 6.6 to 3.0 makes the opening jump reliably clearable.",
-      "summary": "make opening ledge jump reachable"
+      "rationale": "The player fell four times on the wide ledge gap, so shrinking it to a short hop lets a normal running jump land with room to spare.",
+      "summary": "ledge gap too wide for early jump"
     },
     {
       "id": "p2",
       "finding_id": "f2",
       "file": "level/tuning.tres",
-      "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -6,8 +6,8 @@\n script = ExtResource(\"1_tuning\")\n ledge_gap_width = 6.6\n ledge_bypass_deaths = 5\n-marker_color = Color(0.816, 0.486, 0.337, 1)\n-marker_emission = 0.0\n+marker_color = Color(1, 0.85, 0.2, 1)\n+marker_emission = 4.0\n switch_prompt_text = \"Find a way through.\"\n enemy_aggro_delay = 0.0\n fork_arrow_points_to = \"left\"\n",
-      "rationale": "Player circled the plaza for 40 seconds seeing no beacon, so a bright emissive marker makes the exit visible above the pillars from the entrance.",
-      "summary": "make plaza beacon glow brightly"
+      "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -6,8 +6,8 @@\n script = ExtResource(\"1_tuning\")\n ledge_gap_width = 6.6\n ledge_bypass_deaths = 5\n-marker_color = Color(0.816, 0.486, 0.337, 1)\n+marker_color = Color(0, 1, 1, 1)\n-marker_emission = 0.0\n+marker_emission = 2.0\n switch_prompt_text = \"Find a way through.\"\n enemy_aggro_delay = 0.0\n fork_arrow_points_to = \"left\"\n",
+      "rationale": "No beacon was visible from the plaza entrance because the marker used a dull non-emissive color, so giving it a bright cyan color with strong emission makes Reach the beacon match something the player can see.",
+      "summary": "beacon marker invisible in plaza"
     },
     {
       "id": "p3",
-      "finding_id": "f3",
+      "finding_id": "f4",
       "file": "level/tuning.tres",
-      "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -8,7 +8,7 @@\n ledge_bypass_deaths = 5\n marker_color = Color(0.816, 0.486, 0.337, 1)\n marker_emission = 0.0\n-switch_prompt_text = \"Find a way through.\"\n+switch_prompt_text = \"Press the red button on the high shelf to open the gate.\"\n enemy_aggro_delay = 0.0\n fork_arrow_points_to = \"left\"\n corridor_segments = 12\n",
-      "rationale": "Player spent 29 seconds trying the gate before spotting the button, so an explicit prompt links the gate to the red button on the shelf.",
-      "summary": "name red button in gate objective"
+      "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -9,6 +9,6 @@\n marker_color = Color(0.816, 0.486, 0.337, 1)\n marker_emission = 0.0\n switch_prompt_text = \"Find a way through.\"\n-enemy_aggro_delay = 0.0\n+enemy_aggro_delay = 2.5\n fork_arrow_points_to = \"left\"\n corridor_segments = 12\n",
+      "rationale": "The mushroom killed the player twice almost immediately after landing with no warning, so adding a two and a half second delay gives time to see it and react.",
+      "summary": "enemy attacks instantly on landing"
     },
     {
       "id": "p4",
-      "finding_id": "f4",
-      "file": "level/tuning.tres",
-      "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -9,6 +9,6 @@\n marker_color = Color(0.816, 0.486, 0.337, 1)\n marker_emission = 0.0\n switch_prompt_text = \"Find a way through.\"\n-enemy_aggro_delay = 0.0\n+enemy_aggro_delay = 4.0\n fork_arrow_points_to = \"left\"\n corridor_segments = 12\n",
-      "rationale": "The enemy killed the player twice within seconds of the unseen landing, so a 4 second aggro delay gives time to land, see it and react.",
-      "summary": "give time before drop enemy charges"
-    },
-    {
-      "id": "p5",
       "finding_id": "f5",
       "file": "level/tuning.tres",
       "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -10,5 +10,5 @@\n marker_emission = 0.0\n switch_prompt_text = \"Find a way through.\"\n enemy_aggro_delay = 0.0\n-fork_arrow_points_to = \"left\"\n+fork_arrow_points_to = \"right\"\n corridor_segments = 12\n",
-      "rationale": "Player trusted the left-pointing EXIT sign into a dead end, so pointing the arrow right sends them toward the corridor branch.",
-      "summary": "point exit sign to corridor branch"
+      "rationale": "The player followed the left-pointing EXIT arrow into the dead-end branch and had to backtrack, so pointing it right directs them toward the corridor route.",
+      "summary": "exit sign points to dead end"
     },
     {
-      "id": "p6",
+      "id": "p5",
       "finding_id": "f6",
       "file": "level/tuning.tres",
-      "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -11,4 +11,4 @@\n switch_prompt_text = \"Find a way through.\"\n enemy_aggro_delay = 0.0\n fork_arrow_points_to = \"left\"\n-corridor_segments = 12\n+corridor_segments = 6\n",
-      "rationale": "Player walked the empty corridor for 40 seconds commenting on its length, so halving segments to 6 cuts the straight walk to about 20 seconds.",
-      "summary": "shorten final corridor walk"
+      "diff": "--- a/level/tuning.tres\n+++ b/level/tuning.tres\n@@ -11,4 +11,4 @@\n switch_prompt_text = \"Find a way through.\"\n enemy_aggro_delay = 0.0\n fork_arrow_points_to = \"left\"\n-corridor_segments = 12\n+corridor_segments = 5\n",
+      "rationale": "The player walked about forty seconds with nothing to do, so cutting twelve segments to five shortens the walk to roughly fifteen to twenty seconds.",
+      "summary": "final corridor walk is too long"
     }
   ],
   "usage": {
-    "input_tokens": 9888,
+    "input_tokens": 10033,
     "cached_tokens": 0,
-    "output_tokens": 14689,
-    "cost_usd": 0.074788,
-    "latency_s": 48.8
+    "output_tokens": 14465,
+    "cost_usd": 0.074018,
+    "latency_s": 53.6
   }
 }
