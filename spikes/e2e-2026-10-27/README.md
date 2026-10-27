@@ -4,7 +4,7 @@ One pass of the whole pipeline on the synthetic sessions (TUG-120), after every 
 
 | Step | Result | Cost |
 |---|---|---|
-| `analyse planted-voice` (v0, with SAM) | 6 findings, 4 of 5 highlights annotated, 2 SAM misses (HUD text, the small button) | $0.39, 145 s model |
+| `analyse planted-voice` (v0, with SAM) | 6 findings; 3 of 5 highlights annotated (the platform, the mushroom enemy, the arrow sign); SAM missed the HUD text and the small button | $0.39, 145 s model |
 | `eval planted-voice` | recall 0.67, precision 1.00: 4 hits, 2 found with the wrong category (plaza as confusion, fork as ui), 0 false positives | — |
 | `patch planted-voice` (Muse Spark) | 6 patches to `level/tuning.tres`, one per finding, corridor included. All apply in order with `git apply -C0`, and `tools/check.sh` prints OK on the result | $0.07, 49 s |
 | `analyse clean-voice --previous planted --patches` | 0 findings: 6 resolved · 0 new · 0 persisting | $0.05 |
