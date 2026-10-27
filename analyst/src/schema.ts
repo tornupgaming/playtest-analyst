@@ -98,11 +98,12 @@ export const Report = z.object({
 	config: z.string(),
 	findings: z.array(Finding),
 	usage: Usage,
-	/** Compare mode (TUG-109): the previous build's findings that no finding here matches are resolved. */
+	/** Compare mode (TUG-109): the previous build's findings that no finding here matches are
+	 * resolved. They carry their category and summary so a fully fixed build can still show them. */
 	comparison: z
 		.object({
 			previous_session: z.string(),
-			resolved: z.array(z.string()),
+			resolved: z.array(z.object({ id: z.string(), category: Category, summary: z.string() })),
 			counts: z.object({ resolved: z.number(), new: z.number(), persisting: z.number() }),
 		})
 		.optional(),

@@ -242,6 +242,22 @@ for (const f of findings) {
 	$("#findings").append(card);
 }
 
+// Compare mode: the previous build's findings this session no longer shows, so a fully fixed
+// build reads as a result rather than an empty list.
+if (comparison && comparison.resolved.length > 0) {
+	$("#findings").append(
+		h("li", { class: "resolved-head" }, `Resolved since ${comparison.previous_session}`),
+		...comparison.resolved.map((r) =>
+			h(
+				"li",
+				{ class: "card resolved", style: { "--accent": accent(r.category) }, title: `${comparison.previous_session} ${r.id}` },
+				h("div", { class: "card-head" }, h("span", { class: "category" }, label(r.category)), h("span", { class: "build resolved" }, "resolved")),
+				h("p", { class: "summary" }, r.summary),
+			),
+		),
+	);
+}
+
 // --- Playback state ---------------------------------------------------------
 
 let shown: Finding | undefined;

@@ -241,5 +241,8 @@ test("with a previous report, findings are tagged new or persisting and unmatche
 	expect(sent).toContain("- for f1, in level/tuning.tres: Narrow the ledge gap");
 	const report = await Bun.file(join(dir, "report.json")).json();
 	expect(report.findings.map((f: { id: string; previous_id: string | null }) => [f.id, f.previous_id])).toEqual([["f1", null], ["f2", "f2"]]);
-	expect(report.comparison).toEqual({ previous_session: "build-1", resolved: ["f1", "f3"], counts: { resolved: 2, new: 1, persisting: 1 } });
+	expect(report.comparison).toEqual({ previous_session: "build-1", resolved: [
+		{ id: "f1", category: "difficulty", summary: "The player falls at the ledge." },
+		{ id: "f3", category: "pacing", summary: "The lift is slow." },
+	], counts: { resolved: 2, new: 1, persisting: 1 } });
 });

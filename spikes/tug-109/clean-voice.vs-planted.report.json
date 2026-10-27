@@ -15,12 +15,36 @@
   "comparison": {
     "previous_session": "synthetic-planted-voice",
     "resolved": [
-      "f1",
-      "f2",
-      "f3",
-      "f4",
-      "f5",
-      "f6"
+      {
+        "id": "f1",
+        "category": "difficulty",
+        "summary": "The gap between platforms in the ledge section is too far for the player's jump. The player fell four times and questioned whether the jump was possible before finally crossing."
+      },
+      {
+        "id": "f2",
+        "category": "confusion",
+        "summary": "The player is told to reach a beacon, but no beacon or marker can be seen in the plaza. They loop among the similar brown pillars for about 40 seconds before spotting the steps that lead onward."
+      },
+      {
+        "id": "f3",
+        "category": "ui",
+        "summary": "The button that opens the gate is small, high on a side shelf, and has nothing linking it to the gate. The player spends about 30 seconds circling the room and trying the gate before noticing the button."
+      },
+      {
+        "id": "f4",
+        "category": "difficulty",
+        "summary": "A creature is waiting too close to where the player lands in the drop room and kills the player before they can see or react to it. The player died this way twice and called it unfair before getting past on the third attempt."
+      },
+      {
+        "id": "f5",
+        "category": "ui",
+        "summary": "The exit sign at the fork points left, but that route leads to a dead end. The player followed the sign, had to backtrack to the junction, and lost about 15 seconds."
+      },
+      {
+        "id": "f6",
+        "category": "pacing",
+        "summary": "The final corridor is a long, straight, empty walk with nothing to do or decide for about 40 seconds. The player comments on how long it goes on before the flag finally appears."
+      }
     ],
     "counts": {
       "resolved": 6,

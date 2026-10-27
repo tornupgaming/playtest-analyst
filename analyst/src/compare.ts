@@ -37,7 +37,7 @@ export function compareInput({ report, patches, prompt }: Previous) {
 
 export function comparison(previous: Report, found: { previous_id?: string | null }[]): NonNullable<Report["comparison"]> {
 	const matched = new Set(found.map((f) => f.previous_id));
-	const resolved = previous.findings.map((f) => f.id).filter((id) => !matched.has(id));
+	const resolved = previous.findings.filter((f) => !matched.has(f.id)).map(({ id, category, summary }) => ({ id, category, summary }));
 	const persisting = found.filter((f) => f.previous_id).length;
 	return {
 		previous_session: previous.session_id,
