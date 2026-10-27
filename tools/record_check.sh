@@ -2,7 +2,10 @@
 # Records a real session of the test level with --record and checks the bundle,
 # without a person: the mic is a PipeWire loopback that hears beeps played into it.
 #
-#   tools/record_check.sh [SECONDS]
+#   tools/record_check.sh [--real] [SECONDS]
+#
+# --real uses the default mic and speakers instead of the loopback: turn the
+# speakers up so the mic hears the beeps, and keep the room quiet.
 #
 # Prints whether the session closed cleanly, the ffmpeg mic's lag behind each
 # beep, and whether analyst/ reads the bundle. The game window is closed through
@@ -11,11 +14,17 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+real=
+[[ ${1:-} == --real ]] && { real=1; shift; }
 seconds=${1:-30}
 tmp=$(mktemp -d)
-module=$(pactl load-module module-null-sink sink_name=pt_loop sink_properties=device.description=pt_loop)
-trap 'pactl unload-module "$module"' EXIT
-export PULSE_SINK=pt_loop PULSE_SOURCE=pt_loop.monitor
+sink=()
+if [[ -z $real ]]; then
+	module=$(pactl load-module module-null-sink sink_name=pt_loop sink_properties=device.description=pt_loop)
+	trap 'pactl unload-module "$module"' EXIT
+	export PULSE_SINK=pt_loop PULSE_SOURCE=pt_loop.monitor
+	sink=(--device=pt_loop)
+fi
 ffmpeg -v error -f lavfi -i "sine=frequency=1000:duration=0.2,apad=pad_dur=0.3" -ar 48000 "$tmp/beep.wav"
 
 before=$(ls sessions 2>/dev/null || true)
@@ -25,7 +34,7 @@ sleep 3
 end=$((SECONDS + seconds - 3))
 while ((SECONDS < end)); do
 	date +%s.%N >>"$tmp/beeps.txt"
-	paplay --device=pt_loop "$tmp/beep.wav"
+	paplay "${sink[@]}" "$tmp/beep.wav"
 	sleep 2.5
 done
 python3 -I tools/record_check.py close "$godot_pid"

@@ -43,12 +43,19 @@ def beeps(mkv: str, times_file: str) -> None:
     win = 192  # 4 ms; FFT bin 4 is 1 kHz
     energy = np.array([np.abs(np.fft.rfft(audio[i:i + win]))[4] for i in range(0, len(audio) - win, win)])
     hot = energy > energy.max() * 0.3
-    heard = [start + i * win / 48000 for i in range(1, len(hot)) if hot[i] and not hot[i - 1]]
+    # A beep is 200 ms; on a real mic, speech and room noise give shorter blips at 1 kHz, so require 30 ms.
+    run = 8
+    heard = [start + i * win / 48000 for i in range(1, len(hot) - run) if hot[i:i + run].all() and not hot[i - 1]]
+    played_at = list(map(float, open(times_file).read().split()))
     lags = []
-    for played in map(float, open(times_file).read().split()):
+    for played in played_at:
         near = min(heard, key=lambda h: abs(h - played), default=None)
         lags.append(None if near is None or abs(near - played) > 0.5 else round((near - played) * 1000))
     print(f"beeps played {len(lags)}, heard {sum(l is not None for l in lags)}; lag ms (heard - paplay called): {lags}")
+    pairs = [(p, l) for p, l in zip(played_at, lags) if l is not None]
+    if len(pairs) > 1:
+        x, y = np.array(pairs).T
+        print(f"drift: {np.polyfit((x - x[0]) / 60, y, 1)[0]:+.1f} ms/min")
     # Fail on a missed beep or a lag outside 0-100 ms: either means the mic or its timestamps are broken.
     bad = [l for l in lags if l is None or not 0 <= l <= 100]
     if not lags or bad:

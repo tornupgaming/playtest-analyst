@@ -1,6 +1,6 @@
 ---
 title: Screen, mic and telemetry capture sync (Godot on Linux)
-updated: 2026-10-26
+updated: 2026-10-27
 sources:
   - spikes/tug-95/README.md
   - spikes/tug-95/tools/check_sync.py
@@ -38,12 +38,13 @@ Stream minus event time: [README](../../spikes/tug-95/README.md#results)
 
 ### ffmpeg mic in the same process as x11grab
 
-`ffmpeg -f x11grab … -f pulse -i default -copyts` into one `screen.mkv`. The recorder from TUG-98 ran on loopback (a PipeWire null sink monitor as the mic), with a 1 kHz beep played through `paplay` every 3 s. Lag is the time the beep was heard minus the moment `paplay` was called, so it includes paplay's own start-up. [measured](../recorder.md#measured)
+`ffmpeg -f x11grab … -f pulse -i default -copyts` into one `screen.mkv`. The recorder from TUG-98 ran with a 1 kHz beep played through `paplay` every 3 s, either on loopback (a PipeWire null sink monitor as the mic) or through the laptop speakers into the laptop's analog mic. Lag is the time the beep was heard minus the moment `paplay` was called, so it includes paplay's own start-up. [measured](../recorder.md#measured)
 
 | Run | Beeps heard | Lag |
 |---|---|---|
 | Loopback, 60 s (`tools/record_check.sh 60`) | 19 / 19 | 20 – 25 ms, no trend |
 | Loopback, 30 s | 9 / 9 | 13 – 24 ms |
+| Real mic, 120 s (`tools/record_check.sh --real 120`, 2026-10-27) | 39 / 39 | 14 – 21 ms, drift −0.8 ms/min |
 
 - In the muxed file the audio stream's `start_time` was 39–58 ms after the video's in three runs. Each stream carries its own wall-clock pts. [measured](../recorder.md#measured)
 
@@ -65,5 +66,4 @@ Stream minus event time: [README](../../spikes/tug-95/README.md#results)
 ## Open questions
 
 - Capture on Windows (`gdigrab` / `ddagrab`) and macOS (`avfoundation`). Not tested.
-- The ffmpeg mic inside the x11grab process on a real mic, and over more than 60 s. Only loopback runs of up to 60 s have been measured.
 - Real-mic latency on other hardware (USB mics, headsets). Only one laptop has been measured.
