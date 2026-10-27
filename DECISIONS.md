@@ -13,6 +13,7 @@ What we decided, why, and what we fall back to. The evidence lives in the [wiki]
 | `playtest annotate <session>` | Redraws the SAM key frames for an existing `report.json` (§5) |
 | `playtest patch <session>` | `report.json` → Muse Spark → `patches.json`: one diff per fixable finding (§8) |
 | `playtest eval <sessions…>` | Scores reports against `eval/ground_truth.json` |
+| `playtest metrics <sessions…>` | Deaths, retries, time to complete and time per zone, with a before → after line for two sessions (demo shot 11) |
 | `playtest serve <session>` | Serves the report viewer (`Bun.serve`) |
 
 Godot records the session and shells out to the CLI. No Electron, no Elysia, no Effect.
