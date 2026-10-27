@@ -1,18 +1,110 @@
 # Playtest Analyst
 
-A Godot plugin that records a playtest (screen, think-aloud and telemetry), sends it to Muse Wonder for analysis, and proposes fixes.
+An AI UX researcher for solo game developers. A Godot plugin records a playtest (the screen, the player thinking aloud, and gameplay telemetry), Meta's models analyse it, and you get a timestamped report of where the player got confused, stuck or bored. Each finding comes with an annotated key frame and a one-click fix.
+
+Built for the Meta Global AI Developer Hackathon (Indie developer track).
+
+## The problem
+
+Solo developers record friends playing their game, then never watch the footage. Scrubbing hours of video for the moments that matter is a job for a UX researcher they can't afford. Playtest Analyst does that review.
+
+## How it works
+
+```mermaid
+flowchart LR
+  subgraph Godot["Godot editor plugin"]
+    R["Record<br/>screen + mic + telemetry<br/>on one clock"]
+    D["Playtest dock<br/>Analyse · Open report · Propose fixes · Apply"]
+  end
+  subgraph CLI["analyst/ (Bun + TypeScript CLI)"]
+    F["finalize<br/>align streams to t=0"]
+    A["analyse"]
+    P["patch"]
+    S["serve<br/>web report viewer"]
+  end
+  subgraph Meta["Meta Model API"]
+    ASR["muse-voice-transcribe<br/>think-aloud → timed transcript"]
+    W["Muse Wonder<br/>video + transcript + telemetry<br/>→ findings"]
+    SAM["SAM 3.1<br/>outline the element<br/>on the key frame"]
+    SP["Muse Spark<br/>finding → .tres / .gd diff"]
+  end
+  R -->|session bundle| F --> A
+  A --> ASR --> W --> SAM
+  A -->|report.json| S
+  A --> P --> SP
+  P -->|patches.json| D
+  D -->|git apply + commit| G[("your project")]
+```
+
+1. **Record.** The **Playtest** dock records the game window and the mic with one ffmpeg process, and the `PlaytestTelemetry` autoload logs deaths, retries, zone changes, idle periods and objective updates. All three share one session clock ([docs/recorder.md](docs/recorder.md), [docs/telemetry.md](docs/telemetry.md)).
+2. **Analyse.** One Muse Wonder request gets the silent video at 1 fps, the think-aloud as a timestamped transcript (from Meta's ASR, because Wonder places speech it hears 5–245 s off but places what it sees within 2 s), and the telemetry as a timeline. It returns findings in five categories (confusion, difficulty, pacing, ui, bug), each with evidence and a suggested fix ([DECISIONS.md §4](DECISIONS.md)).
+3. **Annotate.** For each finding, Muse Wonder names the on-screen element to change, described by how it looks. SAM 3.1 segments it on the key frame, and the report shows the outline.
+4. **Fix.** Muse Spark turns each finding into a minimal diff to the files the project allowlists (here, the level's tuning resource). The dock previews the diff and applies it as a `playtest-fix:` commit you can revert.
+5. **Compare.** Analyse the next build with `--previous`, and each finding is tagged new or persisting, with the rest listed as resolved.
+
+The session bundle is a plain folder ([DECISIONS.md §2](DECISIONS.md)), so a recorder for another engine would only need to write the same files.
+
+## Quick start
+
+Needs Godot 4.7, [Bun](https://bun.sh), ffmpeg, Linux with X11 or XWayland, and a Meta Model API key in `META_MODEL_API_KEY`.
+
+```sh
+cd analyst && bun install && cd ..
+godot --path . -e                     # open the editor; the plugin is already enabled
+```
+
+In the **Playtest** dock: **Record session**, play, then F9 or close the window. Then **Analyse** (about 2 minutes and $0.30–0.50 for a 10-minute session), **Open report**, **Propose fixes**, **Apply**.
+
+The same steps from a terminal:
+
+```sh
+cd analyst
+bun src/cli.ts analyse ../sessions/<id>          # report.json, with SAM key frames
+bun src/cli.ts serve ../sessions/<id>            # prints the viewer URL
+bun src/cli.ts patch ../sessions/<id> --project ..
+bun src/cli.ts analyse ../sessions/<new> --previous ../sessions/<id>/report.json
+bun src/cli.ts eval ../sessions/<id>             # score against eval/ground_truth.json
+bun src/cli.ts spend                             # Meta API spend against PLAYTEST_SPEND_CAP_USD
+```
+
+To try it without playing, `tools/make_synthetic.sh` builds four bot-played sessions of the test course in `sessions/synthetic/`.
+
+## Meta models used
+
+| Model | What it does here |
+|---|---|
+| Muse Wonder (`muse-wonder-1.0`) | Watches the session video with the transcript and telemetry, and writes the findings. Compares builds. |
+| Muse Voice Transcribe (`muse-voice-transcribe-1.0`) | Turns the think-aloud into turns with start and end times, so quotes land on the right moment. |
+| SAM 3.1 (`sam-3.1`) | Segments the element each finding is about on its key frame. |
+| Muse Spark (`muse-spark-1.3`) | Writes the fix as a diff to an allowlisted project file. |
+
+What we measured about each one is in the [wiki](docs/wiki/index.md).
+
+## Results so far
+
+These numbers come from **synthetic** sessions: a scripted bot plays the test course, and Piper TTS speaks think-aloud lines ([eval/sweeps/2026-10-26-synthetic](eval/sweeps/2026-10-26-synthetic/README.md)). The voice lines were written from the answer key, so treat these as a smoke test. Real playtests come next.
+
+- In every configuration tried, Muse Wonder located all 6 planted problems on the voiced session, and 5–6 of 6 with no voice at all.
+- At strict scoring (right place and right category), recall is 0.67–0.83. Almost every loss is the ui/confusion boundary, e.g. a misleading EXIT sign filed as `ui`.
+- No false positives on the clean (fixed) level in 12 runs.
+- Cost: about $0.30 per 3-minute session; latency 1–2 minutes.
+
 
 ## Layout
 
 | Path | What it is |
 |---|---|
+| `analyst/` | The analysis CLI (`bun src/cli.ts <command>`): finalize, analyse, annotate, patch, eval, sweep, serve. Shared schemas in `src/schema.ts`. |
 | `addons/playtest_analyst/` | The plugin: the Playtest dock, the `PlaytestRecorder` autoload that records a session bundle ([docs/recorder.md](docs/recorder.md)), and the `PlaytestTelemetry` autoload ([docs/telemetry.md](docs/telemetry.md)). |
 | `tests/` | GDScript tests, run headless by `tools/test.sh`. |
 | `level/` | The test course (`level.tscn`). It reads every tunable from `level/tuning.tres` at `_ready()`. |
 | `eval/` | Ground truth and the two tuning profiles. Godot ignores this folder (`.gdignore`), so its labels never reach the analysis. |
 | `demo/` | Player and enemy. The player's movement code comes from the Godot 3D platformer demo (see Credits). |
 | `art/` | Kenney Platformer Kit models (`art/kenney/`), the toy-block shader and its materials (`art/blocks/`), the enemy and the Blender script that builds it (`art/enemy/`), and the HUD font. |
-| `tools/` | Scripts for checking the level without playing it. See [Checking the level](#checking-the-level). |
+| `tools/` | Scripts for checking the level without playing it (see [Checking the level](#checking-the-level)), the synthetic-session bot (`make_synthetic.sh`) and the test runners. |
+| `sessions/` | Session bundles. Media is gitignored; `sessions/synthetic/` holds the bot-played sessions. |
+| `docs/` | The demo script, recorder and telemetry docs, and the [wiki](docs/wiki/index.md) of measured facts about the APIs. |
+| `spikes/` | Throwaway experiments behind each decision in [DECISIONS.md](DECISIONS.md). |
 
 ## Test course
 
