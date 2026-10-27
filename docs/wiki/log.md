@@ -54,3 +54,7 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 ## [2026-10-27] ingest | spikes/tug-123 (multi-phrasing SAM run and probe)
 - sam-3-1.md: added the TUG-123 run (3 of 5 highlights matched, one on the wrong platform) and the follow-up probe (button found only on a 4× crop; HUD text never matched). Replaced the phrasing open question with HUD-text and crop questions.
 - muse-wonder-video.md: added that strict `json_schema` accepted `minItems`/`maxItems`.
+
+## [2026-10-27] ingest | docs/recorder.md#measured (TUG-95 real-mic run)
+- capture-sync.md: added the 120 s real-mic run of the in-process ffmpeg mic (39/39 beeps, 14–21 ms, −0.8 ms/min); removed the open question it answers.
+- index.md: updated the capture-sync.md line.

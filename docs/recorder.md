@@ -66,13 +66,14 @@ The dock lists these sessions as `(incomplete)` and disables Analyse for them.
 ## Checking it without a person
 
 ```sh
-tools/record_check.sh [SECONDS]   # default 30
+tools/record_check.sh [SECONDS]          # default 30
+tools/record_check.sh --real [SECONDS]   # default mic and speakers instead of the loopback
 ```
 
 This records the real game with `--record`. A PipeWire null sink stands in for the mic, and a 1 kHz beep is played into it every 3 s. The script then closes the window through the window manager. It prints:
 
 - whether the bundle is complete;
-- each beep's lag in the mic track (beep heard minus the moment `paplay` was called, so it includes paplay's own start-up);
+- each beep's lag in the mic track (beep heard minus the moment `paplay` was called, so it includes paplay's own start-up), and the lag's drift in ms/min;
 - whether `readSession` accepts the bundle.
 
 From an agent shell a Godot window only presents its first frames, so the video in these runs shows a still frame. The script checks timing and files, not pictures.
@@ -85,6 +86,7 @@ CachyOS (Wayland with XWayland, PipeWire), Godot 4.7.2, ffmpeg 9.0.2, 26 Oct 202
 |---|---|
 | `tools/record_check.sh 60`, loopback mic | Clean stop on window close. 19 of 19 beeps heard, lag 20–25 ms, no trend over 60 s. `readSession` OK. |
 | Same, 30 s run (by hand, same method) | 9 of 9 beeps, 13–24 ms |
+| `tools/record_check.sh --real 120`, run by Phil on 27 Oct: laptop speakers into the laptop's analog mic (`alsa_input.pci-0000_80_1f.3.analog-stereo`) | Clean stop. 39 of 39 beeps heard, lag 14–21 ms, drift −0.8 ms/min. `readSession` OK. |
 | `screen.mkv` stream start times, three runs | Audio `start_time` 52, 58 and 39 ms after video |
 | F9 twice, then close | Two complete bundles |
 | `kill -9` on Godot while recording | `INCOMPLETE` kept, no `session.json`. Without the watchdog, ffmpeg kept recording after Godot died. With it, ffmpeg exits and `screen.mkv` has a duration. |

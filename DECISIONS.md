@@ -48,7 +48,7 @@ sessions/<id>/
 ## 3. Capture (TUG-95)
 
 - Video: external `ffmpeg -f x11grab -copyts` on the Godot window. Godot runs with `--display-driver x11` on Wayland.
-- Mic: ffmpeg `-f pulse`, not Godot's `AudioEffectRecord`, which lags a real mic by ~80 ms more and drifts if the mix rate doesn't match ([wiki](docs/wiki/capture-sync.md)). Preferred: the same ffmpeg process as the video, so both share one wall clock (not yet measured).
+- Mic: ffmpeg `-f pulse`, not Godot's `AudioEffectRecord`, which lags a real mic by ~80 ms more and drifts if the mix rate doesn't match ([wiki](docs/wiki/capture-sync.md)). Preferred: the same ffmpeg process as the video, so both share one wall clock. Measured 14–21 ms behind the beep with −0.8 ms/min drift over 120 s on a real mic ([wiki](docs/wiki/capture-sync.md)).
 - Stop ffmpeg with `q` on stdin, never a kill. Stop on window close.
 
 **Fallback.** If the in-process ffmpeg mic misbehaves, run it as a second ffmpeg process (measured: 44–53 ms on a real mic).
