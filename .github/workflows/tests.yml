@@ -1,10 +1,12 @@
 # Runs the analyst's tests and typecheck, and the Godot tests and level build check,
-# on every push and pull request. No secrets: nothing here can reach the Meta API
-# (the analyst's tests talk to a fake server on localhost).
+# on every push to main and every pull request. Other branches are checked through their
+# pull request, so a push there doesn't run everything twice. No secrets: nothing here
+# can reach the Meta API (the analyst's tests talk to a fake server on localhost).
 name: tests
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 permissions:
