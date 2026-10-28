@@ -82,6 +82,19 @@ Sessions go in `<project>/sessions/<id>/` when the game runs from the editor or 
 - `profile`: the project setting `playtest_analyst/profile`, or `null` if it isn't set.
 - `capture`: `{video: "screen.mkv", audio: "screen.mkv"}`. There is no `video_start` or `audio_start`, because both streams carry wall-clock pts.
 
+### When recording can't start
+
+The recorder checks first, and records nothing if it can't, so no session folder is made. It tells the dock why, and the dock's status line says "Not recording: …" within about a second of the game starting. Record works again straight away. The game keeps running.
+
+| Situation | Status line |
+|---|---|
+| The game isn't on X11 (e.g. pure Wayland with no XWayland) | "the game is running on Wayland, not X11, …" |
+| ffmpeg isn't installed, or isn't on the game's PATH | "ffmpeg isn't installed, or isn't on the PATH the game was started with." |
+| The ffmpeg process couldn't be launched at all | "ffmpeg could not be started." |
+| The editor isn't on Linux | Record is disabled from the start, and the status line says recording works only on Linux |
+
+If the project's run args already equal the ones the dock would set (an editor crash can leave them saved), the dock plays the game straight away instead of waiting for the editor to notice a change that never comes.
+
 After a clean stop the recorder starts `bun analyst/src/cli.ts finalize <dir>` in the background. If bun or the CLI is missing, it prints a line and carries on.
 
 ### Bundles that end early are marked, never deleted
@@ -91,7 +104,7 @@ A bundle without `session.json` is unfinished, and `readSession` rejects it. `IN
 | What happened | `INCOMPLETE` says | `screen.mkv` |
 |---|---|---|
 | The game crashed or was killed (including the editor's Stop button) | "Recording started … and never stopped" | Finalised: a watchdog shell around ffmpeg sends it SIGTERM when Godot's process disappears, and ffmpeg writes the file's end on SIGTERM |
-| ffmpeg exited by itself (e.g. no ffmpeg, no mic, bad window) | Its exit code and stderr | Whatever it wrote |
+| ffmpeg exited by itself (e.g. no mic, bad window) | Its exit code and stderr | Whatever it wrote |
 | ffmpeg didn't exit within 5 s of `q` | That, and that it was sent SIGTERM | Finalised on SIGTERM |
 
 The dock lists these sessions as `(incomplete)` and disables Analyse for them.
@@ -127,6 +140,17 @@ CachyOS (Wayland with XWayland, PipeWire), Godot 4.7.2, ffmpeg 9.0.2, 26 Oct 202
 | Dock in a real editor: Record → Stop recording | The game got `--display-driver x11 -- --record --tester=Phil%20Smith`. `session.json` has `"tester": "Phil Smith"`, and `readSession` OK. |
 | Dock: Record → the editor's Stop button | Status says the session is incomplete; the list shows `(incomplete)`; no ffmpeg left running |
 | Dock: Analyse and Open report with no `analyse`/`serve` command yet | CLI output and `[exited with code 2]` streamed into the dock |
+
+Dock, driven in a headless editor by a throwaway plugin that clicks Record and prints the status line, 28 Oct 2026:
+
+| Check | Result |
+|---|---|
+| `DISPLAY` unset, so the game falls back to Wayland | "Not recording: the game is running on Wayland, not X11, …" 1.3 s after Record; Record enabled; a second click gives the same. Before this change the status stayed on "Starting the game…" |
+| ffmpeg missing from `PATH` | "Not recording: ffmpeg isn't installed, …" after 1.0 s; no session folder |
+| The launch of ffmpeg forced to fail (code edited for the test) | "Not recording: ffmpeg could not be started." after 1.0 s; no session folder |
+| Run args already set to the dock's own | The game started and recorded. Before this change, Record stayed disabled and the game never started |
+| Normal Record, then Stop | "Recording …", then "Saved …" |
+| The dock told the OS is macOS | Record disabled; the reason reads "Recording works only on Linux: it captures the game window with ffmpeg's x11grab, which macOS doesn't have." |
 
 The x11grab frame from the dock-launched game shows the game view at 1152×648. In this setup the editor launched the game with `--wid`, which is its option for embedding the game in the Game tab, and the capture still showed the game.
 
