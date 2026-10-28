@@ -1,6 +1,6 @@
 {
   "name": "v0-rep",
-  "prompt": "../../../../analyst/prompts/v0.md",
+  "prompt": "../prompts/v0.md",
   "fps": 1,
   "include_transcript": true,
   "include_telemetry": true,

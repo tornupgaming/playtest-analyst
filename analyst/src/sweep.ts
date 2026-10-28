@@ -46,8 +46,10 @@ export async function sweep(configs: AnalysisConfig[], dirs: string[], out: stri
 			const path = join(out, config.name, session.meta.id, "report.json");
 			let result: Run["result"];
 			try {
-				// Reuse a report only if it came from this exact config and prompt.
-				const stamp = JSON.stringify({ ...config, prompt_text: await Bun.file(config.prompt).text() });
+				// Reuse a report only if it came from these exact settings and prompt text. The prompt's
+				// path is left out, so the stamp holds no machine-specific folder and survives a move.
+				const { prompt, ...settings } = config;
+				const stamp = JSON.stringify({ ...settings, prompt_text: await Bun.file(prompt).text() });
 				const stampPath = join(dirname(path), "config.json");
 				const cached = existsSync(path) && existsSync(stampPath) && (await Bun.file(stampPath).text()) === stamp;
 				const report = cached ? Report.parse(await Bun.file(path).json()) : await analyse(session.dir, config, path);

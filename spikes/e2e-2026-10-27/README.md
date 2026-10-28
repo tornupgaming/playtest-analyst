@@ -1,6 +1,6 @@
 # End-to-end run of the merged `overnight` branch (27 Oct, early morning)
 
-One pass of the whole pipeline on the synthetic sessions (TUG-120), after every overnight branch had merged. Logs: [e2e.log](e2e.log) (first pass) and [e2e2.log](e2e2.log) (patch and compare re-run after the fix below).
+One pass of the whole pipeline on the synthetic sessions (TUG-120), after every overnight branch had merged. Logs: [e2e.log](e2e.log) (first pass) and [e2e2.log](e2e2.log) (patch and compare re-run after the fix below), with paths shown relative to the repo and stack traces cut down to the error line. Outputs: [the report](planted-voice.report.json), [the patches](planted-voice.patches.json) and [the comparison report](clean-voice.vs-planted.report.json).
 
 | Step | Result | Cost |
 |---|---|---|
