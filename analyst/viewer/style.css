@@ -72,6 +72,8 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 600px; 
 .stage { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .player { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); }
 .player video { width: 100%; height: 100%; display: block; object-fit: contain; cursor: pointer; }
+.no-video { position: absolute; inset: 0; height: fit-content; margin: auto; padding: 0 15%; color: var(--muted); font-size: 17px; text-align: center; }
+.no-video code { color: var(--text); font: 15px var(--mono); }
 
 /* --- Timeline --- */
 
@@ -106,6 +108,7 @@ main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 600px; 
 	transition: background 120ms, box-shadow 120ms;
 }
 .mark:hover, .mark.live { background: var(--accent); }
+.mark:focus-visible, .card:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .mark.active { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--accent); }
 .idle {
 	position: absolute; top: 12px; height: 12px; border-radius: 3px;

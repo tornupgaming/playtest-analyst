@@ -79,6 +79,7 @@ function icon(name: keyof typeof ICONS) {
 
 const video = $<HTMLVideoElement>("#video");
 video.src = "video.mp4";
+video.onerror = () => ($("#no-video").hidden = false);
 const seek = (t: number, play = true) => {
 	video.currentTime = Math.min(Math.max(t, 0), duration);
 	if (play) video.play();
@@ -86,7 +87,12 @@ const seek = (t: number, play = true) => {
 /** A finding the user clicked. It stays open while the playhead is inside it, even when
  * another finding overlaps or starts at the same time. */
 let pinned: Finding | undefined;
-const open = (f: Finding) => ((pinned = f), seek(f.t_start));
+/** When the user last scrolled or clicked in the findings list. Auto-scroll leaves the list alone
+ * for a few seconds after, so it never fights a hand on the scroll wheel. Picking a finding clears it. */
+let touched = -Infinity;
+const open = (f: Finding) => ((pinned = f), (touched = -Infinity), seek(f.t_start));
+/** Enter opens a focused finding card or timeline marker, as a click does. */
+const onEnter = (f: Finding) => (e: KeyboardEvent) => e.key === "Enter" && e.target === e.currentTarget && open(f);
 const toggle = () => (video.paused ? video.play() : video.pause());
 video.onclick = toggle;
 $("#play").onclick = toggle;
@@ -150,7 +156,11 @@ for (const f of findings) {
 		class: "mark",
 		style: { ...span({ t0: f.t_start, t1: f.t_end }), top: `${rows.get(f)! * ROW + 5}px`, "--accent": accent(f.category) },
 		title: `${label(f.category)} · ${f.summary}`,
+		tabindex: 0,
+		role: "button",
+		"aria-label": `${label(f.category)} finding at ${clock(f.t_start)}: ${f.summary}`,
 		onpointerdown: (e: Event) => (e.stopPropagation(), open(f)),
+		onkeydown: onEnter(f),
 	});
 	markers.set(f, el);
 }
@@ -210,7 +220,7 @@ for (const f of findings) {
 
 	const card = h(
 		"li",
-		{ class: "card", style: { "--accent": accent(f.category) }, onclick: () => open(f) },
+		{ class: "card", style: { "--accent": accent(f.category) }, tabindex: 0, onclick: () => open(f), onkeydown: onEnter(f) },
 		h(
 			"div",
 			{ class: "card-head" },
@@ -264,6 +274,11 @@ if (comparison && comparison.resolved.length > 0) {
 
 // --- Playback state ---------------------------------------------------------
 
+for (const type of ["wheel", "touchmove", "pointerdown", "keydown"]) {
+	// Enter on a card picks it (see `open`), so it isn't a hand on the list.
+	$("#findings").addEventListener(type, (e) => (e as KeyboardEvent).key !== "Enter" && (touched = performance.now()), { passive: true });
+}
+
 let shown: Finding | undefined;
 function frame() {
 	const t = video.currentTime;
@@ -279,7 +294,8 @@ function frame() {
 		shown = active;
 		cards.get(shown)!.classList.add("active");
 		markers.get(shown)!.classList.add("active");
-		cards.get(shown)!.scrollIntoView({ block: "nearest", behavior: "smooth" });
+		// "nearest" leaves a card that is already on screen where it is.
+		if (performance.now() - touched > 3000) cards.get(shown)!.scrollIntoView({ block: "nearest", behavior: "smooth" });
 	}
 	for (const [f, el] of markers) el.classList.toggle("live", f === active);
 	requestAnimationFrame(frame);
