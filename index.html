@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Playtest Analyst</title>
+		<link rel="icon" href="data:," />
+		
+	<link rel="stylesheet" crossorigin href="./chunk-q3fd8rk0.css"><script type="module" crossorigin src="./chunk-30qtk2nh.js"></script></head>
+	<body>
+		<header>
+			<div class="brand"><span class="logo"></span>Playtest Analyst</div>
+			<div id="session" class="session"></div>
+			<div id="compare" class="compare" hidden></div>
+			<dl id="usage" class="usage"></dl>
+		</header>
+		<main>
+			<section class="stage">
+				<div class="player">
+					<video id="video" preload="auto"></video>
+					<p id="no-video" class="no-video" hidden>
+						This session has no video. To make one from the recording, run <code>playtest finalize &lt;session folder&gt;</code>, then reload this page.
+					</p>
+				</div>
+				<div class="timeline-panel">
+					<div class="transport">
+						<button id="play" class="play" aria-label="Play"></button>
+						<span id="clock" class="clock"></span>
+						<button id="mute" class="mute" aria-label="Mute"></button>
+						<div id="legend" class="legend"></div>
+					</div>
+					<div id="timeline" class="timeline"></div>
+				</div>
+			</section>
+			<aside class="findings-panel">
+				<h2>Findings <span id="count"></span></h2>
+				<ol id="findings" class="findings"></ol>
+			</aside>
+		</main>
+		
+	</body>
+</html>
