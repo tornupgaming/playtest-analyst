@@ -34,6 +34,7 @@ Measured on 28 Oct 2026 (CachyOS, PipeWire, laptop analog mic), from an agent sh
 | Run | Result |
 |---|---|
 | `tools/preflight.sh clean`, tree on the clean profile | 9 PASS, exit 0, 3.1 s. Mic peak −31 dB. |
+| `tools/preflight.sh`, planted profile copied in and committed | 9 PASS, exit 0, 2.8 s |
 | Default (`planted`) on that tree, key unset, `PULSE_SOURCE` set to a null sink's monitor (stands in for a muted mic), one tracked file edited | FAIL lines for the mic (peak −91 dB), the key, the profile and the uncommitted change; exit 1 |
 | `META_MODEL_API_KEY=bogus` | `GET /v1/models` returned 401; FAIL, exit 1. With the real key it returned 200. |
 | `PULSE_SERVER` pointed at nothing | FAIL "Couldn't record from the default mic", exit 1 |
