@@ -26,7 +26,7 @@ export async function run(argv: string[]) {
 	const { meta, events } = await readSession(dir);
 	const report = await readJson(join(dir, "report.json"), Report);
 	const video = join(dir, "video.mp4");
-	if (!(await Bun.file(video).exists())) console.warn(`No video.mp4 in ${dir}; run \`playtest finalize\` first.`);
+	if (!(await Bun.file(video).exists())) console.warn(`No video.mp4 in ${dir}, so the report will have no video. For a fresh recording, run \`playtest finalize\` first.`);
 
 	const server = Bun.serve({
 		// Fail if the port is taken, rather than share it with a stale viewer. Bun 1.4 ignores
