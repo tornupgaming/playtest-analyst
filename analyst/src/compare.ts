@@ -4,6 +4,7 @@
 // previous findings that nothing matches are resolved.
 import { resolve } from "node:path";
 import { z } from "zod";
+import { readJson } from "./boundary.ts";
 import { ModelFinding, Report } from "./schema.ts";
 
 /** patches.json from TUG-107, reduced to what the model needs. */
@@ -13,8 +14,8 @@ export type Previous = { report: Report; patches: z.infer<typeof Patches>["patch
 
 export async function loadPrevious(reportPath: string, patchesPath?: string): Promise<Previous> {
 	return {
-		report: Report.parse(await Bun.file(reportPath).json()),
-		patches: patchesPath ? Patches.parse(await Bun.file(patchesPath).json()).patches : [],
+		report: await readJson(reportPath, Report),
+		patches: patchesPath ? (await readJson(patchesPath, Patches)).patches : [],
 		prompt: await Bun.file(resolve(import.meta.dir, "../prompts/compare.md")).text(),
 	};
 }

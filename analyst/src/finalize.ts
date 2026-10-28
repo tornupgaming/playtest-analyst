@@ -3,6 +3,7 @@
 // t=0 at session t=0, so nothing downstream handles offsets again.
 import { existsSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import { readJson } from "./boundary.ts";
 import { SessionMeta } from "./schema.ts";
 
 /** Session time of a stream's first frame or sample: the declared value, else the file's
@@ -52,7 +53,7 @@ export const finalized = (dir: string) => existsSync(join(dir, "video.mp4")) && 
  * The names are per process: the recorder finalizes on stop and Analyse may too, and two runs
  * sharing one temp file corrupt it. Each run writes a whole file and the last rename wins. */
 export async function finalize(dir: string): Promise<void> {
-	const meta = SessionMeta.parse(await Bun.file(join(dir, "session.json")).json());
+	const meta = await readJson(join(dir, "session.json"), SessionMeta);
 	const { capture, duration, t0_unix } = meta;
 	const videoPath = join(dir, capture.video);
 	// A start further out than the whole session means the pts weren't wall-clock (no -copyts).

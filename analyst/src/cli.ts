@@ -2,6 +2,7 @@
 // `playtest <command> [args]`. Each command is a module in src/commands/ exporting
 // `description` and `run(argv)`, so commands can be added without touching this file.
 import { basename } from "node:path";
+import { UserError } from "./boundary.ts";
 
 type Command = { description: string; run: (argv: string[]) => Promise<number | void> };
 
@@ -24,4 +25,11 @@ if (!name || name === "--help" || name === "-h" || !names.includes(name)) {
 }
 
 const cmd = (await import(`${dir}/${name}.ts`)) as Command;
-process.exit((await cmd.run(argv)) ?? 0);
+try {
+	process.exit((await cmd.run(argv)) ?? 0);
+} catch (err) {
+	// One line for a failure the user can fix; anything else is a bug and keeps its stack trace.
+	if (!(err instanceof UserError)) throw err;
+	console.error(err.message);
+	process.exit(1);
+}

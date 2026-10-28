@@ -1,5 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { basename, join } from "node:path";
+import { readJson } from "../boundary.ts";
 import { loadConfig } from "../config.ts";
 import { GroundTruth } from "../schema.ts";
 import { readme, sweep } from "../sweep.ts";
@@ -24,7 +25,7 @@ export async function run(argv: string[]) {
 		return 2;
 	}
 
-	const gt = GroundTruth.parse(await Bun.file(join(ROOT, "eval/ground_truth.json")).json());
+	const gt = await readJson(join(ROOT, "eval/ground_truth.json"), GroundTruth);
 	const runs = await sweep(await Promise.all(configs.map(loadConfig)), sessions, out, gt, concurrency);
 	mkdirSync(out, { recursive: true });
 	const md = readme(basename(out), runs, gt);

@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { parseArgs } from "node:util";
+import { readJson } from "../boundary.ts";
 import { readSession } from "../bundle.ts";
 import { ratios, score, windows } from "../eval.ts";
 import type { Score, Strictness } from "../eval.ts";
@@ -38,11 +39,11 @@ export async function run(argv: string[]) {
 		return 2;
 	}
 
-	const gt = GroundTruth.parse(await Bun.file(gtPath).json());
+	const gt = await readJson(gtPath, GroundTruth);
 	const rows = [];
 	for (const dir of args.positionals) {
 		const session = await readSession(dir);
-		const report = Report.parse(await Bun.file(join(dir, reportName)).json());
+		const report = await readJson(join(dir, reportName), Report);
 		const opts = { padS, strict: strict as Strictness, profile: session.meta.profile, endT: session.meta.duration };
 		rows.push({ report, session, score: score(report, gt, session.events, opts) });
 	}

@@ -13,7 +13,8 @@ const SAM_EMPTY = await Bun.file(join(import.meta.dir, "../fixtures/sam/empty.js
 type SamRequest = { input: [{ content: [{ text: string }, { image_url: string }] }] };
 /** SAM's reply to a phrasing on the n-th distinct image (0-based) the test has sent so far. */
 let samReply: (phrasing: string, image: number) => unknown = () => SAM_EMPTY;
-let asrStatus = 200;
+/** Status of each ASR reply in turn; 200 once they run out. */
+let asrStatuses: number[] = [];
 
 const server = Bun.serve({
 	port: 0,
@@ -24,7 +25,8 @@ const server = Bun.serve({
 			return Response.json({ id: "file-123", object: "file", bytes: 1, created_at: 0, filename: "upload.mp4", purpose: "user_data" });
 		}
 		if (path === "/v1/asr/transcribe") {
-			if (asrStatus !== 200) return new Response("rate limited", { status: asrStatus });
+			const status = asrStatuses.shift() ?? 200;
+			if (status !== 200) return new Response("rate limited", { status });
 			seen.asr.push(JSON.parse(await ((await req.formData()).get("request") as Blob).text()));
 			return Response.json({
 				transcript: "where do I go go.",
@@ -54,6 +56,7 @@ process.env.META_API_BASE = `http://localhost:${server.port}/v1`;
 process.env.META_MODEL_API_KEY = "test-key";
 process.env.PLAYTEST_SPEND_LEDGER = join(tmp, "spend.jsonl");
 process.env.PLAYTEST_SPEND_CAP_USD = "100";
+process.env.PLAYTEST_RETRY_DELAY_MS = "1";
 const { analyse } = await import("./analyse.ts");
 const { loadPrevious } = await import("./compare.ts");
 const { run } = await import("./finalize.ts");
@@ -102,7 +105,7 @@ beforeEach(() => {
 	seen.responses = [];
 	seen.sam = [];
 	seen.uploads = [];
-	asrStatus = 200;
+	asrStatuses = [];
 	samReply = () => SAM_EMPTY;
 });
 
@@ -141,12 +144,23 @@ test("invalid output twice fails without writing a report", async () => {
 	expect(existsSync(join(dir, "report.json"))).toBe(false);
 });
 
-test("when ASR fails, the video is sent with its audio track and no transcript", async () => {
+test("an ASR rate limit is retried, and the report has the transcript", async () => {
 	replies = [VALID];
-	asrStatus = 429;
+	asrStatuses = [429];
 	await analyse(dir, config);
 
-	expect(seen.uploads).toEqual(["upload.mp4", "video.mp4"]);
+	expect(seen.uploads).toEqual(["upload.mp4"]);
+	expect(JSON.stringify(seen.responses[0])).toContain("[1.2–2.0s] where do I go");
+	expect(await Bun.file(join(dir, "analysis/transcript.json")).json()).toEqual([{ start: 1.2, end: 2, text: "where do I go" }]);
+});
+
+test("when ASR keeps failing, the video is uploaded once, with its audio track, and no transcript is sent", async () => {
+	replies = [VALID];
+	asrStatuses = [503, 429, 500, 429];
+	await analyse(dir, config);
+
+	expect(asrStatuses).toEqual([]);
+	expect(seen.uploads).toEqual(["video.mp4"]);
 	const sent = JSON.stringify(seen.responses[0]);
 	expect(sent).not.toContain("Think-aloud transcript");
 	expect(sent).toContain("[1.5s] input_idle duration=1");

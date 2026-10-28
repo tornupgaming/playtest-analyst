@@ -2,6 +2,7 @@
 // compared config by config (TUG-121). Lives in analyst/configs/*.json.
 import { dirname, resolve } from "node:path";
 import { z } from "zod";
+import { readJson } from "./boundary.ts";
 
 export const AnalysisConfig = z.strictObject({
 	/** Written into report.json as `config`. */
@@ -21,7 +22,7 @@ export const AnalysisConfig = z.strictObject({
 export type AnalysisConfig = z.infer<typeof AnalysisConfig>;
 
 export async function loadConfig(path: string): Promise<AnalysisConfig> {
-	const config = AnalysisConfig.parse(await Bun.file(path).json());
+	const config = await readJson(path, AnalysisConfig);
 	return { ...config, prompt: resolve(dirname(path), config.prompt) };
 }
 

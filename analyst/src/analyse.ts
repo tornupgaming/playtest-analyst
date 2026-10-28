@@ -1,5 +1,5 @@
 // `playtest analyse`: session bundle → Muse Wonder → SAM → report.json (DECISIONS.md §4, §5).
-// Upload and ASR run in parallel, then one /v1/responses call. Invalid output is retried
+// ASR (retried on rate limits and server errors), then the upload, then one /v1/responses call. Invalid output is retried
 // once with the validation error appended. Last, each finding's highlight is drawn on its key frame.
 import { mkdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
@@ -10,7 +10,7 @@ import { comparison, compareInput, type Previous } from "./compare.ts";
 import type { AnalysisConfig } from "./config.ts";
 import { finalize, finalized, run } from "./finalize.ts";
 import { ASR_CHUNK_S, chunkStarts, MODEL, modelRequest, sessionTurns } from "./input.ts";
-import { metaFetch, respond, type Responded, uploadFile } from "./meta.ts";
+import { metaFetch, outputJson, respond, uploadFile } from "./meta.ts";
 import { type Finding, ModelOutput, type Report, type TranscriptTurn } from "./schema.ts";
 
 const ASR_MODEL = "muse-voice-transcribe-1.0";
@@ -41,22 +41,6 @@ async function transcribe(dir: string, work: string, duration: number): Promise<
 	return turns;
 }
 
-/** The model's findings, or an error saying why the output doesn't match the schema. */
-function findings(response: Responded["response"], output: z.ZodType<{ findings: Omit<Finding, "id">[] }>): Omit<Finding, "id">[] {
-	if (response.status === "incomplete") throw new Error(`The response is incomplete (${response.incomplete_details?.reason ?? "no reason given"}).`);
-	const text = response.output.flatMap((o) => (o.type === "message" ? o.content : [])).find((c) => c.type === "output_text")?.text;
-	if (text === undefined) throw new Error("The response has no output_text.");
-	let json: unknown;
-	try {
-		json = JSON.parse(text);
-	} catch (err) {
-		throw new Error(`The output is not JSON: ${(err as Error).message}`);
-	}
-	const parsed = output.safeParse(json);
-	if (!parsed.success) throw new Error(z.prettifyError(parsed.error));
-	return parsed.data.findings;
-}
-
 /** Intermediate files go next to `out`: in `analysis/` for report.json, `<name>.analysis/` for any
  * other name, so two reports written to one folder never share an upload or ASR chunks.
  * With `previous`, the findings are compared with the previous build's (TUG-109). */
@@ -67,19 +51,17 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	mkdirSync(work, { recursive: true });
 	const prompt = await Bun.file(config.prompt).text();
 
-	const [uploadedId, transcript] = await Promise.all([
-		uploadVideo(dir, work, config.video_audio),
+	// ASR before the upload, so the video goes up once: silent, or with its audio if ASR failed.
+	const transcript =
 		config.include_transcript && meta.capture.audio !== null
-			? transcribe(dir, work, meta.duration).catch((err: Error) => {
+			? await transcribe(dir, work, meta.duration).catch((err: Error) => {
 					console.error(`ASR failed, so the video goes with its audio track instead (DECISIONS.md §4): ${err.message}`);
 					return null;
 				})
-			: [],
-	]);
+			: [];
 	// ASR failed: send the mic as the video's audio track. Speech timing is looser, but the words get through.
-	const asrFailed = transcript === null;
-	if (asrFailed) config = { ...config, include_transcript: false, video_audio: true };
-	const fileId = asrFailed ? await uploadVideo(dir, work, true) : uploadedId;
+	if (transcript === null) config = { ...config, include_transcript: false, video_audio: true };
+	const fileId = await uploadVideo(dir, work, config.video_audio);
 	const turns = transcript ?? [];
 
 	const usage = { input_tokens: 0, cached_tokens: 0, output_tokens: 0, cost_usd: 0, latency_s: 0 };
@@ -97,7 +79,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 		usage.cost_usd += costUsd;
 		usage.latency_s += latencyS;
 		try {
-			found = findings(response, compare?.output ?? ModelOutput);
+			found = outputJson(response, compare?.output ?? ModelOutput).findings;
 		} catch (err) {
 			error = (err as Error).message;
 			console.error(`Attempt ${attempt}: the output doesn't match the schema:\n${error}`);

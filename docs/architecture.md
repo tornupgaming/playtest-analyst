@@ -106,11 +106,8 @@ sequenceDiagram
 
   Dev->>Dock: Analyse
   Dock->>CLI: analyse <bundle>
-  par in parallel
-    CLI->>Meta: Files API upload (silent video)
-  and
-    CLI->>Meta: ASR per ≤10-min chunk
-  end
+  CLI->>Meta: ASR per ≤10-min chunk (retried on 429 / 5xx)
+  CLI->>Meta: Files API upload (silent video, or with audio if ASR failed)
   CLI->>Meta: one /v1/responses to Muse Wonder<br/>video + transcript + telemetry
   Meta-->>CLI: findings JSON (strict schema)
   loop each finding with a highlight (4 at a time)
@@ -221,7 +218,7 @@ How to read it:
 
 - **`commands/` are shells.** Each exports `description` and `run(argv)`. To add a command, drop in a new file; `cli.ts` finds it with a glob.
 - **The pure modules** are `input.ts`, `eval.ts`, `metrics.ts`, and `comparison()` in `compare.ts`. Data goes in and data comes out, so this is where the unit tests live (`*.test.ts`).
-- **`meta.ts` is the only way out to the network.** `respond()` (Responses API), `uploadFile()` (Files API) and `metaFetch()` (ASR) all check the spend cap before the call and append to the ledger after it. SAM goes through `respond()` too and is billed per image.
+- **`meta.ts` is the only way out to the network.** `respond()` (Responses API), `uploadFile()` (Files API) and `metaFetch()` (ASR) all check the spend cap before the call and append to the ledger after it. `metaFetch()` retries a rate limit (429), a server error (5xx) or a timeout 3 times, 2, 4 then 8 s apart; the OpenAI SDK retries the other two itself. SAM goes through `respond()` too and is billed per image.
 - **Configs** (`analyst/configs/*.json`) are plain data: prompt file, fps, and whether to include the transcript or telemetry. `sweep` runs every config on every session, so prompt changes can be compared.
 
 ---
@@ -236,11 +233,10 @@ flowchart TB
   fin{"video.mp4 and<br/>mic16k.wav exist?"}
   doFin["finalize(dir)"]
   read["readSession → meta, events"]
-  par["in parallel"]
   up["strip audio → upload.mp4<br/>uploadFile()"]
-  asr["split mic16k.wav into ≤600 s chunks<br/>POST /asr/transcribe each<br/>sessionTurns() → transcript.json"]
+  asr["split mic16k.wav into ≤600 s chunks<br/>POST /asr/transcribe each<br/>(up to 3 retries on 429, 5xx, timeout)<br/>sessionTurns() → transcript.json"]
   asrok{"ASR ok?"}
-  fallback["fallback (DECISIONS §4):<br/>re-upload video WITH audio,<br/>include_transcript = false"]
+  fallback["fallback (DECISIONS §4):<br/>upload video WITH audio,<br/>include_transcript = false"]
   req["modelRequest(): prompt + input_video @fps<br/>+ transcript text + telemetry text<br/>+ compare text if --previous"]
   wonder["respond() → Muse Wonder<br/>strict json_schema"]
   valid{"parses against<br/>ModelOutput?"}
@@ -253,11 +249,9 @@ flowchart TB
   start --> fin
   fin -- no --> doFin --> read
   fin -- yes --> read
-  read --> par --> up & asr
-  asr --> asrok
+  read --> asr --> asrok
   asrok -- no --> fallback --> req
-  asrok -- yes --> req
-  up --> req
+  asrok -- yes --> up --> req
   req --> wonder --> valid
   valid -- yes --> ids
   valid -- no --> retry
@@ -266,7 +260,7 @@ flowchart TB
   ids --> sam --> write
 ```
 
-The validation error from attempt 1 is appended to the prompt for attempt 2. In compare mode, the output schema narrows `previous_id` to an enum of the previous report's ids, so the model can't make up a match.
+The validation error from attempt 1 is appended to the prompt for attempt 2. `patch` does the same when Muse Spark's answer doesn't match its schema. In compare mode, the output schema narrows `previous_id` to an enum of the previous report's ids, so the model can't make up a match.
 
 ---
 
