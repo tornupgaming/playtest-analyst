@@ -1,10 +1,30 @@
 # Playtest Analyst
 
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE)
+[![Godot 4.7](https://img.shields.io/badge/Godot-4.7-478cbf?logo=godotengine&logoColor=white)](https://godotengine.org)
+[![Bun + TypeScript](https://img.shields.io/badge/Bun-TypeScript-f9f1e1?logo=bun&logoColor=black)](https://bun.sh)
+
 An AI UX researcher for solo game developers. A Godot plugin records a playtest (the screen, the player thinking aloud, and gameplay telemetry), Meta's models analyse it, and you get a timestamped report of where the player got confused, stuck or bored. Each finding comes with an annotated key frame and a one-click fix.
+
+[![The report viewer on the bot-played sample session. The selected finding says the EXIT sign at the fork points into a dead end; its key frame has the sign outlined by SAM 3.1, with the player's quotes, the gameplay log and a suggested fix underneath.](docs/images/sample-report.jpg)](https://tornupgaming.github.io/playtest-analyst/)
+
+<sub>A **bot-played sample session**, not a real player: a scripted bot plays the test level, which has problems planted in it, and a computer voice reads the think-aloud lines. The selected finding: the EXIT sign points into a dead end, and SAM 3.1 has outlined the sign on the key frame.</sub>
 
 Built for the Meta Global AI Developer Hackathon (Indie developer track).
 
-**[See a sample report in your browser](https://tornupgaming.github.io/playtest-analyst/)**, no install needed. It is a bot-played session of the test level with planted problems and a scripted think-aloud, analysed by Meta's models: click a finding to jump the video to it.
+## What you get
+
+- **A list of the moments the player struggled.** Muse Wonder watches the video, reads the think-aloud and the gameplay log, and gives each problem a time, a cause, the player's own words and the evidence.
+- **A picture of what to change.** SAM 3.1 outlines the sign, button or enemy each finding is about on a key frame from the video.
+- **A fix you can apply and undo.** Muse Spark writes the fix as a small change to your game's files, and the Godot dock applies it as a git commit.
+
+## See it, try it, read the code
+
+| | |
+|---|---|
+| **See it** | **[The sample report, live in your browser](https://tornupgaming.github.io/playtest-analyst/)**. Nothing to install. Click a finding to jump the video to it. |
+| **Try it** | The [quick start](#quick-start) opens the same report on your own machine with a handful of commands. You don't need Godot, a mic or an API key. |
+| **Read the code** | [`addons/playtest_analyst/`](addons/playtest_analyst/) is the Godot plugin: the recorder and the Playtest dock. [`analyst/src/`](analyst/src/) is the analysis pipeline, a Bun and TypeScript command-line tool that calls Meta's models. How well it works so far: [Results so far](#results-so-far) and the [latest evaluation write-up](eval/sweeps/2026-10-27-v2/README.md). |
 
 ## The problem
 
