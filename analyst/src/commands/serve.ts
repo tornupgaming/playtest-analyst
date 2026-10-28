@@ -1,6 +1,7 @@
 import { join, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
 import viewer from "../../viewer/index.html";
+import { readJson } from "../boundary.ts";
 import { readSession } from "../bundle.ts";
 import { Report } from "../schema.ts";
 
@@ -23,7 +24,7 @@ export async function run(argv: string[]) {
 		return 1;
 	}
 	const { meta, events } = await readSession(dir);
-	const report = Report.parse(await reportFile.json());
+	const report = await readJson(join(dir, "report.json"), Report);
 	const video = join(dir, "video.mp4");
 	if (!(await Bun.file(video).exists())) console.warn(`No video.mp4 in ${dir}; run \`playtest finalize\` first.`);
 
