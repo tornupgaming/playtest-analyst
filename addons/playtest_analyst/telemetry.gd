@@ -78,7 +78,9 @@ func now() -> float:
 func event(type: String, data: Dictionary = {}) -> void:
 	if _file == null:
 		return
-	if type == "zone_enter":
+	if type in ["zone_enter", "zone_exit"] and not data.has("zone"):
+		push_warning("PlaytestTelemetry: %s has no data.zone, so its time in the zone isn't counted" % type)
+	elif type == "zone_enter":
 		_zones[data.zone] = now()
 	elif type == "zone_exit" and _zones.has(data.zone):
 		data = data.merged({dwell = snappedf(now() - _zones[data.zone], 0.001)})

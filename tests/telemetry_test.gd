@@ -27,6 +27,18 @@ func test_zone_exit_carries_seconds_since_its_zone_enter() -> String:
 	])
 
 
+func test_zone_events_without_a_zone_are_logged_and_logging_carries_on() -> String:
+	_start()
+	_telemetry.event("zone_enter")
+	_telemetry.event("zone_exit", {reason = "door"})
+	_telemetry.event("zone_enter", {zone = "hall"})
+	return _expect([
+		{t = 0.0, type = "zone_enter", player_pos = null, data = {}},
+		{t = 0.0, type = "zone_exit", player_pos = null, data = {reason = "door"}},
+		{t = 0.0, type = "zone_enter", player_pos = null, data = {zone = "hall"}},
+	])
+
+
 func test_event_records_the_player_position() -> String:
 	var player := Node3D.new()
 	player.add_to_group(&"player")

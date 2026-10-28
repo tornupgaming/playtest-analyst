@@ -37,6 +37,8 @@ Lines are in the order they were written. `input_idle` is written when the idle 
 | `input_idle` | telemetry, by itself | `duration`: seconds without input. `t` is when the last input happened |
 | anything else | the game | anything |
 
+A `zone_enter` or `zone_exit` without `zone` is still written, with a warning in the Godot output, and isn't counted towards time in a zone.
+
 The test level (`level/level.gd`) writes `death`, `retry`, `zone_enter`, `zone_exit` and `objective_update`. It has no UI screens.
 
 ### Idle detection

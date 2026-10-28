@@ -6,7 +6,8 @@ extends Node
 ## written last, so a bundle without it is unfinished.
 ##
 ## Starts with the user arg --record, or F9. Stops with F9, on window close, or when
-## the editor dock asks. Needs X11: on Wayland run the game with --display-driver x11.
+## the editor dock asks. Needs X11 (on Wayland run the game with --display-driver x11)
+## and ffmpeg: without them it records nothing and tells the dock why ("refused").
 ##
 ## User args (after `--`):
 ##   --record          start recording at launch
@@ -78,8 +79,9 @@ func is_recording() -> bool:
 func start() -> void:
 	if is_recording():
 		return
-	if DisplayServer.get_name() != "X11":
-		push_error("PlaytestRecorder: x11grab needs X11; run with --display-driver x11")
+	var why_not := _cannot_record()
+	if not why_not.is_empty():
+		_refuse(why_not)
 		return
 	var id := Time.get_datetime_string_from_system(true).replace(":", "-")
 	# Two sessions in one second (F9 twice) must not share, and overwrite, one bundle.
@@ -98,6 +100,10 @@ func start() -> void:
 	var t0_usec := Time.get_ticks_usec()
 	var t0_unix := Time.get_unix_time_from_system()
 	_ffmpeg = OS.execute_with_pipe("sh", PackedStringArray(["-c", WATCHDOG, "sh"]) + _ffmpeg_args(_dir.path_join(VIDEO)), false)
+	if _ffmpeg.is_empty():
+		DirAccess.remove_absolute(_dir)  # still empty: nothing was recorded into it
+		_refuse("ffmpeg could not be started.")
+		return
 	_mark_incomplete("Recording started %s and never stopped: the game crashed or was killed." % Time.get_datetime_string_from_system(true))
 	PlaytestTelemetry.start(_dir, false, t0_usec)
 	_meta = {
@@ -163,6 +169,28 @@ func _input(input: InputEvent) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		stop()
+
+
+## Why this OS can't record at all, "" if it can. The editor dock asks before trying.
+static func unsupported_os(os_name: String) -> String:
+	if os_name == "Linux":
+		return ""
+	return "Recording works only on Linux: it captures the game window with ffmpeg's x11grab, which %s doesn't have." % os_name
+
+
+## Why recording can't start in this game, "" if it can.
+func _cannot_record() -> String:
+	if DisplayServer.get_name() != "X11":
+		return "the game is running on %s, not X11, so ffmpeg can't capture its window. Recording needs an X11 session, or XWayland on Wayland." % DisplayServer.get_name()
+	if OS.execute("sh", ["-c", "command -v ffmpeg"]) != 0:
+		return "ffmpeg isn't installed, or isn't on the PATH the game was started with."
+	return ""
+
+
+## Leaves nothing behind and tells the editor dock why, so it doesn't wait for "started".
+func _refuse(reason: String) -> void:
+	push_error("PlaytestRecorder: not recording: %s" % reason)
+	_tell_editor("refused", [reason])
 
 
 func _on_editor_message(message: String, _data: Array) -> bool:

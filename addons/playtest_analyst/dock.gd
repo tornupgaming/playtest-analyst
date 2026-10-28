@@ -41,6 +41,8 @@ var _play_requested_ms := 0
 ## plus `command`, and for `serve`, whether its URL has been opened.
 var _jobs: Array[Dictionary] = []
 var _url := RegEx.create_from_string("https?://\\S+")
+## Why this OS can't record, "" if it can.
+var _unsupported := Recorder.unsupported_os(OS.get_name())
 
 var _tester := LineEdit.new()
 var _record := Button.new()
@@ -69,7 +71,7 @@ func _init() -> void:
 	_record.text = "Record session"
 	_record.pressed.connect(_on_record)
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_status.text = "Not recording."
+	_status.text = "Not recording." if _unsupported.is_empty() else _unsupported
 	_sessions.item_selected.connect(func(_i: int) -> void: _load_patches())
 	_analyse.text = "Analyse"
 	_analyse.pressed.connect(_run.bind("analyse"))
@@ -133,7 +135,7 @@ func _process(_delta: float) -> void:
 		_refresh()
 	_was_playing = playing
 	_record.text = "Stop recording" if not _recording.is_empty() else "Record session"
-	_record.disabled = _saved_run_args != null
+	_record.disabled = _saved_run_args != null or not _unsupported.is_empty()
 	for job in _jobs.duplicate():
 		_read(job)
 
@@ -152,8 +154,10 @@ func _on_record() -> void:
 	if OS.get_name() == "Linux":
 		args = "--display-driver x11 " + args
 	_saved_run_args = ProjectSettings.get_setting("editor/run/main_run_args")
-	ProjectSettings.set_setting("editor/run/main_run_args", args)
-	await ProjectSettings.settings_changed  # the editor rereads run args on this signal
+	# Setting the same value emits nothing, e.g. when an editor crash left ours saved.
+	if _saved_run_args != args:
+		ProjectSettings.set_setting("editor/run/main_run_args", args)
+		await ProjectSettings.settings_changed  # the editor rereads run args on this signal
 	EditorInterface.play_main_scene()
 	_play_requested_ms = Time.get_ticks_msec()
 	_status.text = "Starting the game…"
@@ -168,6 +172,8 @@ func _on_game_message(name: String, data: Array) -> void:
 		_status.text = "Saved %s." % data[0].get_file() if error.is_empty() else "%s is incomplete: %s" % [data[0].get_file(), error]
 		_recording = ""
 		_refresh(data[0])
+	elif name == "refused":
+		_status.text = "Not recording: %s" % data[0]
 
 
 ## Lists bundles newest first, then those one folder down (e.g. synthetic/planted-voice),
