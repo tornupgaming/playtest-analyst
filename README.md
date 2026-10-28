@@ -207,6 +207,8 @@ tools/clip.sh -v drop "move_forward+jump:0.7,:1"       # scripted input -> /tmp/
 tools/clip.sh -c 0,3,-14 "move_right:1,move_left:1"   # the same, filmed from a fixed point
 ```
 
+They run `godot` from your PATH. To use another Godot 4.7 binary, set `GODOT`, e.g. `GODOT=~/bin/godot-4.7 tools/test.sh`. GitHub runs `tools/test.sh` and `tools/check.sh`, plus the analyst's tests and typecheck, on every pull request and every push to `main`.
+
 Views are defined in `VIEWS` in `tools/shot.gd`: the player stands at an offset into a zone and the game camera frames it, so a shot shows what a tester sees. `clip.sh` prints where the player ended up. A player at the spawn after a run means they died.
 
 ## Credits
