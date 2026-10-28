@@ -1,0 +1,50 @@
+# Runs the analyst's tests and typecheck, and the Godot tests and level build check,
+# on every push to main and every pull request. Other branches are checked through their
+# pull request, so a push there doesn't run everything twice. No secrets: nothing here
+# can reach the Meta API (the analyst's tests talk to a fake server on localhost).
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  GODOT_VERSION: 4.7.2-stable
+  GODOT_SHA512: 9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65
+
+jobs:
+  analyst:
+    name: Analyst tests and typecheck
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: analyst
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+      # Some tests make short test clips with ffmpeg.
+      - run: sudo apt-get update -q && sudo apt-get install -yq --no-install-recommends ffmpeg
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+      - run: bun run typecheck
+
+  godot:
+    name: Godot tests and level build check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Godot ${{ env.GODOT_VERSION }}
+        run: |
+          zip=Godot_v${GODOT_VERSION}_linux.x86_64.zip
+          curl -fsSLo "$RUNNER_TEMP/$zip" "https://github.com/godotengine/godot-builds/releases/download/$GODOT_VERSION/$zip"
+          echo "$GODOT_SHA512  $RUNNER_TEMP/$zip" | sha512sum -c -
+          unzip -q "$RUNNER_TEMP/$zip" -d "$RUNNER_TEMP/godot"
+          echo "GODOT=$RUNNER_TEMP/godot/Godot_v${GODOT_VERSION}_linux.x86_64" >> "$GITHUB_ENV"
+      - run: tools/test.sh
+      - run: tools/check.sh

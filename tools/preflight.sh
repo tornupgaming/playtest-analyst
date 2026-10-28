@@ -8,6 +8,7 @@
 # The mic test reads 2 s of the default mic and keeps nothing.
 set -uo pipefail
 cd "$(dirname "$0")/.."
+GODOT=${GODOT:-godot}  # override with GODOT=/path/to/godot
 
 profile=${1:-planted}
 [[ -f eval/tuning_$profile.tres ]] || { echo "Unknown profile '$profile': use planted or clean."; exit 2; }
@@ -22,7 +23,7 @@ failed=0
 pass() { echo "PASS  $1"; }
 fail() { echo "FAIL  $1"; failed=1; }
 
-if [[ $(godot --version 2>/dev/null | tail -1) == 4.7.* ]]; then
+if [[ $("$GODOT" --version 2>/dev/null | tail -1) == 4.7.* ]]; then
 	pass "Godot 4.7"
 else
 	fail "Godot 4.7 not found on PATH. Install Godot 4.7 and make 'godot' run it."

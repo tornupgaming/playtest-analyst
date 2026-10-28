@@ -1,5 +1,6 @@
 # Playtest Analyst
 
+[![Tests](https://github.com/tornupgaming/playtest-analyst/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/tornupgaming/playtest-analyst/actions/workflows/tests.yml?query=branch%3Amain)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE)
 [![Godot 4.7](https://img.shields.io/badge/Godot-4.7-478cbf?logo=godotengine&logoColor=white)](https://godotengine.org)
 [![Bun + TypeScript](https://img.shields.io/badge/Bun-TypeScript-f9f1e1?logo=bun&logoColor=black)](https://bun.sh)
@@ -205,6 +206,8 @@ tools/shots.sh over=50,70,30:0,0,-90                   # a free camera: name=eye
 tools/clip.sh -v drop "move_forward+jump:0.7,:1"       # scripted input -> /tmp/shots/clip_strip.png and clip.mp4
 tools/clip.sh -c 0,3,-14 "move_right:1,move_left:1"   # the same, filmed from a fixed point
 ```
+
+They run `godot` from your PATH. To use another Godot 4.7 binary, set `GODOT`, e.g. `GODOT=~/bin/godot-4.7 tools/test.sh`. GitHub runs `tools/test.sh` and `tools/check.sh`, plus the analyst's tests and typecheck, on every pull request and every push to `main`.
 
 Views are defined in `VIEWS` in `tools/shot.gd`: the player stands at an offset into a zone and the game camera frames it, so a shot shows what a tester sees. `clip.sh` prints where the player ended up. A player at the spawn after a run means they died.
 

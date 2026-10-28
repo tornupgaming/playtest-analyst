@@ -13,6 +13,7 @@
 # XWayland display, pactl, paplay, python3 with numpy and python-xlib, and bun.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+GODOT=${GODOT:-godot}  # override with GODOT=/path/to/godot
 
 real=
 [[ ${1:-} == --real ]] && { real=1; shift; }
@@ -28,7 +29,7 @@ fi
 ffmpeg -v error -f lavfi -i "sine=frequency=1000:duration=0.2,apad=pad_dur=0.3" -ar 48000 "$tmp/beep.wav"
 
 before=$(ls sessions 2>/dev/null || true)
-godot --path . --display-driver x11 -- --record --tester=record_check >"$tmp/godot.log" 2>&1 &
+"$GODOT" --path . --display-driver x11 -- --record --tester=record_check >"$tmp/godot.log" 2>&1 &
 godot_pid=$!
 sleep 3
 end=$((SECONDS + seconds - 3))

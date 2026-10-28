@@ -13,6 +13,7 @@
 # then prints the strip's path and where the player ended up.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+GODOT=${GODOT:-godot}  # override with GODOT=/path/to/godot
 
 profile=clean view=start eye="" every=0.25 name=clip dir=/tmp/shots
 while getopts "p:v:c:e:n:o:" opt; do
@@ -33,12 +34,12 @@ rm -f "$dir/${name}"_[0-9][0-9][0-9].png
 
 args=(--out "$dir/$name.png" --profile "$profile" --view "$view" --play "$steps" --every "$every")
 [[ -n $eye ]] && args+=(--eye "$eye")
-timeout 300 godot --path . --fixed-fps 60 --resolution 960x540 -s res://tools/shot.gd -- "${args[@]}" \
+timeout 300 "$GODOT" --path . --fixed-fps 60 --resolution 960x540 -s res://tools/shot.gd -- "${args[@]}" \
 	>"$dir/$name.log" 2>&1 || true
 grep -E 'SCRIPT ERROR|^ERROR' -A1 "$dir/$name.log" | grep -v -e PagedAllocator -e 'still in use' | head -10 >&2 || true
 
 frames=("$dir/${name}"_[0-9][0-9][0-9].png)
-montage -font /usr/share/fonts/TTF/DejaVuSans.ttf -pointsize 16 -label '%f' "${frames[@]}" \
+montage -font DejaVu-Sans -pointsize 16 -label '%f' "${frames[@]}" \
 	-tile 4x -geometry 480x270+2+2 -background '#222' -fill white "$dir/${name}_strip.png"
 ffmpeg -loglevel error -y -framerate "$(python3 -c "print(round(1/$every, 3))")" \
 	-i "$dir/${name}_%03d.png" -pix_fmt yuv420p "$dir/$name.mp4"

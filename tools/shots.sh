@@ -9,6 +9,7 @@
 # prints the sheet's path.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+export GODOT=${GODOT:-godot}  # override with GODOT=/path/to/godot
 
 profile=clean
 dir=/tmp/shots
@@ -37,7 +38,7 @@ render() {
 		args=(--view "$view")
 	fi
 	rm -f "$dir/$name.png"
-	timeout 60 godot --path . --resolution 1280x720 -s res://tools/shot.gd -- \
+	timeout 60 "$GODOT" --path . --resolution 1280x720 -s res://tools/shot.gd -- \
 		--out "$dir/$name.png" --profile "$profile" "${args[@]}" >"$dir/$name.log" 2>&1 || true
 	if [[ ! -f $dir/$name.png ]]; then
 		echo "no image for $name:" >&2
@@ -52,6 +53,6 @@ for view in "${views[@]}"; do
 	name=${view%%=*}
 	[[ -f $dir/$name.png ]] && pngs+=("$dir/$name.png")
 done
-montage -font /usr/share/fonts/TTF/DejaVuSans.ttf -pointsize 20 -label '%t' "${pngs[@]}" \
+montage -font DejaVu-Sans -pointsize 20 -label '%t' "${pngs[@]}" \
 	-tile 3x -geometry 640x360+4+4 -background '#222' -fill white "$dir/sheet.png"
 echo "$dir/sheet.png"

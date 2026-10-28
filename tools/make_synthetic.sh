@@ -17,6 +17,7 @@
 # eval/ground_truth.json (DECISIONS.md §6).
 set -euo pipefail
 cd "$(dirname "$0")/.."
+GODOT=${GODOT:-godot}  # override with GODOT=/path/to/godot
 
 venv=${PIPER_VENV:-$HOME/.cache/playtest-analyst/piper-venv}
 voice=${PIPER_VOICE:-$HOME/.cache/playtest-analyst/voice/en_US-lessac-medium.onnx}
@@ -27,7 +28,7 @@ fi
 if [[ ! -f $voice ]]; then
 	"$venv/bin/python" -m piper.download_voices --download-dir "$(dirname "$voice")" "$(basename "$voice" .onnx)"
 fi
-godot --headless --path . --import >/dev/null 2>&1
+"$GODOT" --headless --path . --import >/dev/null 2>&1
 
 # A private scratch dir per invocation, so builds in two worktrees can't clobber each other.
 scratch=$(mktemp -d /tmp/synthetic-run.XXXXXX)
@@ -38,7 +39,7 @@ for profile in planted clean; do
 	run=$scratch/$profile
 	mkdir -p "$run"
 	started=$(date +%s.%N)
-	godot --path . --fixed-fps 60 --resolution 1280x720 -s res://tools/synth.gd -- \
+	"$GODOT" --path . --fixed-fps 60 --resolution 1280x720 -s res://tools/synth.gd -- \
 		--profile "$profile" --out "$run" --telemetry-dir="$run" --telemetry-game-clock >"$run/godot.log" 2>&1 || true
 	if ! grep -q '^finished at' "$run/godot.log"; then
 		grep -E 'BOT FAILED|SCRIPT ERROR|Parse Error' -A2 "$run/godot.log" >&2
@@ -60,7 +61,7 @@ for profile in planted clean; do
 		ffmpeg -loglevel error -y -ss "$t" -i "$run/screen.mkv" -frames:v 1 -vf scale=480:-1 \
 			"$run/sheet/t=$(printf %03d "$t")s.png"
 	done
-	montage -font /usr/share/fonts/TTF/DejaVuSans.ttf -pointsize 16 \
+	montage -font DejaVu-Sans -pointsize 16 \
 		-label '%t' "$run"/sheet/*.png -tile 5x -geometry 480x270+2+2 \
 		-background '#222' -fill white "/tmp/synthetic/${profile}_sheet.png"
 	echo "/tmp/synthetic/${profile}_sheet.png"
