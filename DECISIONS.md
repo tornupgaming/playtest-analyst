@@ -15,6 +15,7 @@ What we decided, why, and what we fall back to. The evidence lives in the [wiki]
 | `playtest eval <sessions…>` | Scores reports against `eval/ground_truth.json` |
 | `playtest metrics <sessions…>` | Deaths, retries, time to complete and time per zone, with a before → after line for two sessions (demo shot 11) |
 | `playtest serve <session>` | Serves the report viewer (`Bun.serve`) |
+| `playtest export <session> <dir>` | Writes the same viewer as a static site: the files `serve` answers, with a smaller re-encode of the video. `tools/publish_pages.sh` puts it on GitHub Pages |
 
 Godot records the session and shells out to the CLI. No Electron, no Elysia, no Effect.
 

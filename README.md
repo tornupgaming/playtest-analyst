@@ -4,6 +4,8 @@ An AI UX researcher for solo game developers. A Godot plugin records a playtest 
 
 Built for the Meta Global AI Developer Hackathon (Indie developer track).
 
+**[See a sample report in your browser](https://tornupgaming.github.io/playtest-analyst/)**, no install needed. It is a bot-played session of the test level with planted problems and a scripted think-aloud, analysed by Meta's models: click a finding to jump the video to it.
+
 ## The problem
 
 Solo developers record friends playing their game, then never watch the footage. Scrubbing hours of video for the moments that matter is a job for a UX researcher they can't afford. Playtest Analyst does that review.
@@ -62,6 +64,7 @@ The same steps from a terminal:
 cd analyst
 bun src/cli.ts analyse ../sessions/<id>          # report.json, with SAM key frames
 bun src/cli.ts serve ../sessions/<id>            # prints the viewer URL
+bun src/cli.ts export ../sessions/<id> <dir>     # the same viewer as a static site, for any web host
 bun src/cli.ts patch ../sessions/<id> --project ..
 bun src/cli.ts analyse ../sessions/<new> --previous ../sessions/<id>/report.json
 bun src/cli.ts eval ../sessions/<id>             # score against eval/ground_truth.json
@@ -95,7 +98,7 @@ These numbers come from **synthetic** sessions: a scripted bot plays the test co
 
 | Path | What it is |
 |---|---|
-| `analyst/` | The analysis CLI (`bun src/cli.ts <command>`): finalize, analyse, annotate, patch, eval, sweep, serve. Shared schemas in `src/schema.ts`. |
+| `analyst/` | The analysis CLI (`bun src/cli.ts <command>`): finalize, analyse, annotate, patch, eval, sweep, serve, export. Shared schemas in `src/schema.ts`. |
 | `addons/playtest_analyst/` | The plugin: the Playtest dock, the `PlaytestRecorder` autoload that records a session bundle ([docs/recorder.md](docs/recorder.md)), and the `PlaytestTelemetry` autoload ([docs/telemetry.md](docs/telemetry.md)). |
 | `tests/` | GDScript tests, run headless by `tools/test.sh`. |
 | `level/` | The test course (`level.tscn`). It reads every tunable from `level/tuning.tres` at `_ready()`. |

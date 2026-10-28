@@ -35,13 +35,14 @@ export async function run(argv: string[]) {
 		reusePort: false,
 		port: Number(values.port),
 		development: false,
+		// The viewer fetches these by relative URL, so `export` can write the same paths as files.
 		routes: {
 			"/": viewer,
-			"/api/session": Response.json({ meta, events, report }),
+			"/session.json": Response.json({ meta, events, report }),
 			// A file response: Bun answers Range requests, so the player can seek.
-			"/media/video.mp4": new Response(Bun.file(video)),
+			"/video.mp4": new Response(Bun.file(video)),
 			"/files/*": (req) => file(dir, decodeURIComponent(new URL(req.url).pathname.slice("/files/".length))),
-			"/frame": (req) => frame(video, Number(new URL(req.url).searchParams.get("t"))),
+			"/frames/:name": (req) => frame(video, Number(req.params.name.replace(/\.jpg$/, ""))),
 		},
 	});
 	console.log(`Viewer: ${server.url}`);
@@ -71,7 +72,8 @@ async function frame(video: string, t: number): Promise<Response> {
 	}
 }
 
-async function extract(video: string, t: number): Promise<Uint8Array<ArrayBuffer>> {
+/** One JPEG frame of `video` at `t` seconds, cut with ffmpeg. */
+export async function extract(video: string, t: number): Promise<Uint8Array<ArrayBuffer>> {
 	const proc = Bun.spawn(
 		["ffmpeg", "-hide_banner", "-loglevel", "error", "-ss", String(t), "-i", video, "-frames:v", "1", "-q:v", "3", "-f", "image2pipe", "-c:v", "mjpeg", "-"],
 		{ stdout: "pipe", stderr: "pipe" },
