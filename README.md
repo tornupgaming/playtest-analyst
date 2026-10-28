@@ -20,11 +20,9 @@ Built for the Meta Global AI Developer Hackathon (Indie developer track).
 
 ## See it, try it, read the code
 
-| | |
-|---|---|
-| **See it** | **[The sample report, live in your browser](https://tornupgaming.github.io/playtest-analyst/)**. Nothing to install. Click a finding to jump the video to it. |
-| **Try it** | The [quick start](#quick-start) opens the same report on your own machine with a handful of commands. You don't need Godot, a mic or an API key. |
-| **Read the code** | [`addons/playtest_analyst/`](addons/playtest_analyst/) is the Godot plugin: the recorder and the Playtest dock. [`analyst/src/`](analyst/src/) is the analysis pipeline, a Bun and TypeScript command-line tool that calls Meta's models. How well it works so far: [Results so far](#results-so-far) and the [latest evaluation write-up](eval/sweeps/2026-10-27-v2/README.md). |
+- **See it.** [The sample report, live in your browser](https://tornupgaming.github.io/playtest-analyst/). Nothing to install. Click a finding to jump the video to it.
+- **Try it.** The [quick start](#quick-start) opens the same report on your own machine with a handful of commands. You don't need Godot, a mic or an API key.
+- **Read the code.** [`addons/playtest_analyst/`](addons/playtest_analyst/) is the Godot plugin: the recorder and the Playtest dock. [`analyst/src/`](analyst/src/) is the analysis pipeline, a Bun and TypeScript command-line tool that calls Meta's models. For how well it works so far, see [Results so far](#results-so-far) and the [latest evaluation write-up](eval/sweeps/2026-10-27-v2/README.md).
 
 ## The problem
 
