@@ -316,7 +316,7 @@ The dock works out whether a patch is applied from **git history** (`playtest-fi
 
 ## 7. The developer loop: measuring the analyser
 
-This loop isn't part of the product. It's how prompts and configs get tuned against a known answer key.
+This loop isn't part of the product. It's how prompts and configs get tuned against a known answer key. The test level has six **planted problems** ("plants"): spots we made hard, slow or misleading on purpose. The answer key lists them, and **synthetic sessions**, where a scripted bot plays the level and Piper TTS reads think-aloud lines, give the loop something to score without a human player.
 
 ```mermaid
 flowchart LR
@@ -339,7 +339,7 @@ flowchart LR
 
 ## 8. Current state vs end state
 
-What the CLAUDE.md brief asked for, against what the code does today and what's still open in Linear (as of 27 Oct).
+What the CLAUDE.md brief asked for, against what the code does today and what was still open (as of 27 Oct). Round 1 is the first set of real playtests, on the level with its planted problems; round 2 is the next set, on the build after the suggested fixes are applied.
 
 ```mermaid
 flowchart LR
@@ -358,16 +358,16 @@ flowchart LR
 
   subgraph Evidence["Evidence the loop works"]
     SYN["Synthetic sweep<br/>24 runs, precision 1.00"]:::done
-    COLD["Baseline cold test +<br/>freeze ground truth<br/>TUG-116"]:::todo
-    RD1["Round 1 real playtests<br/>TUG-106"]:::todo
-    TUNE["Prompt / fps tuning on<br/>real sessions — TUG-103"]:::todo
-    RD2["Round 2 on patched build<br/>TUG-111"]:::todo
+    COLD["Baseline cold test +<br/>freeze ground truth"]:::todo
+    RD1["Round 1 real playtests"]:::todo
+    TUNE["Prompt / fps tuning on<br/>real sessions"]:::todo
+    RD2["Round 2 on patched build"]:::todo
     SYN --> COLD --> RD1 --> TUNE --> RD2
   end
 
   subgraph Ship["Submission"]
-    VID["Demo video edit<br/>TUG-112"]:::todo
-    SUB["Submit by 2 AM UK Thu 5 Nov<br/>TUG-114"]:::todo
+    VID["Demo video edit"]:::todo
+    SUB["Submit by 2 AM UK Thu 5 Nov"]:::todo
     VID --> SUB
   end
 
@@ -382,10 +382,10 @@ Key: green = done; amber = built, in review; red dashed = not started.
 | Area | Today | End state | Where the change would go |
 |---|---|---|---|
 | Evidence | Synthetic bot sessions only. The voice lines were written from the answer key. | Real round 1 and round 2 playtests, scored by `eval` | `sessions/`, `eval/sweeps/` |
-| Ground truth | `frozen_at` not set yet | Frozen after the cold test, before any real analysis | `eval/ground_truth.json` (TUG-116) |
-| Annotation | 3 of 5 highlights matched on planted-voice, one of them on the wrong platform | Final call on the SAM fallback (TUG-94) | `annotate.ts`, prompt `highlight` guidance |
-| Remember | CLI flag only (`analyse --previous … --patches …`); the viewer shows the banner and chips | The demo uses the comparison banner in shot 11, if it ships | `dock.gd` would need a "compare with" picker |
-| Metrics | `playtest metrics` is CLI only | Before/after table for demo shot 11 | Captured from the CLI; no dock work needed |
+| Ground truth | `frozen_at` not set yet | Frozen after the cold test, before any real analysis | `eval/ground_truth.json` |
+| Annotation | 3 of 5 highlights matched on planted-voice, one of them on the wrong platform | Final call on the SAM fallback (under evaluation) | `annotate.ts`, prompt `highlight` guidance |
+| Remember | CLI flag only (`analyse --previous … --patches …`); the viewer shows the banner and chips | The demo video uses the comparison banner, if it ships | `dock.gd` would need a "compare with" picker |
+| Metrics | `playtest metrics` is CLI only | Before/after table for the demo video | Captured from the CLI; no dock work needed |
 | Platform | Linux + X11/XWayland only | Same for the hackathon (DECISIONS §3 limit) | `recorder.gd → _ffmpeg_args()` for other OSes |
 
 On the product side, all five stages from the brief are now built, including both stretch goals. Every amber box is code waiting on review, not missing code. Between today and the end state the remaining work is **evidence and submission**: real playtests, tuning against them, and the video.

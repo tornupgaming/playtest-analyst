@@ -10,7 +10,7 @@ An AI UX researcher for solo game developers. A Godot plugin records a playtest 
 
 <sub>A **bot-played sample session**, not a real player: a scripted bot plays the test level, which has problems planted in it, and a computer voice reads the think-aloud lines. The selected finding: the EXIT sign points into a dead end, and SAM 3.1 has outlined the sign on the key frame.</sub>
 
-Built for the Meta Global AI Developer Hackathon (Indie developer track).
+Built for the Meta Global AI Developer Hackathon (Indie developer track), with AI coding agents. Their instructions live in [`CLAUDE.md`](CLAUDE.md) and [`.claude/`](.claude/).
 
 ## What you get
 
@@ -123,7 +123,7 @@ bun src/cli.ts eval ../sessions/<id>             # score against eval/ground_tru
 bun src/cli.ts spend                             # Meta API spend against PLAYTEST_SPEND_CAP_USD
 ```
 
-Only `planted-voice` has its media in the release. `tools/make_synthetic.sh` rebuilds all four bot-played sessions in `sessions/synthetic/` from scratch, media included; it needs Godot and [Piper](https://github.com/rhasspy/piper) for the voice.
+Only `planted-voice` has its media in the release. `tools/make_synthetic.sh` rebuilds all four bot-played (synthetic) sessions in `sessions/synthetic/` from scratch, media included; it needs Godot and [Piper](https://github.com/rhasspy/piper) for the voice.
 
 ## Meta models used
 
@@ -138,10 +138,12 @@ What we measured about each one is in the [wiki](docs/wiki/index.md).
 
 ## Results so far
 
-These numbers come from **synthetic** sessions: a scripted bot plays the test course, and Piper TTS speaks think-aloud lines ([eval/sweeps/2026-10-26-synthetic](eval/sweeps/2026-10-26-synthetic/README.md)). The voice lines were written from the answer key, so treat these as a smoke test. Real playtests come next.
+These numbers come from **synthetic sessions**, recorded with no human: a scripted bot plays the test course, and Piper TTS, a computer voice, speaks think-aloud lines ([eval/sweeps/2026-10-26-synthetic](eval/sweeps/2026-10-26-synthetic/README.md)). The voice lines were written from the answer key, so treat these as a smoke test. Real playtests come next.
+
+The test course has 6 **planted problems**: spots we made hard, slow or misleading on purpose, such as an EXIT sign that points into a dead end. An answer key ([`eval/ground_truth.json`](eval/ground_truth.json)) records each one, so a report can be scored. **Recall** is the share of planted problems a report finds. **Strict scoring** counts a find only when the report also gives it the same category as the key, such as `difficulty` or `ui`. The **prompt** is the written instructions Muse Wonder gets; we number its versions v0, v1 and v2.
 
 - In every configuration tried, Muse Wonder located all 6 planted problems on the voiced session, and 5–6 of 6 with no voice at all.
-- At strict scoring (right place and right category), prompt v2 gets recall 1.00 and 0.92 over two runs, the same as when the category is ignored ([eval/sweeps/2026-10-27-v2](eval/sweeps/2026-10-27-v2/README.md)). Before v2, strict recall was 0.50–0.75, and almost every loss was a problem labelled `confusion` in one place and `ui` in the other. v2 labels the cause (what to change) and records the player's feeling separately (TUG-125).
+- At strict scoring (right place and right category), prompt v2 gets recall 1.00 and 0.92 over two runs (12 of 12, then 11 of 12), the same as when the category is ignored ([eval/sweeps/2026-10-27-v2](eval/sweeps/2026-10-27-v2/README.md)). Before v2, strict recall was 0.50–0.75, and almost every loss was a problem that the report labelled `confusion` and the answer key labelled `ui`, or the other way round. v2 labels the cause (what to change) and records the player's feeling separately ([DECISIONS.md §6](DECISIONS.md#6-eval)).
 - No false positives in 32 runs: every finding was one of the planted problems, and the clean (fixed) level produced none.
 - Cost: about $0.30 per 3-minute session; latency 1–2 minutes.
 
@@ -167,8 +169,8 @@ These numbers come from **synthetic** sessions: a scripted bot plays the test co
 Open the project in Godot 4.7 and press Play. Pick a profile by copying it over the live tuning file:
 
 ```sh
-cp eval/tuning_planted.tres level/tuning.tres   # round 1
-cp eval/tuning_clean.tres level/tuning.tres     # baseline
+cp eval/tuning_planted.tres level/tuning.tres   # with the planted problems
+cp eval/tuning_clean.tres level/tuning.tres     # baseline: the problems fixed
 ```
 
 `eval/ground_truth.json` lists what differs between the profiles and the evidence each difference should leave.
@@ -181,7 +183,7 @@ Controls: WASD or arrows to move, Space to jump. Click to capture the mouse, the
 
 Bright toybox platformer, in the family of Super Mario 3D World, Captain Toad and Astro Bot. Grass-topped clay cliffs and floating mesas over a sea of cloud, chunky bevelled blocks, a soft checker on walkable tops so distances read at a glance, saturated colours under a warm sun. Everything uses the Kenney Platformer Kit palette.
 
-The level is still built from boxes in `level.gd`, so every plant keeps its exact geometry. `art/blocks/block.gdshader` makes any box look like a Kenney block. Each block kind (grass, sand, stone, wood, hedge) is a material in `art/blocks/`, editable in the inspector.
+The level is still built from boxes in `level.gd`, so every planted problem keeps its exact geometry. `art/blocks/block.gdshader` makes any box look like a Kenney block. Each block kind (grass, sand, stone, wood, hedge) is a material in `art/blocks/`, editable in the inspector.
 
 To rebuild the enemy after editing its script:
 

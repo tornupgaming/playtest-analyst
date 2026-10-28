@@ -15,8 +15,8 @@ The editor plugin (`addons/playtest_analyst/`) records a playtest into a session
 Run this from the repo root first. It takes a few seconds:
 
 ```sh
-tools/preflight.sh            # for the planted profile (round 1)
-tools/preflight.sh clean      # for the clean profile
+tools/preflight.sh            # planted profile: the test level with problems built in on purpose
+tools/preflight.sh clean      # clean profile: the same level with those problems fixed
 ```
 
 It prints one PASS or FAIL line per check, each FAIL with what to do, and exits non-zero if anything failed. It checks:
