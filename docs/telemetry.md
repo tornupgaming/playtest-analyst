@@ -28,7 +28,7 @@ Lines are in the order they were written. `input_idle` is written when the idle 
 
 | Type | Written by | `data` |
 |---|---|---|
-| `death` | the game | `cause` (e.g. `"fall"`, `"enemy"`), `zone` (the current zone id, `""` if none) |
+| `death` | the game | `cause` (e.g. `"fall"`, `"enemy"`), `zone` (the current zone id, `""` if none; a fall counts in the zone the player fell from) |
 | `retry` | the game, when the player respawns after a death | none |
 | `zone_enter` | the game | `zone`: zone id |
 | `zone_exit` | the game | `zone`; telemetry adds `dwell`: seconds since that zone's `zone_enter` |
