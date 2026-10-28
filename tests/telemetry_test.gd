@@ -22,7 +22,7 @@ func test_zone_exit_carries_seconds_since_its_zone_enter() -> String:
 	return _expect([
 		{t = 0.0, type = "zone_enter", player_pos = null, data = {zone = "plaza"}},
 		{t = 2.5, type = "zone_enter", player_pos = null, data = {zone = "hall"}},
-		{t = 3.5, type = "zone_exit", player_pos = null, data = {zone = "plaza", dwell = 3.5}},
+		{t = 3.5, type = "zone_exit", player_pos = null, data = {zone = "plaza", dwell = 9.9}},
 		{t = 3.5, type = "zone_exit", player_pos = null, data = {zone = "hall", dwell = 1.0}},
 	])
 

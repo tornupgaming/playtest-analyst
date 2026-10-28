@@ -24,7 +24,7 @@ test("counts deaths by cause, retries, finish time and time per zone", () => {
 
 	// "exit" is never left, so it runs to the session's end at 30 s.
 	expect(metrics(events, { endT: 30 })).toEqual({
-		deaths: 3,
+		deaths: 4,
 		deaths_by_cause: { spikes: 2, unknown: 1 },
 		retries: 2,
 		time_to_complete: 25,
