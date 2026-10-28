@@ -1,7 +1,7 @@
 import { join, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
 import viewer from "../../viewer/index.html";
-import { readJson } from "../boundary.ts";
+import { readJson, UserError } from "../boundary.ts";
 import { readSession } from "../bundle.ts";
 import { Report } from "../schema.ts";
 
@@ -17,6 +17,8 @@ export async function run(argv: string[]) {
 		console.error("Usage: playtest serve <session dir> [--port N]");
 		return 2;
 	}
+	const port = Number(values.port);
+	if (!/^\d+$/.test(values.port) || port > 65535) throw new UserError(`--port must be a number from 0 to 65535, not "${values.port}".`);
 	const dir = resolve(positionals[0]!);
 	const reportFile = Bun.file(join(dir, "report.json"));
 	if (!(await reportFile.exists())) {
@@ -33,7 +35,7 @@ export async function run(argv: string[]) {
 		// reusePort: false for "localhost", so bind the IPv4 loopback explicitly.
 		hostname: "127.0.0.1",
 		reusePort: false,
-		port: Number(values.port),
+		port,
 		development: false,
 		// The viewer fetches these by relative URL, so `export` can write the same paths as files.
 		routes: {
@@ -41,7 +43,7 @@ export async function run(argv: string[]) {
 			"/session.json": Response.json({ meta, events, report }),
 			// A file response: Bun answers Range requests, so the player can seek.
 			"/video.mp4": new Response(Bun.file(video)),
-			"/files/*": (req) => file(dir, decodeURIComponent(new URL(req.url).pathname.slice("/files/".length))),
+			"/files/*": (req) => file(dir, new URL(req.url).pathname.slice("/files/".length)),
 			"/frames/:name": (req) => frame(video, Number(req.params.name.replace(/\.jpg$/, ""))),
 		},
 	});
@@ -50,8 +52,13 @@ export async function run(argv: string[]) {
 }
 
 /** A file inside the bundle, such as an annotated frame. (`{ dir }` routes need `development: true` in Bun 1.4.) */
-async function file(dir: string, rel: string): Promise<Response> {
-	const path = resolve(dir, rel);
+async function file(dir: string, encoded: string): Promise<Response> {
+	let path: string;
+	try {
+		path = resolve(dir, decodeURIComponent(encoded));
+	} catch {
+		return new Response("Not found", { status: 404 }); // a malformed escape such as `%`
+	}
 	const f = Bun.file(path);
 	if (!path.startsWith(dir + sep) || !(await f.exists())) return new Response("Not found", { status: 404 });
 	return new Response(f);

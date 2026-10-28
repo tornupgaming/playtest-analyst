@@ -10,7 +10,6 @@
 		<header>
 			<div class="brand"><span class="logo"></span>Playtest Analyst</div>
 			<div id="session" class="session"></div>
-			<!-- TUG-109: cross-build comparison banner ("4 resolved · 1 new · 1 persisting") goes here. -->
 			<div id="compare" class="compare" hidden></div>
 			<dl id="usage" class="usage"></dl>
 		</header>
@@ -18,6 +17,9 @@
 			<section class="stage">
 				<div class="player">
 					<video id="video" preload="auto"></video>
+					<p id="no-video" class="no-video" hidden>
+						This session has no video. To make one from the recording, run <code>playtest finalize &lt;session folder&gt;</code>, then reload this page.
+					</p>
 				</div>
 				<div class="timeline-panel">
 					<div class="transport">
