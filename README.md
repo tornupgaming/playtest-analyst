@@ -62,12 +62,20 @@ bun src/cli.ts serve ../sessions/synthetic/planted-voice    # open the URL it pr
 
 This opens the report that comes with the repo, the same one as the [live sample](https://tornupgaming.github.io/playtest-analyst/).
 
-To analyse the session again yourself, you need a Meta Model API key. It takes about 2 minutes and costs about $0.30. The new report replaces the bundled one and its key frames. To get them back, run `git checkout ../sessions/synthetic/planted-voice/report.json` and the download step again.
+To analyse the session again yourself, you need a Meta Model API key. It takes about 2 minutes and costs about $0.30. The new report replaces the bundled one and its key frames.
 
 ```sh
 export META_MODEL_API_KEY=<your key>
 bun src/cli.ts analyse ../sessions/synthetic/planted-voice
 bun src/cli.ts serve ../sessions/synthetic/planted-voice
+```
+
+To get the bundled report back (still in `analyst/`):
+
+```sh
+git checkout ../sessions/synthetic/planted-voice/report.json
+curl -fL https://github.com/tornupgaming/playtest-analyst/releases/download/sample-planted-voice/planted-voice-media.tar.gz \
+  | tar -xz -C ../sessions/synthetic/planted-voice
 ```
 
 Without a key, `analyse` stops straight away with `META_MODEL_API_KEY is not set` and costs nothing.
