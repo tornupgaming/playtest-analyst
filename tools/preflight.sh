@@ -37,15 +37,17 @@ else
 fi
 
 devices=$(ffmpeg -hide_banner -devices 2>/dev/null)
-if [[ $devices == *x11grab* && $devices == *pulse* ]]; then
-	pass "ffmpeg, with screen (x11grab) and mic (pulse) capture"
-else
+if [[ $devices != *x11grab* || $devices != *pulse* ]]; then
 	fail "ffmpeg is missing, or lacks x11grab or pulse input. Install a full ffmpeg build (e.g. your distro's ffmpeg package)."
+elif ! timeout 10 ffmpeg -hide_banner -loglevel quiet -f x11grab -i "${DISPLAY:-}" -frames:v 1 -f null - </dev/null; then
+	fail "ffmpeg can't capture the screen (DISPLAY='${DISPLAY:-}'). Run this from a terminal on the desktop you'll play on."
+else
+	pass "ffmpeg, with screen (x11grab) and mic (pulse) capture; grabbed a frame of $DISPLAY"
 fi
 
 # Reads the default mic exactly as the recorder does (-f pulse -i default). A muted mic
 # records digital silence (-91 dB); a real one in a quiet room peaks around -30 dB.
-max_db=$(ffmpeg -hide_banner -nostats -f pulse -i default -t 2 -af volumedetect -f null - 2>&1 |
+max_db=$(timeout 10 ffmpeg -hide_banner -nostats -f pulse -i default -t 2 -af volumedetect -f null - 2>&1 |
 	sed -n 's/.*max_volume: \(-*[0-9.]*\) dB.*/\1/p')
 if [[ -z $max_db ]]; then
 	fail "Couldn't record from the default mic. Check PulseAudio or PipeWire is running and a mic is plugged in (pactl get-default-source)."
@@ -85,8 +87,9 @@ else
 fi
 
 # Apply and Revert in the dock refuse while a tracked file has uncommitted changes.
-dirty=$(git status --porcelain --untracked-files=no)
-if [[ -z $dirty ]]; then
+if ! dirty=$(git status --porcelain --untracked-files=no 2>&1); then
+	fail "git can't read this checkout: $(head -1 <<<"$dirty")"
+elif [[ -z $dirty ]]; then
 	pass "No uncommitted changes, so the dock's Apply will work"
 else
 	fail "Uncommitted changes in $(wc -l <<<"$dirty") tracked file(s), so the dock's Apply will refuse. Commit or discard them (git status)."

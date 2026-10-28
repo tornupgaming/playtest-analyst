@@ -21,7 +21,7 @@ tools/preflight.sh clean      # for the clean profile
 
 It prints one PASS or FAIL line per check, each FAIL with what to do, and exits non-zero if anything failed. It checks:
 
-- Godot 4.7, Bun with the analyst's packages installed, and ffmpeg with screen (x11grab) and mic (pulse) capture;
+- Godot 4.7, Bun with the analyst's packages installed, and ffmpeg with screen (x11grab) and mic (pulse) capture. It grabs one frame of `$DISPLAY`, so it fails if run from a terminal that can't see the desktop;
 - the default mic hears sound: it reads 2 s from it and fails on silence, which is what a muted mic gives (nothing is saved);
 - `META_MODEL_API_KEY` is set and the Meta API accepts it. It lists the models, which runs no model ([wiki](wiki/meta-model-api.md));
 - the spend left under `PLAYTEST_SPEND_CAP_USD` covers three analyses at $0.50 each;
@@ -38,6 +38,7 @@ Measured on 28 Oct 2026 (CachyOS, PipeWire, laptop analog mic), from an agent sh
 | Default (`planted`) on that tree, key unset, `PULSE_SOURCE` set to a null sink's monitor (stands in for a muted mic), one tracked file edited | FAIL lines for the mic (peak −91 dB), the key, the profile and the uncommitted change; exit 1 |
 | `META_MODEL_API_KEY=bogus` | `GET /v1/models` returned 401; FAIL, exit 1. With the real key it returned 200. |
 | `PULSE_SERVER` pointed at nothing | FAIL "Couldn't record from the default mic", exit 1 |
+| `DISPLAY` empty | FAIL "ffmpeg can't capture the screen", exit 1 |
 | `PLAYTEST_SPEND_CAP_USD=10` with $9.86 spent | FAIL, exit 1 |
 
 The spend ledger read $9.86 before and after all of these runs.
