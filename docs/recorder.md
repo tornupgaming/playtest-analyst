@@ -10,6 +10,37 @@ The editor plugin (`addons/playtest_analyst/`) records a playtest into a session
 | `recorder.gd` | The `PlaytestRecorder` autoload. It runs in the game and writes the bundle. |
 | `telemetry.gd` | The `PlaytestTelemetry` autoload. It writes `events.jsonl` ([telemetry.md](telemetry.md)). |
 
+## Before testers arrive
+
+Run this from the repo root first. It takes a few seconds:
+
+```sh
+tools/preflight.sh            # for the planted profile (round 1)
+tools/preflight.sh clean      # for the clean profile
+```
+
+It prints one PASS or FAIL line per check, each FAIL with what to do, and exits non-zero if anything failed. It checks:
+
+- Godot 4.7, Bun with the analyst's packages installed, and ffmpeg with screen (x11grab) and mic (pulse) capture;
+- the default mic hears sound: it reads 2 s from it and fails on silence, which is what a muted mic gives (nothing is saved);
+- `META_MODEL_API_KEY` is set and the Meta API accepts it. It lists the models, which runs no model ([wiki](wiki/meta-model-api.md));
+- the spend left under `PLAYTEST_SPEND_CAP_USD` covers three analyses at $0.50 each;
+- `level/tuning.tres` is the profile you asked for. Copying a profile in changes a tracked file, so commit it (on a playtest branch) before the next check will pass;
+- no tracked file has uncommitted changes, so **Apply** will work later;
+- 10 GB free on disk for an hour of recording.
+
+Measured on 28 Oct 2026 (CachyOS, PipeWire, laptop analog mic), from an agent shell:
+
+| Run | Result |
+|---|---|
+| `tools/preflight.sh clean`, tree on the clean profile | 9 PASS, exit 0, 3.1 s. Mic peak −31 dB. |
+| Default (`planted`) on that tree, key unset, `PULSE_SOURCE` set to a null sink's monitor (stands in for a muted mic), one tracked file edited | FAIL lines for the mic (peak −91 dB), the key, the profile and the uncommitted change; exit 1 |
+| `META_MODEL_API_KEY=bogus` | `GET /v1/models` returned 401; FAIL, exit 1. With the real key it returned 200. |
+| `PULSE_SERVER` pointed at nothing | FAIL "Couldn't record from the default mic", exit 1 |
+| `PLAYTEST_SPEND_CAP_USD=10` with $9.86 spent | FAIL, exit 1 |
+
+The spend ledger read $9.86 before and after all of these runs.
+
 ## Using it
 
 1. In the **Playtest** dock, type the tester's name and click **Record session**. The dock plays the main scene with `--display-driver x11 -- --record --tester=<name>`. It sets those args for this one run only, then restores the project's run args.
