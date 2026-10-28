@@ -65,3 +65,7 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 
 ## [2026-10-27] ingest | eval/sweeps/2026-10-27-v2/README.md (TUG-129 prompt v2 sweep)
 - muse-wonder-video.md: added the v2 sweep result (strict recall equals recall-any, 1.00 and 0.92) under synthetic sessions.
+
+## [2026-10-28] ingest | docs/recorder.md#before-testers-arrive (TUG-136 pre-flight runs)
+- Created meta-model-api.md: `GET /v1/models` status for a good and a bad key.
+- index.md: added meta-model-api.md under Meta Model API.

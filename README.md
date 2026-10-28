@@ -46,10 +46,11 @@ The session bundle is a plain folder ([DECISIONS.md §2](DECISIONS.md)), so a re
 
 ## Quick start
 
-Needs Godot 4.7, [Bun](https://bun.sh), ffmpeg, Linux with X11 or XWayland, and a Meta Model API key in `META_MODEL_API_KEY`.
+Needs Godot 4.7, [Bun](https://bun.sh), ffmpeg with x11grab and PulseAudio input, Linux with X11 or XWayland, PulseAudio or PipeWire with a working mic, and a Meta Model API key in `META_MODEL_API_KEY`. `tools/preflight.sh` checks all of these, plus spend, level profile, uncommitted changes and disk space ([docs/recorder.md](docs/recorder.md#before-testers-arrive)).
 
 ```sh
 cd analyst && bun install && cd ..
+tools/preflight.sh clean              # one PASS or FAIL line per check
 godot --path . -e                     # open the editor; the plugin is already enabled
 ```
 
@@ -101,7 +102,7 @@ These numbers come from **synthetic** sessions: a scripted bot plays the test co
 | `eval/` | Ground truth and the two tuning profiles. Godot ignores this folder (`.gdignore`), so its labels never reach the analysis. |
 | `demo/` | Player and enemy. The player's movement code comes from the Godot 3D platformer demo (see Credits). |
 | `art/` | Kenney Platformer Kit models (`art/kenney/`), the toy-block shader and its materials (`art/blocks/`), the enemy and the Blender script that builds it (`art/enemy/`), and the HUD font. |
-| `tools/` | Scripts for checking the level without playing it (see [Checking the level](#checking-the-level)), the synthetic-session bot (`make_synthetic.sh`) and the test runners. |
+| `tools/` | Scripts for checking the level without playing it (see [Checking the level](#checking-the-level)), the synthetic-session bot (`make_synthetic.sh`), the test runners, and `preflight.sh`, run before testers arrive. |
 | `sessions/` | Session bundles. Media is gitignored; `sessions/synthetic/` holds the bot-played sessions. |
 | `docs/` | The demo script, recorder and telemetry docs, and the [wiki](docs/wiki/index.md) of measured facts about the APIs. |
 | `spikes/` | Throwaway experiments behind each decision in [DECISIONS.md](DECISIONS.md). |
