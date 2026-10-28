@@ -15,7 +15,7 @@ Built for the Meta Global AI Developer Hackathon (Indie developer track).
 ## What you get
 
 - **A list of the moments the player struggled.** Muse Wonder watches the video, reads the think-aloud and the gameplay log, and gives each problem a time, a cause, the player's own words and the evidence.
-- **A picture of what to change.** SAM 3.1 outlines the sign, button or enemy each finding is about on a key frame from the video.
+- **A picture of what to change.** Each finding shows a key frame from the video. When the problem is a thing on screen, such as a sign or an enemy, SAM 3.1 outlines it, if it can find it.
 - **A fix you can apply and undo.** Muse Spark writes the fix as a small change to your game's files, and the Godot dock applies it as a git commit.
 
 ## See it, try it, read the code
