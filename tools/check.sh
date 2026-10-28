@@ -4,9 +4,10 @@
 # whose faces z-fight. Exit code 0 means none of either.
 set -uo pipefail
 cd "$(dirname "$0")/.."
+GODOT=${GODOT:-godot}  # override with GODOT=/path/to/godot
 
-godot --headless --path . --import >/dev/null 2>&1
-out=$(godot --headless --path . -s res://tools/check.gd 2>&1)
+"$GODOT" --headless --path . --import >/dev/null 2>&1
+out=$("$GODOT" --headless --path . -s res://tools/check.gd 2>&1)
 # Leak reports at exit are engine noise from quitting a -s script, not our errors.
 errors=$(grep -E 'SCRIPT ERROR|^ERROR|Parse Error' <<<"$out" \
 	| grep -v -e 'PagedAllocator' -e 'resources still in use' -e 'ObjectDB instances')

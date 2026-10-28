@@ -1,5 +1,6 @@
 # Playtest Analyst
 
+[![Tests](https://github.com/tornupgaming/playtest-analyst/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/tornupgaming/playtest-analyst/actions/workflows/tests.yml?query=branch%3Amain)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-blue)](LICENSE)
 [![Godot 4.7](https://img.shields.io/badge/Godot-4.7-478cbf?logo=godotengine&logoColor=white)](https://godotengine.org)
 [![Bun + TypeScript](https://img.shields.io/badge/Bun-TypeScript-f9f1e1?logo=bun&logoColor=black)](https://bun.sh)
