@@ -3,7 +3,7 @@
 // t=0 at session t=0, so nothing downstream handles offsets again.
 import { existsSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { readJson } from "./boundary.ts";
+import { readJson, UserError } from "./boundary.ts";
 import { SessionMeta } from "./schema.ts";
 
 /** Session time of a stream's first frame or sample: the declared value, else the file's
@@ -56,6 +56,7 @@ export async function finalize(dir: string): Promise<void> {
 	const meta = await readJson(join(dir, "session.json"), SessionMeta);
 	const { capture, duration, t0_unix } = meta;
 	const videoPath = join(dir, capture.video);
+	if (!existsSync(videoPath)) throw new UserError(`No recording in ${dir}: it has neither video.mp4 and mic16k.wav nor ${capture.video} to make them from.`);
 	// A start further out than the whole session means the pts weren't wall-clock (no -copyts).
 	const start = (s: number, file: string) => {
 		if (Math.abs(s) > duration) throw new Error(`${file} starts at ${s} s on a ${duration} s session; set its start in session.json`);

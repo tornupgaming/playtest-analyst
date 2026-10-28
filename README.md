@@ -48,7 +48,33 @@ The session bundle is a plain folder ([DECISIONS.md §2](DECISIONS.md)), so a re
 
 ## Quick start
 
-Needs Godot 4.7, [Bun](https://bun.sh), ffmpeg with x11grab and PulseAudio input, Linux with X11 or XWayland, PulseAudio or PipeWire with a working mic, and a Meta Model API key in `META_MODEL_API_KEY`. `tools/preflight.sh` checks all of these, plus spend, level profile, uncommitted changes and disk space ([docs/recorder.md](docs/recorder.md#before-testers-arrive)).
+### Try it on the sample session
+
+This needs Linux, [Bun](https://bun.sh), ffmpeg and curl. You don't need Godot, a mic or an API key. Git holds only the sample session's text files, so the first step downloads its video, think-aloud audio and key frames (13 MB) from a [GitHub release](https://github.com/tornupgaming/playtest-analyst/releases/tag/sample-planted-voice).
+
+```sh
+git clone https://github.com/tornupgaming/playtest-analyst && cd playtest-analyst
+curl -fL https://github.com/tornupgaming/playtest-analyst/releases/download/sample-planted-voice/planted-voice-media.tar.gz \
+  | tar -xz -C sessions/synthetic/planted-voice
+cd analyst && bun install
+bun src/cli.ts serve ../sessions/synthetic/planted-voice    # open the URL it prints; Ctrl+C to stop
+```
+
+This opens the report that comes with the repo, the same one as the [live sample](https://tornupgaming.github.io/playtest-analyst/).
+
+To analyse the session again yourself, you need a Meta Model API key. It takes about 2 minutes and costs about $0.30. The new report replaces the bundled one and its key frames. To get them back, run `git checkout ../sessions/synthetic/planted-voice/report.json` and the download step again.
+
+```sh
+export META_MODEL_API_KEY=<your key>
+bun src/cli.ts analyse ../sessions/synthetic/planted-voice
+bun src/cli.ts serve ../sessions/synthetic/planted-voice
+```
+
+Without a key, `analyse` stops straight away with `META_MODEL_API_KEY is not set` and costs nothing.
+
+### Record your own playtest
+
+This needs Godot 4.7, [Bun](https://bun.sh), ffmpeg with x11grab and PulseAudio input, Linux with X11 or XWayland, PulseAudio or PipeWire with a working mic, and a Meta Model API key in `META_MODEL_API_KEY`. `tools/preflight.sh` checks all of these, plus spend, level profile, uncommitted changes and disk space ([docs/recorder.md](docs/recorder.md#before-testers-arrive)).
 
 ```sh
 cd analyst && bun install && cd ..
@@ -71,7 +97,7 @@ bun src/cli.ts eval ../sessions/<id>             # score against eval/ground_tru
 bun src/cli.ts spend                             # Meta API spend against PLAYTEST_SPEND_CAP_USD
 ```
 
-To try it without playing, `tools/make_synthetic.sh` builds four bot-played sessions of the test course in `sessions/synthetic/`.
+Only `planted-voice` has its media in the release. `tools/make_synthetic.sh` rebuilds all four bot-played sessions in `sessions/synthetic/` from scratch, media included; it needs Godot and [Piper](https://github.com/rhasspy/piper) for the voice.
 
 ## Meta models used
 
