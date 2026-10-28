@@ -307,9 +307,10 @@ func _zone(id: String, a: Vector3, b: Vector3) -> void:
 	area.name = "Zone_" + id
 	_on_player_enter(area, _enter_zone.bind(id))
 	if not Engine.is_editor_hint():
+		var bottom := minf(a.y, b.y)
 		area.body_exited.connect(func(body: Node3D) -> void:
 			if body == _player:
-				_exit_zone(id))
+				_exit_zone(id, _player.global_position.y < bottom))
 
 
 func _checkpoint(a: Vector3, b: Vector3, spawn: Vector3) -> void:
@@ -425,8 +426,10 @@ func _enter_zone(id: String) -> void:
 				_enemy.trigger(_player, tuning.enemy_aggro_delay)
 
 
-func _exit_zone(id: String) -> void:
-	if _current_zone == id:
+## A player who falls out of the bottom of a zone is still in it until they hit
+## KILL_Y, so the death is logged in the zone they fell from.
+func _exit_zone(id: String, fell: bool) -> void:
+	if _current_zone == id and not fell:
 		_current_zone = ""
 	if id == "drop" and is_instance_valid(_enemy):
 		_enemy.trigger(null, 0.0)
