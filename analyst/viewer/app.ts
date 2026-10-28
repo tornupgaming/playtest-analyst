@@ -274,7 +274,10 @@ if (comparison && comparison.resolved.length > 0) {
 
 // --- Playback state ---------------------------------------------------------
 
-for (const type of ["wheel", "touchmove", "pointerdown", "keydown"]) $("#findings").addEventListener(type, () => (touched = performance.now()), { passive: true });
+for (const type of ["wheel", "touchmove", "pointerdown", "keydown"]) {
+	// Enter on a card picks it (see `open`), so it isn't a hand on the list.
+	$("#findings").addEventListener(type, (e) => (e as KeyboardEvent).key !== "Enter" && (touched = performance.now()), { passive: true });
+}
 
 let shown: Finding | undefined;
 function frame() {
