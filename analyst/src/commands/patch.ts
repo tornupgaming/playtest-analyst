@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { parseArgs } from "node:util";
+import { apiKey } from "../boundary.ts";
 import { patch } from "../patch.ts";
 
 export const description = "Propose diffs to allowlisted project files for a report's findings; write patches.json";
@@ -15,6 +16,7 @@ export async function run(argv: string[]) {
 		console.error("Usage: playtest patch <session> [--report report.json] [--project <godot project root>]");
 		return 2;
 	}
+	apiKey();
 	const started = performance.now();
 	const { patches, usage: u } = await patch(dir, values.report ?? join(dir, "report.json"), values.project);
 	const total = ((performance.now() - started) / 1000).toFixed(1);

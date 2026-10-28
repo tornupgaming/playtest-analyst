@@ -1,10 +1,12 @@
 // `playtest patch`: a report's findings → minimal diffs to allowlisted project files (TUG-107).
 // One /v1/responses call proposes a patch per fixable finding. Each diff is checked with
-// `git apply --check` in the project; the ones that fail get one retry with the error.
+// `git apply --check` in the project; the ones that fail get one retry with the error. An answer
+// that doesn't match the schema gets one retry with the validation error, as in analyse.
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
-import { type Responded, respond } from "./meta.ts";
+import { readJson } from "./boundary.ts";
+import { outputJson, type Responded, respond } from "./meta.ts";
 import { type Finding, ModelPatch, type Patches, Report } from "./schema.ts";
 
 export const PATCH_MODEL = "muse-spark-1.3";
@@ -18,7 +20,7 @@ type ProjectFile = { path: string; text: string; editable: boolean };
 /** The allowlisted files, plus the scripts their .tres resources use, so the model sees each
  * export's type and doc comment. Scripts outside the allowlist are read-only context. */
 async function projectFiles(root: string): Promise<ProjectFile[]> {
-	const { patch_allow } = ProjectConfig.parse(await Bun.file(join(root, "playtest.json")).json());
+	const { patch_allow } = await readJson(join(root, "playtest.json"), ProjectConfig);
 	const editable = new Set(patch_allow.flatMap((g) => Array.from(new Bun.Glob(g).scanSync({ cwd: root }))));
 	if (editable.size === 0) throw new Error(`playtest.json: patch_allow matches no files under ${root}`);
 	const paths = [...editable].sort();
@@ -49,15 +51,12 @@ function findingText(f: Finding): string {
 
 /** The model's patches, parsed against the schema that limits ids and files to the ones it was given. */
 function parsePatches(response: Responded["response"], schema: z.ZodType<{ patches: ModelPatch[] }>): ModelPatch[] {
-	if (response.status === "incomplete") throw new Error(`The response is incomplete (${response.incomplete_details?.reason ?? "no reason given"}).`);
-	const text = response.output.flatMap((o) => (o.type === "message" ? o.content : [])).find((c) => c.type === "output_text")?.text;
-	if (text === undefined) throw new Error("The response has no output_text.");
 	// A diff must end with a newline or git calls it corrupt; models often drop the last one.
-	return schema.parse(JSON.parse(text)).patches.map((p) => ({ ...p, diff: p.diff.endsWith("\n") ? p.diff : `${p.diff}\n` }));
+	return outputJson(response, schema).patches.map((p) => ({ ...p, diff: p.diff.endsWith("\n") ? p.diff : `${p.diff}\n` }));
 }
 
 export async function patch(dir: string, reportPath: string, root: string): Promise<Patches> {
-	const report = Report.parse(await Bun.file(reportPath).json());
+	const report = await readJson(reportPath, Report);
 	const files = await projectFiles(root);
 	const editable = files.filter((f) => f.editable).map((f) => f.path);
 	const usage = { input_tokens: 0, cached_tokens: 0, output_tokens: 0, cost_usd: 0, latency_s: 0 };
@@ -76,12 +75,12 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 		];
 		mkdirSync(join(dir, "analysis"), { recursive: true });
 
-		let rejected: { patch: ModelPatch; error: string }[] = [];
+		/** What the second attempt is told, and which findings it may answer for (null: all of them). */
+		let retry: { text: string; findings: Set<string> | null } | undefined;
 		for (let attempt = 1; attempt <= 2; attempt++) {
-			const retry = rejected.map(({ patch: p, error }) => `Finding ${p.finding_id}, ${p.file}:\n${p.diff}git apply said: ${error}`);
 			const body = {
 				model: PATCH_MODEL,
-				input: [{ role: "user", content: attempt === 1 ? context : [...context, text(`Your patches below were rejected. Answer with corrected patches for these findings only, or none for a finding you can't patch.\n\n${retry.join("\n\n")}`)] }],
+				input: [{ role: "user", content: retry ? [...context, text(retry.text)] : context }],
 				text: { format: { type: "json_schema", name: "playtest_patches", strict: true, schema } },
 				// Spark reasons at length: a 6-finding report ran past 16000 (TUG-124 e2e).
 				max_output_tokens: 32000,
@@ -95,10 +94,20 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 			usage.cost_usd += costUsd;
 			usage.latency_s += latencyS;
 
-			const retried = new Set(rejected.map((r) => r.patch.finding_id));
-			const proposed = parsePatches(response, Output).filter((p) => attempt === 1 || retried.has(p.finding_id));
-			rejected = [];
-			for (const p of proposed) {
+			let proposed: ModelPatch[];
+			try {
+				proposed = parsePatches(response, Output);
+			} catch (err) {
+				const error = (err as Error).message;
+				console.error(`Attempt ${attempt}: the output doesn't match the schema:\n${error}`);
+				// Invalid after a valid first answer keeps the patches that first answer gave.
+				if (attempt === 2 && retry?.findings === null) throw new Error(`The model's output was invalid twice. Last error:\n${error}`);
+				retry = { text: `Your answer was invalid:\n${error}\n\nAnswer again, with a patch for each finding you can fix.`, findings: null };
+				continue;
+			}
+			const allowed = retry?.findings;
+			const rejected: { patch: ModelPatch; error: string }[] = [];
+			for (const p of proposed.filter((p) => !allowed || allowed.has(p.finding_id))) {
 				// One patch per finding: a second one for the same finding would fail once the first is applied.
 				if (accepted.some((a) => a.finding_id === p.finding_id)) continue;
 				const error = await rejection(root, p);
@@ -107,6 +116,10 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 			}
 			for (const { patch: p, error } of rejected) console.error(`Attempt ${attempt}: patch for ${p.finding_id} rejected: ${error}`);
 			if (rejected.length === 0) break;
+			retry = {
+				text: `Your patches below were rejected. Answer with corrected patches for these findings only, or none for a finding you can't patch.\n\n${rejected.map(({ patch: p, error }) => `Finding ${p.finding_id}, ${p.file}:\n${p.diff}git apply said: ${error}`).join("\n\n")}`,
+				findings: new Set(rejected.map((r) => r.patch.finding_id)),
+			};
 		}
 	}
 

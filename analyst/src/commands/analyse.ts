@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { analyse } from "../analyse.ts";
+import { apiKey } from "../boundary.ts";
 import { loadPrevious } from "../compare.ts";
 import { DEFAULT_CONFIG, loadConfig } from "../config.ts";
 
@@ -18,6 +19,7 @@ export async function run(argv: string[]) {
 		return 2;
 	}
 	const out = values.out ?? join(dir, "report.json");
+	apiKey();
 	const started = performance.now();
 	const previous = values.previous ? await loadPrevious(values.previous, values.patches) : undefined;
 	const { findings, usage: u, comparison: c } = await analyse(dir, await loadConfig(values.config), out, previous);

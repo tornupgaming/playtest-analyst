@@ -126,3 +126,12 @@ test("a patch that touches a file other than the one it names is dropped after i
 	expect(seen).toHaveLength(2);
 	expect(JSON.stringify(seen[1])).toContain("The diff touches scripts/player_tuning.gd; it must change only tuning/player.tres.");
 });
+
+test("an answer that breaks the schema is retried once with the validation error", async () => {
+	replies = [reply({ ...p("f1", JUMP), finding_id: "f9" }), reply(p("f1", JUMP))];
+	const result = await patch(dir, reportPath, root);
+
+	expect(await saved()).toEqual([{ id: "p1", ...p("f1", JUMP) }]);
+	expect(result.usage).toMatchObject({ input_tokens: 20000, output_tokens: 2000, cost_usd: 0.0335 });
+	expect(JSON.stringify(seen[1])).toContain("patches[0].finding_id");
+});

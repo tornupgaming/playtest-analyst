@@ -1,5 +1,7 @@
 // Reads a session bundle (DECISIONS.md §2). This is the boundary: files in, typed data out.
+import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { parseJson, readJson, UserError } from "./boundary.ts";
 import { SessionMeta, TelemetryEvent } from "./schema.ts";
 
 /** `events` are in time order. Recorders may write some lines late (input_idle is written when
@@ -7,18 +9,13 @@ import { SessionMeta, TelemetryEvent } from "./schema.ts";
 export type Session = { dir: string; meta: SessionMeta; events: TelemetryEvent[] };
 
 export async function readSession(dir: string): Promise<Session> {
-	const meta = SessionMeta.parse(await Bun.file(join(dir, "session.json")).json());
-	const text = await Bun.file(join(dir, "events.jsonl")).text();
-	const events = text
+	const meta = await readJson(join(dir, "session.json"), SessionMeta);
+	const path = join(dir, "events.jsonl");
+	if (!existsSync(path)) throw new UserError(`${path}: not found`);
+	const events = (await Bun.file(path).text())
 		.split("\n")
 		.filter((line) => line.trim() !== "")
-		.map((line, i) => {
-			try {
-				return TelemetryEvent.parse(JSON.parse(line));
-			} catch (err) {
-				throw new Error(`${dir}/events.jsonl line ${i + 1}: ${err}`);
-			}
-		})
+		.map((line, i) => parseJson(line, TelemetryEvent, `${path} line ${i + 1}`))
 		.sort((a, b) => a.t - b.t);
 	return { dir, meta, events };
 }

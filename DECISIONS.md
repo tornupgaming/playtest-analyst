@@ -88,7 +88,7 @@ Every Meta API call goes through `analyst/src/meta.ts`, which appends its cost t
 
 ## 8. Patches (TUG-107)
 
-`playtest patch <session> [--report …] [--project <root>]` makes one `muse-spark-1.3` call with every finding, the files the project allows in `playtest.json` (`{"patch_allow": [globs]}`), and the scripts behind any allowlisted `.tres`, read-only, for their export docs. A strict `json_schema` limits each patch's finding id and file to the ones given. Each diff must pass `git apply --check` in the project and touch only its own file. The ones that fail get one retry with git's error, then are dropped. Output: `patches.json` (`Patches` in `analyst/src/schema.ts`).
+`playtest patch <session> [--report …] [--project <root>]` makes one `muse-spark-1.3` call with every finding, the files the project allows in `playtest.json` (`{"patch_allow": [globs]}`), and the scripts behind any allowlisted `.tres`, read-only, for their export docs. A strict `json_schema` limits each patch's finding id and file to the ones given. Each diff must pass `git apply --check` in the project and touch only its own file. The ones that fail get one retry with git's error, then are dropped. An answer that doesn't match the schema gets one retry with the validation error. Output: `patches.json` (`Patches` in `analyst/src/schema.ts`).
 
 **Why Spark.** About a quarter of Muse Wonder's price per token, and the task needs no video. First run: 5 patches for 6 findings, all passing first time, $0.05 ([wiki](docs/wiki/muse-spark.md)). It also puts a second Meta model in the pipeline.
 
