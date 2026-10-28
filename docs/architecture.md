@@ -173,7 +173,7 @@ flowchart LR
 
   subgraph commands["commands/ (thin: parse args, call one function, print)"]
     cA["analyse"] ; cAn["annotate"] ; cF["finalize"] ; cP["patch"]
-    cS["serve"] ; cE["eval"] ; cSw["sweep"] ; cM["metrics"] ; cSp["spend"]
+    cS["serve"] ; cX["export"] ; cE["eval"] ; cSw["sweep"] ; cM["metrics"] ; cSp["spend"]
   end
 
   subgraph core["src/ (the logic)"]
@@ -201,6 +201,8 @@ flowchart LR
   cP --> patch
   cS --> bundle
   cS -.serves.-> viewer
+  cX --> bundle
+  cX -.builds.-> viewer
   cE --> eval & bundle
   cSw --> sweep & config
   cM --> metrics & bundle

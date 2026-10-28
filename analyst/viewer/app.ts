@@ -4,7 +4,7 @@ import type { Category, Finding, Report, SessionMeta, TelemetryEvent } from "../
 type Session = { meta: SessionMeta; events: TelemetryEvent[]; report: Report };
 type Span = { t0: number; t1: number };
 
-const { meta, events, report } = (await (await fetch("/api/session")).json()) as Session;
+const { meta, events, report } = (await (await fetch("session.json")).json()) as Session;
 const findings = report.findings.toSorted((a, b) => a.t_start - b.t_start);
 const duration = meta.duration;
 
@@ -78,7 +78,7 @@ function icon(name: keyof typeof ICONS) {
 // --- Video and transport ----------------------------------------------------
 
 const video = $<HTMLVideoElement>("#video");
-video.src = "/media/video.mp4";
+video.src = "video.mp4";
 const seek = (t: number, play = true) => {
 	video.currentTime = Math.min(Math.max(t, 0), duration);
 	if (play) video.play();
@@ -201,7 +201,8 @@ timeline.addEventListener("pointermove", (e) => timeline.hasPointerCapture(e.poi
 const cards = new Map<Finding, HTMLElement>();
 for (const f of findings) {
 	const stamp = (t: number) => h("button", { class: "stamp", onclick: (e: Event) => (e.stopPropagation(), seek(t)) }, clock(t));
-	const frameSrc = f.annotated_frame ? `/files/${f.annotated_frame}` : `/frame?t=${f.highlight?.t ?? f.t_start}`;
+	// Relative URLs, so the viewer works from `serve` and from a static copy made by `export`.
+	const frameSrc = f.annotated_frame ? `files/${f.annotated_frame}` : `frames/${f.highlight?.t ?? f.t_start}.jpg`;
 	// The phrasing SAM matched, else the model's first.
 	const phrase = f.highlight && (f.annotated_prompt ?? f.highlight.prompts[0]!);
 	const evidence = (name: "telemetry" | "visual", items: string[]) =>
