@@ -162,7 +162,7 @@ The test course has 6 **planted problems**: spots we made hard, slow or misleadi
 | `tools/` | Scripts for checking the level without playing it (see [Checking the level](#checking-the-level)), the synthetic-session bot (`make_synthetic.sh`), the test runners, and `preflight.sh`, run before testers arrive. |
 | `sessions/` | Session bundles. Media is gitignored; `sessions/synthetic/` holds the bot-played sessions. |
 | `docs/` | The demo script, recorder and telemetry docs, and the [wiki](docs/wiki/index.md) of measured facts about the APIs. |
-| `spikes/` | Throwaway experiments behind each decision in [DECISIONS.md](DECISIONS.md). |
+| [`spikes/`](spikes/README.md) | Throwaway experiments behind each decision in [DECISIONS.md](DECISIONS.md), with an index of the question each one answered. |
 
 ## Test course
 

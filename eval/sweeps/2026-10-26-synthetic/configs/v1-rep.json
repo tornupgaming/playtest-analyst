@@ -1,6 +1,6 @@
 {
   "name": "v1-rep",
-  "prompt": "../../../../analyst/prompts/v1.md",
+  "prompt": "../prompts/v1.md",
   "fps": 1,
   "include_transcript": true,
   "include_telemetry": true,

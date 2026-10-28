@@ -61,7 +61,7 @@ These runs show that:
 
 ### 40-second session through `playtest analyse`
 
-**Conditions:** 2026-10-26, one run each, config [`v0`](../../analyst/configs/v0.json) (silent 720p video at `fps` 1 via the Files API, the [v0 prompt](../../analyst/prompts/v0.md), ASR transcript and telemetry as text, strict `json_schema` from `z.toJSONSchema(ModelOutput)`, `max_output_tokens` 32000). The session is the TUG-95 real-mic sync recording (40 s of screen flashes and beeps, 6 `death` events). "Voiced" adds two Piper TTS lines to the mic.
+**Conditions:** 2026-10-26, one run each, config [`v0`](../../eval/sweeps/2026-10-26-synthetic/configs/v0.json) (silent 720p video at `fps` 1 via the Files API, the [v0 prompt](../../eval/sweeps/2026-10-26-synthetic/prompts/v0.md), ASR transcript and telemetry as text, strict `json_schema` from `z.toJSONSchema(ModelOutput)`, `max_output_tokens` 32000). The session is the TUG-95 real-mic sync recording (40 s of screen flashes and beeps, 6 `death` events). "Voiced" adds two Piper TTS lines to the mic.
 
 | Session | Input tokens | Output tokens (reasoning) | Cost | Model latency | Findings | Source |
 |---|---|---|---|---|---|---|

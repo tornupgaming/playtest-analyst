@@ -69,3 +69,7 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 ## [2026-10-28] ingest | docs/recorder.md#before-testers-arrive (TUG-136 pre-flight runs)
 - Created meta-model-api.md: `GET /v1/models` status for a good and a bad key.
 - index.md: added meta-model-api.md under Meta Model API.
+
+## [2026-10-28] lint | broken source links (retired v0 prompt and config moved to eval/sweeps/2026-10-26-synthetic/)
+- muse-wonder-video.md: repointed the v0 config and prompt links to their new place next to the sweep that ran them.
+- sam-3-1.md: the box-and-point row linked an overlay image that was never committed; it now links records.json, which holds the same mask sizes and confidences.
