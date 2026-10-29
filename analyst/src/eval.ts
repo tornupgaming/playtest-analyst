@@ -96,7 +96,7 @@ export const num = (x: number | null, digits = 2) => (x === null ? "n/a" : x.toF
 
 /** A report's finding as list text: "f2 [30.9–70.9 s] ui in plaza: summary". */
 export function findingText(report: Report, id: string): string {
-	const f = report.findings.find((f) => f.id === id)!;
+	const f = report.findings.findLast((f) => f.id === id)!;
 	return `${id} [${f.t_start.toFixed(1)}–${f.t_end.toFixed(1)} s] ${f.category}${f.zone ? ` in ${f.zone}` : ""}: ${f.summary}`;
 }
 
