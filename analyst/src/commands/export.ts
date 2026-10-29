@@ -1,3 +1,4 @@
+// `playtest export`: the report viewer, report and a smaller video as a folder any static host can serve.
 import { copyFile, mkdir, readdir } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";

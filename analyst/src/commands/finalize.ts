@@ -1,3 +1,4 @@
+// `playtest finalize`: a recording's raw capture → video.mp4 and mic16k.wav on the session clock.
 import { join } from "node:path";
 import { finalize } from "../finalize.ts";
 

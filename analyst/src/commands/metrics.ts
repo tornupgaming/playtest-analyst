@@ -1,3 +1,4 @@
+// `playtest metrics`: deaths, retries and times from the telemetry alone (src/metrics.ts), as markdown.
 import { basename, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { readSession } from "../bundle.ts";

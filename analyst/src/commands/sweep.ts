@@ -1,3 +1,4 @@
+// `playtest sweep`: every config on every session, scored, with a README (src/sweep.ts).
 import { mkdirSync } from "node:fs";
 import { basename, join } from "node:path";
 import { readJson } from "../boundary.ts";

@@ -84,6 +84,22 @@ export function ratios(c: { hits: number; misses: number; duplicates: number; fa
 	};
 }
 
+/** Counts summed over several scores, with the recall and precision of the sum. */
+export function totals(scores: Score[]) {
+	const t = { hits: 0, misses: 0, duplicates: 0, false_positives: 0, mislabelled: 0 };
+	for (const s of scores) for (const k of Object.keys(t) as (keyof typeof t)[]) t[k] += s[k].length;
+	return { ...t, ...ratios(t) };
+}
+
+/** A table cell for a ratio, cost or mean: "n/a" when there was nothing to measure. */
+export const num = (x: number | null, digits = 2) => (x === null ? "n/a" : x.toFixed(digits));
+
+/** A report's finding as list text: "f2 [30.9–70.9 s] ui in plaza: summary". */
+export function findingText(report: Report, id: string): string {
+	const f = report.findings.findLast((f) => f.id === id)!;
+	return `${id} [${f.t_start.toFixed(1)}–${f.t_end.toFixed(1)} s] ${f.category}${f.zone ? ` in ${f.zone}` : ""}: ${f.summary}`;
+}
+
 export function score(report: Report, gt: GroundTruth, events: TelemetryEvent[], opts: Partial<Options> = {}): Score {
 	const { padS = 10, strict = "category", profile = null, endT = events.at(-1)?.t ?? 0 } = opts;
 	const plants = profile === "clean" ? [] : gt.plants;

@@ -1,3 +1,4 @@
+// `playtest spend`: the Meta API spend so far, read from the spend ledger (src/meta.ts).
 import { spentUsd } from "../meta.ts";
 
 export const description = "Show Meta API spend so far against the cap";

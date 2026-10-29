@@ -1,3 +1,4 @@
+// `playtest serve`: the report viewer for one session on localhost, cutting key frames on request.
 import { join, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
 import viewer from "../../viewer/index.html";

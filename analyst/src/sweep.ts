@@ -5,7 +5,7 @@ import { basename, dirname, join } from "node:path";
 import { analyse } from "./analyse.ts";
 import { readSession, type Session } from "./bundle.ts";
 import type { AnalysisConfig } from "./config.ts";
-import { ratios, score, type Score } from "./eval.ts";
+import { findingText, num, score, type Score, totals } from "./eval.ts";
 import { finalize, finalized } from "./finalize.ts";
 import { type GroundTruth, Report } from "./schema.ts";
 
@@ -70,7 +70,6 @@ export async function sweep(configs: AnalysisConfig[], dirs: string[], out: stri
 	return runs.sort((a, b) => order(a) - order(b));
 }
 
-const num = (x: number | null, digits = 2) => (x === null ? "n/a" : x.toFixed(digits));
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 
 /** The sweep's README: a summary row per config, which plants each config found, then a table
@@ -79,16 +78,6 @@ export function readme(title: string, runs: Run[], gt: GroundTruth): string {
 	const configs = [...new Set(runs.map((r) => r.config))];
 	const scored = (config: string) =>
 		runs.flatMap((r) => (r.config === config && "report" in r.result ? [{ ...r, ...r.result }] : []));
-	const totals = (rows: ReturnType<typeof scored>, s: (r: (typeof rows)[number]) => Score) => {
-		const t = { hits: 0, misses: 0, duplicates: 0, false_positives: 0 };
-		for (const r of rows) {
-			t.hits += s(r).hits.length;
-			t.misses += s(r).misses.length;
-			t.duplicates += s(r).duplicates.length;
-			t.false_positives += s(r).false_positives.length;
-		}
-		return { ...t, ...ratios(t) };
-	};
 	const fpClean = (rows: ReturnType<typeof scored>) => sum(rows.filter((r) => r.session.meta.profile === "clean").map((r) => r.strict.false_positives.length));
 
 	const lines = [
@@ -103,8 +92,8 @@ export function readme(title: string, runs: Run[], gt: GroundTruth): string {
 	];
 	for (const config of configs) {
 		const rows = scored(config);
-		const t = totals(rows, (r) => r.strict);
-		const a = totals(rows, (r) => r.any);
+		const t = totals(rows.map((r) => r.strict));
+		const a = totals(rows.map((r) => r.any));
 		const failed = runs.filter((r) => r.config === config).length - rows.length;
 		const mean = (f: (r: (typeof rows)[number]) => number) => (rows.length ? sum(rows.map(f)) / rows.length : null);
 		lines.push(
@@ -135,16 +124,11 @@ export function readme(title: string, runs: Run[], gt: GroundTruth): string {
 			const { report, strict: s, any } = r.result;
 			const u = report.usage;
 			lines.push(`| ${name} | ${report.findings.length} | ${s.hits.length} | ${num(s.recall)} | ${num(any.recall)} | ${num(s.precision)} | ${s.false_positives.length} | ${s.duplicates.length} | ${num(u.cost_usd, 3)} | ${num(u.latency_s, 1)} | ${u.output_tokens} |`);
-			const byId = new Map(report.findings.map((f) => [f.id, f]));
-			const finding = (id: string) => {
-				const f = byId.get(id)!;
-				return `${id} [${f.t_start.toFixed(1)}–${f.t_end.toFixed(1)} s] ${f.category}${f.zone ? ` in ${f.zone}` : ""}: ${f.summary}`;
-			};
 			for (const id of s.misses) {
 				const p = gt.plants.find((p) => p.id === id)!;
 				items.push(`- miss: ${name}: plant ${id} ${p.category} in ${p.zone}${any.misses.includes(id) ? "" : " (hit with another category)"}`);
 			}
-			for (const id of s.false_positives) items.push(`- false positive: ${name}: ${finding(id)}`);
+			for (const id of s.false_positives) items.push(`- false positive: ${name}: ${findingText(report, id)}`);
 		}
 		lines.push("", ...(items.length ? items : ["No misses, false positives or failures."]));
 	}

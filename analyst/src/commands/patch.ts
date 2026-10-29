@@ -1,3 +1,4 @@
+// `playtest patch`: a report's findings → proposed diffs in patches.json (src/patch.ts), with the cost.
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { apiKey } from "../boundary.ts";
