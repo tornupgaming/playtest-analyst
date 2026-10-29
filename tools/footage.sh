@@ -13,7 +13,7 @@ GODOT=${GODOT:-godot}  # override with GODOT=/path/to/godot
 
 dir=${1:-/tmp/footage}
 mkdir -p "$dir"
-rm -f "$dir"/fly_*.png "$dir"/*.mp4
+rm -f "$dir"/fly_*.png
 
 render() {  # render NAME [ARGS...]: one Godot run, which must write DIR/NAME.png
 	local name=$1
