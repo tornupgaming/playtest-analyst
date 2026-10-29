@@ -13,7 +13,7 @@ The demo is what judges see. Every feature below earns its place by appearing in
 | # | 3:00 | 2:00 | Shot | Voiceover (VO) | Depends on | If that feature is cut |
 |---|---|---|---|---|---|---|
 | 1 | 0:00 (12s) | 8s | **Problem.** A 15-minute playtest recording scrubbed at 1×. A counter shows "unwatched footage: 3h 40m". | "Solo devs record playtests. Then nobody watches them. I've got hours of my friends playing my game that I've never reviewed." | Round 1 footage (TUG-106) | — |
-| 2 | 0:12 (10s) | 5s | **Title card.** "Playtest Analyst: a Godot plugin." Muse Wonder and SAM 3.1 logos. | "Playtest Analyst records the session, Muse Wonder watches it, and SAM 3.1 points at the problem." | — | — |
+| 2 | 0:12 (10s) | 5s | **Title card.** "Playtest Analyst: a Godot plugin." Muse Wonder and SAM 3.1 named in text (logos only if Meta supplies approved files). | "Playtest Analyst records the session, Muse Wonder watches it, and SAM 3.1 points at the problem." | — | — |
 | 3 | 0:22 (15s) | 8s | **Test level.** Editor flythrough of the level. Six numbered pins, labels hidden. | "To check it properly, I built a level with six planted problems. I know exactly what's wrong. Let's see if it does." | Test level + `ground_truth.json` (TUG-90) | — |
 | 4 | 0:37 (15s) | 10s | **Record.** Click **Start session** in the editor dock. A tester plays, with a mic waveform and a telemetry ticker beside the game (`death`, `input_idle`, `zone_enter`). | "One click records the screen, the player thinking aloud, and gameplay telemetry, all on one clock." | Recorder (TUG-98), telemetry (TUG-97), round 1 footage (TUG-106) | — (core) |
 | 5 | 0:52 (8s) | 7s | **Analyse.** Click **Analyse**. The status line reads "Muse Wonder · [11] min video + think-aloud audio + [214] events · one request". It finishes with "[48]s · $[0.xx]". | "The whole session goes to Muse Wonder in one request: video, voice and telemetry together." | Pipeline (TUG-99), cost/latency numbers (TUG-93) | — (core) |
@@ -26,6 +26,8 @@ The demo is what judges see. Every feature below earns its place by appearing in
 | 12 | 2:50 (10s) | 6s | **End card.** Repo URL. "Built with Muse Wonder + SAM 3.1 · Meta Model API". Name. | "Playtest Analyst. Link below." | Public repo (TUG-113, TUG-114) | — |
 
 Totals: 180s / 120s.
+
+**Ready-made shots.** Shots 2, 3, 8 (the pins and the list, without ticks) and 12 need no players. `tools/footage.sh` renders them from the planted level as 1080p 30 fps video and PNG stills; the files are in the [`demo-footage` release](https://github.com/tornupgaming/playtest-analyst/releases/tag/demo-footage), and [`demo-footage.jpg`](demo-footage.jpg) shows stills from each. The flythrough ends on the view shot 8 uses, so the pins "return" in the same place. Add the ✓ and ✗ for shot 8 in the edit. Re-render after any change to the level; the camera path, pin positions and card text are at the top of `tools/footage.gd`.
 
 **Swap-in if cross-build memory ships (TUG-109):** in shot 11, replace the table header with the viewer's comparison banner, "[4] resolved · [1] new · [1] persisting". This adds no time. If TUG-109 doesn't ship, nothing changes.
 
@@ -44,7 +46,7 @@ Patch:
 Round 2 (patched build):
 - [ ] The same two moments as round 1: the ledge and the quest marker (shot 10)
 - [ ] Deaths, retries and time to complete for both rounds, same metric definitions (shot 11)
-- [ ] Editor flythrough of the level with pins (shot 3)
+- [x] Flythrough of the level with pins (shot 3): `tools/footage.sh`, no players needed
 
 ## Cut list
 
