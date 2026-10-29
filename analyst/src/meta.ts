@@ -6,6 +6,7 @@ import { dirname, join } from "node:path";
 import OpenAI from "openai";
 import { z } from "zod";
 import { apiKey, UserError } from "./boundary.ts";
+import type { Usage } from "./schema.ts";
 
 /** Override for tests: point it at a local fake. */
 export const API_BASE = process.env.META_API_BASE ?? "https://api.meta.ai/v1";
@@ -71,15 +72,13 @@ export function costUsd(model: string, input: number, cached: number, output: nu
 	return ((input - cached) * p.input + cached * p.cached + output * p.output) / 1e6;
 }
 
-function charge(model: string, endpoint: string, tokens: { input: number; cached: number; output: number }, note?: string, images = 0): number {
-	const cost = model in PRICE_PER_IMAGE ? images * PRICE_PER_IMAGE[model]! : costUsd(model, tokens.input, tokens.cached, tokens.output);
+function charge(model: string, endpoint: string, tokens: Pick<Usage, "input_tokens" | "cached_tokens" | "output_tokens">, note?: string, images = 0): number {
+	const cost = model in PRICE_PER_IMAGE ? images * PRICE_PER_IMAGE[model]! : costUsd(model, tokens.input_tokens, tokens.cached_tokens, tokens.output_tokens);
 	const entry: LedgerEntry = {
 		ts: new Date().toISOString(),
 		model,
 		endpoint,
-		input_tokens: tokens.input,
-		cached_tokens: tokens.cached,
-		output_tokens: tokens.output,
+		...tokens,
 		cost_usd: cost ?? 0,
 		unpriced: cost === null,
 		...(note ? { note } : {}),
@@ -94,21 +93,34 @@ function client(): OpenAI {
 	return (_client ??= new OpenAI({ baseURL: API_BASE, apiKey: apiKey() }));
 }
 
-export type Responded = { response: OpenAI.Responses.Response; costUsd: number; latencyS: number };
+export type Responded = { response: OpenAI.Responses.Response; usage: Usage };
 
 /** POST /v1/responses. `body` is loosely typed because Meta's `input_video` part isn't in the SDK's types. */
 export async function respond(body: Record<string, unknown>, note?: string): Promise<Responded> {
 	assertBudget();
 	const started = performance.now();
 	const response = (await client().responses.create(body as never)) as OpenAI.Responses.Response;
-	const latencyS = (performance.now() - started) / 1000;
+	const latency_s = (performance.now() - started) / 1000;
 	const u = response.usage;
-	const costUsd = charge(String(body.model), "responses", {
-		input: u?.input_tokens ?? 0,
-		cached: u?.input_tokens_details?.cached_tokens ?? 0,
-		output: u?.output_tokens ?? 0,
-	}, note, (u as { images_processed?: number } | undefined)?.images_processed);
-	return { response, costUsd, latencyS };
+	const tokens = { input_tokens: u?.input_tokens ?? 0, cached_tokens: u?.input_tokens_details?.cached_tokens ?? 0, output_tokens: u?.output_tokens ?? 0 };
+	const cost_usd = charge(String(body.model), "responses", tokens, note, (u as { images_processed?: number } | undefined)?.images_processed);
+	return { response, usage: { ...tokens, cost_usd, latency_s } };
+}
+
+/** respond() for a run that may take several attempts. Attempt n's request and response are saved
+ * as `<stem>request-<n>.json` and `<stem>response-<n>.json`; `usage()` is the run's total, rounded for a report. */
+export function attempts(stem: string) {
+	const total: Usage = { input_tokens: 0, cached_tokens: 0, output_tokens: 0, cost_usd: 0, latency_s: 0 };
+	return {
+		async respond(body: Record<string, unknown>, n: number, note: string): Promise<Responded["response"]> {
+			await Bun.write(`${stem}request-${n}.json`, JSON.stringify(body, null, 2));
+			const { response, usage } = await respond(body, note);
+			await Bun.write(`${stem}response-${n}.json`, JSON.stringify(response, null, 2));
+			for (const k of Object.keys(total) as (keyof Usage)[]) total[k] += usage[k];
+			return response;
+		},
+		usage: (): Usage => ({ ...total, cost_usd: Math.round(total.cost_usd * 1e6) / 1e6, latency_s: Math.round(total.latency_s * 10) / 10 }),
+	};
 }
 
 /** POST /v1/files (purpose user_data). Uploads are free, so they aren't charged. */
@@ -153,7 +165,7 @@ export async function metaFetch(path: string, init: RequestInit, model: string, 
 	for (let attempt = 0; ; attempt++) {
 		assertBudget();
 		const res = await fetch(`${API_BASE}${path}`, { ...init, headers, signal: AbortSignal.timeout(TIMEOUT_MS) }).catch((err: Error) => err);
-		charge(model, path, { input: 0, cached: 0, output: 0 }, note);
+		charge(model, path, { input_tokens: 0, cached_tokens: 0, output_tokens: 0 }, note);
 		const failure = res instanceof Error ? res.message : res.status === 429 || res.status >= 500 ? `HTTP ${res.status}` : null;
 		if (failure === null || attempt === RETRIES) {
 			if (res instanceof Error) throw res;

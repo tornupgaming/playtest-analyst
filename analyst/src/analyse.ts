@@ -10,7 +10,7 @@ import { comparison, compareInput, type Previous } from "./compare.ts";
 import type { AnalysisConfig } from "./config.ts";
 import { finalize, finalized, run } from "./finalize.ts";
 import { ASR_CHUNK_S, chunkStarts, MODEL, modelRequest, sessionTurns } from "./input.ts";
-import { metaFetch, outputJson, respond, uploadFile } from "./meta.ts";
+import { attempts, metaFetch, outputJson, uploadFile } from "./meta.ts";
 import { type Finding, ModelOutput, type Report, type TranscriptTurn } from "./schema.ts";
 
 const ASR_MODEL = "muse-voice-transcribe-1.0";
@@ -64,20 +64,13 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	const fileId = await uploadVideo(dir, work, config.video_audio);
 	const turns = transcript ?? [];
 
-	const usage = { input_tokens: 0, cached_tokens: 0, output_tokens: 0, cost_usd: 0, latency_s: 0 };
+	const calls = attempts(`${work}/`);
 	const compare = previous && compareInput(previous);
 	let found: Omit<Finding, "id">[] | undefined;
 	let error: string | undefined;
 	for (let attempt = 1; attempt <= 2 && !found; attempt++) {
 		const body = modelRequest({ config, prompt, meta, fileId, turns, events, retryError: error, compare });
-		await Bun.write(join(work, `request-${attempt}.json`), JSON.stringify(body, null, 2));
-		const { response, costUsd, latencyS } = await respond(body, `analyse ${meta.id} ${config.name} attempt ${attempt}`);
-		await Bun.write(join(work, `response-${attempt}.json`), JSON.stringify(response, null, 2));
-		usage.input_tokens += response.usage?.input_tokens ?? 0;
-		usage.cached_tokens += response.usage?.input_tokens_details?.cached_tokens ?? 0;
-		usage.output_tokens += response.usage?.output_tokens ?? 0;
-		usage.cost_usd += costUsd;
-		usage.latency_s += latencyS;
+		const response = await calls.respond(body, attempt, `analyse ${meta.id} ${config.name} attempt ${attempt}`);
 		try {
 			found = outputJson(response, compare?.output ?? ModelOutput).findings;
 		} catch (err) {
@@ -94,7 +87,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 		model: MODEL,
 		config: config.name,
 		findings: found.toSorted((a, b) => a.t_start - b.t_start).map((f, i) => ({ id: `f${i + 1}`, ...f })),
-		usage: { ...usage, cost_usd: Math.round(usage.cost_usd * 1e6) / 1e6, latency_s: Math.round(usage.latency_s * 10) / 10 },
+		usage: calls.usage(),
 		...(previous && { comparison: comparison(previous.report, found) }),
 	});
 	await Bun.write(out, JSON.stringify(report, null, 2) + "\n");

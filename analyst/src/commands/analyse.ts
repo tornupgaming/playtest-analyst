@@ -1,3 +1,4 @@
+// `playtest analyse`: one session → report.json (src/analyse.ts), then the run's cost and tokens.
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { analyse } from "../analyse.ts";

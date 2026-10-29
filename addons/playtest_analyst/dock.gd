@@ -28,15 +28,11 @@ class Debugger extends EditorDebuggerPlugin:
 
 
 var debugger := Debugger.new()
-## The bundle the running game is recording, "" when it isn't.
-var _recording := ""
+## Where Record is up to. Idle: {}. Starting: {run_args, asked_ms}: the project's own run args,
+## put back once the game has launched with ours or hasn't 10 s after `asked_ms` (no main scene,
+## a cancelled dialog, a launch error). Recording: {bundle}, the folder being written.
+var _rec := {}
 var _was_playing := false
-## The project's own run args, put back once the game has launched with ours. Non-null
-## while a start is pending, so Record is disabled then.
-var _saved_run_args: Variant = null
-## Ticks (ms) when Record asked the editor to play; the run args are given back if the game
-## hasn't started 10 s later (no main scene, a cancelled dialog, a launch error).
-var _play_requested_ms := 0
 ## CLI processes whose output is streaming into the log: execute_with_pipe() results
 ## plus `command`, and for `serve`, whether its URL has been opened.
 var _jobs: Array[Dictionary] = []
@@ -122,30 +118,29 @@ func _exit_tree() -> void:
 
 func _process(_delta: float) -> void:
 	var playing := EditorInterface.is_playing_scene()
-	var gave_up := not playing and _play_requested_ms > 0 and Time.get_ticks_msec() - _play_requested_ms > 10000
-	if (playing or gave_up) and _saved_run_args != null:
-		ProjectSettings.set_setting("editor/run/main_run_args", _saved_run_args)
-		_saved_run_args = null
-		_play_requested_ms = 0
+	var gave_up: bool = not playing and _rec.get("asked_ms", 0) > 0 and Time.get_ticks_msec() - _rec.asked_ms > 10000
+	if (playing or gave_up) and _rec.has("run_args"):
+		ProjectSettings.set_setting("editor/run/main_run_args", _rec.run_args)
+		_rec = {}
 		if gave_up:
 			_status.text = "The game didn't start, so nothing is recording. Check the project's main scene."
-	if _was_playing and not playing and not _recording.is_empty():
-		_status.text = "The game was stopped while recording, so %s is incomplete. Stop from this dock, F9 or by closing the game window." % _recording.get_file()
-		_recording = ""
+	if _was_playing and not playing and _rec.has("bundle"):
+		_status.text = "The game was stopped while recording, so %s is incomplete. Stop from this dock, F9 or by closing the game window." % _rec.bundle.get_file()
+		_rec = {}
 		_refresh()
 	_was_playing = playing
-	_record.text = "Stop recording" if not _recording.is_empty() else "Record session"
-	_record.disabled = _saved_run_args != null or not _unsupported.is_empty()
+	_record.text = "Stop recording" if _rec.has("bundle") else "Record session"
+	_record.disabled = _rec.has("run_args") or not _unsupported.is_empty()
 	for job in _jobs.duplicate():
 		_read(job)
 
 
 func _on_record() -> void:
-	if not _recording.is_empty():
+	if _rec.has("bundle"):
 		debugger.send("stop")
 		_status.text = "Stopping…"
 		return
-	if _saved_run_args != null:
+	if _rec.has("run_args"):
 		return  # a second click before the game launched: the run args are ours by now
 	var args := "-- --record"
 	if not _tester.text.strip_edges().is_empty():
@@ -153,24 +148,27 @@ func _on_record() -> void:
 	# x11grab can only see X11 windows, so run the game through XWayland on Wayland.
 	if OS.get_name() == "Linux":
 		args = "--display-driver x11 " + args
-	_saved_run_args = ProjectSettings.get_setting("editor/run/main_run_args")
+	_rec = {run_args = ProjectSettings.get_setting("editor/run/main_run_args"), asked_ms = 0}
 	# Setting the same value emits nothing, e.g. when an editor crash left ours saved.
-	if _saved_run_args != args:
+	if _rec.run_args != args:
 		ProjectSettings.set_setting("editor/run/main_run_args", args)
 		await ProjectSettings.settings_changed  # the editor rereads run args on this signal
 	EditorInterface.play_main_scene()
-	_play_requested_ms = Time.get_ticks_msec()
+	if _rec.has("run_args"):
+		_rec.asked_ms = Time.get_ticks_msec()
 	_status.text = "Starting the game…"
 
 
 func _on_game_message(name: String, data: Array) -> void:
 	if name == "started":
-		_recording = data[0]
-		_status.text = "Recording %s. Stop here, with F9, or by closing the game window." % _recording.get_file()
+		if _rec.has("run_args"):  # the game is up, so the project's own run args go back now
+			ProjectSettings.set_setting("editor/run/main_run_args", _rec.run_args)
+		_rec = {bundle = data[0]}
+		_status.text = "Recording %s. Stop here, with F9, or by closing the game window." % data[0].get_file()
 	elif name == "stopped":
 		var error: String = data[1]
 		_status.text = "Saved %s." % data[0].get_file() if error.is_empty() else "%s is incomplete: %s" % [data[0].get_file(), error]
-		_recording = ""
+		_rec = {}
 		_refresh(data[0])
 	elif name == "refused":
 		_status.text = "Not recording: %s" % data[0]
@@ -183,13 +181,10 @@ func _refresh(select := "") -> void:
 	var root := Recorder.sessions_root()
 	for id in _bundles(root):
 		var dir := root.path_join(id)
-		var label := id
-		if FileAccess.file_exists(dir.path_join(Recorder.INCOMPLETE)) or not FileAccess.file_exists(dir.path_join("session.json")):
-			label += "  (incomplete)"
-		elif FileAccess.file_exists(dir.path_join("report.json")):
-			label += "  (analysed)"
-		_sessions.add_item(label)
-		_sessions.set_item_metadata(_sessions.item_count - 1, dir)
+		var complete := not FileAccess.file_exists(dir.path_join(Recorder.INCOMPLETE)) and FileAccess.file_exists(dir.path_join("session.json"))
+		var analysed := complete and FileAccess.file_exists(dir.path_join("report.json"))
+		_sessions.add_item(id + ("  (analysed)" if analysed else "" if complete else "  (incomplete)"))
+		_sessions.set_item_metadata(_sessions.item_count - 1, {dir = dir, complete = complete})
 		if dir == select:
 			_sessions.select(_sessions.item_count - 1)
 	_load_patches()
@@ -218,9 +213,9 @@ static func _bundles(root: String) -> Array[String]:
 
 
 func _update_buttons() -> void:
-	var i := _sessions.selected
-	var complete := i >= 0 and not _sessions.get_item_text(i).ends_with("(incomplete)")
-	var analysed := i >= 0 and FileAccess.file_exists(_sessions.get_item_metadata(i).path_join("report.json"))
+	var session := _selected_session()
+	var complete: bool = session.get("complete", false)
+	var analysed := not session.is_empty() and FileAccess.file_exists(session.dir.path_join("report.json"))
 	var running := func(command: String) -> bool: return _jobs.any(func(job: Dictionary) -> bool: return job.command == command)
 	_analyse.disabled = not complete or running.call("analyse")
 	_open.disabled = not complete or not analysed
@@ -231,7 +226,7 @@ func _update_buttons() -> void:
 
 
 func _run(command: String, args: Array = []) -> void:
-	var dir: String = _sessions.get_selected_metadata()
+	var dir: String = _selected_session().dir
 	if command == "serve":
 		for job in _jobs:
 			if job.command == "serve":
@@ -263,7 +258,7 @@ func _read(job: Dictionary) -> void:
 	if not running:
 		_append("[playtest %s exited with code %d]\n" % [job.command, OS.get_process_exit_code(job.pid)])
 		_jobs.erase(job)
-		_refresh(_sessions.get_selected_metadata() if _sessions.selected >= 0 else "")
+		_refresh(_selected_session().get("dir", ""))
 
 
 func _append(text: String) -> void:
@@ -280,8 +275,8 @@ func _project_root() -> String:
 ## Lists the selected bundle's patches, keeping the selected patch selected.
 func _load_patches() -> void:
 	var keep: String = _selected_patch().get("id", "")
-	var i := _sessions.selected
-	var path: String = _sessions.get_item_metadata(i).path_join("patches.json") if i >= 0 else ""
+	var session := _selected_session()
+	var path: String = session.dir.path_join("patches.json") if not session.is_empty() else ""
 	_patches = Patches.new(_project_root(), path) if FileAccess.file_exists(path) else null
 	_patch_list.clear()
 	var root := _patch_list.create_item()
@@ -299,6 +294,11 @@ func _load_patches() -> void:
 		if patch.id == keep:
 			item.select(0)
 	_show_patch()
+
+
+## The selected bundle as {dir, complete}, {} when there is none.
+func _selected_session() -> Dictionary:
+	return _sessions.get_selected_metadata() if _sessions.selected >= 0 else {}
 
 
 func _selected_patch() -> Dictionary:

@@ -1,3 +1,4 @@
+// `playtest annotate`: redraws the SAM highlights of an existing report.json (src/annotate.ts).
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { annotate } from "../annotate.ts";

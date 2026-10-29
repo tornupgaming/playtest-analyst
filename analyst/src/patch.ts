@@ -6,7 +6,7 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
 import { readJson } from "./boundary.ts";
-import { outputJson, type Responded, respond } from "./meta.ts";
+import { attempts, outputJson, type Responded } from "./meta.ts";
 import { type Finding, ModelPatch, type Patches, Report } from "./schema.ts";
 
 export const PATCH_MODEL = "muse-spark-1.3";
@@ -59,7 +59,7 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 	const report = await readJson(reportPath, Report);
 	const files = await projectFiles(root);
 	const editable = files.filter((f) => f.editable).map((f) => f.path);
-	const usage = { input_tokens: 0, cached_tokens: 0, output_tokens: 0, cost_usd: 0, latency_s: 0 };
+	const calls = attempts(join(dir, "analysis/patch-"));
 	const accepted: ModelPatch[] = [];
 
 	if (report.findings.length > 0) {
@@ -85,15 +85,7 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 				// Spark reasons at length: a 6-finding report ran past 16000 (TUG-124 e2e).
 				max_output_tokens: 32000,
 			};
-			await Bun.write(join(dir, `analysis/patch-request-${attempt}.json`), JSON.stringify(body, null, 2));
-			const { response, costUsd, latencyS } = await respond(body, `patch ${report.session_id} attempt ${attempt}`);
-			await Bun.write(join(dir, `analysis/patch-response-${attempt}.json`), JSON.stringify(response, null, 2));
-			usage.input_tokens += response.usage?.input_tokens ?? 0;
-			usage.cached_tokens += response.usage?.input_tokens_details?.cached_tokens ?? 0;
-			usage.output_tokens += response.usage?.output_tokens ?? 0;
-			usage.cost_usd += costUsd;
-			usage.latency_s += latencyS;
-
+			const response = await calls.respond(body, attempt, `patch ${report.session_id} attempt ${attempt}`);
 			let proposed: ModelPatch[];
 			try {
 				proposed = parsePatches(response, Output);
@@ -131,7 +123,7 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 		patches: accepted
 			.toSorted((a, b) => report.findings.findIndex((f) => f.id === a.finding_id) - report.findings.findIndex((f) => f.id === b.finding_id))
 			.map((p, i) => ({ id: `p${i + 1}`, ...p })),
-		usage: { ...usage, cost_usd: Math.round(usage.cost_usd * 1e6) / 1e6, latency_s: Math.round(usage.latency_s * 10) / 10 },
+		usage: calls.usage(),
 	};
 	await Bun.write(join(dir, "patches.json"), JSON.stringify(patches, null, 2) + "\n");
 	return patches;
