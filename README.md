@@ -205,6 +205,7 @@ tools/shots.sh -p planted beacon    # one view, planted profile
 tools/shots.sh over=50,70,30:0,0,-90                   # a free camera: name=eye:target
 tools/clip.sh -v drop "move_forward+jump:0.7,:1"       # scripted input -> /tmp/shots/clip_strip.png and clip.mp4
 tools/clip.sh -c 0,3,-14 "move_right:1,move_left:1"   # the same, filmed from a fixed point
+tools/footage.sh                    # the demo video's shots with no players -> /tmp/footage (1080p mp4 + PNG stills)
 ```
 
 They run `godot` from your PATH. To use another Godot 4.7 binary, set `GODOT`, e.g. `GODOT=~/bin/godot-4.7 tools/test.sh`. GitHub runs `tools/test.sh` and `tools/check.sh`, plus the analyst's tests and typecheck, on every pull request and every push to `main`.
