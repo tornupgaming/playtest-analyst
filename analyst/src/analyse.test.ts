@@ -126,6 +126,21 @@ test("writes report.json with findings in time order, ids, and the call's cost",
 	expect(sent).toContain("[1.5s] input_idle duration=1");
 });
 
+test("reports each step as it starts, so the dock can show what it is doing", async () => {
+	replies = [INVALID, VALID];
+	const steps: string[] = [];
+	await analyse(dir, config, join(dir, "report.json"), undefined, (doing) => steps.push(doing));
+
+	expect(steps).toEqual([
+		"Lining up the video, mic and telemetry",
+		"Transcribing the think-aloud",
+		"Uploading the video",
+		"Muse Wonder is watching the session. This is the long step, often several minutes",
+		"Asking Muse Wonder again, with the error",
+		"Outlining what each finding is about on its key frame, with SAM 3.1",
+	]);
+});
+
 test("invalid output is retried once with the validation error, and both calls are billed", async () => {
 	replies = [INVALID, VALID];
 	await analyse(dir, config);

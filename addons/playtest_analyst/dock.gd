@@ -34,7 +34,7 @@ var debugger := Debugger.new()
 var _rec := {}
 var _was_playing := false
 ## CLI processes whose output is streaming into the log: execute_with_pipe() results
-## plus `command`, and for `serve`, whether its URL has been opened.
+## plus `command`, `started_ms`, and for `serve`, whether its URL has been opened.
 var _jobs: Array[Dictionary] = []
 var _url := RegEx.create_from_string("https?://\\S+")
 ## Why this OS can't record, "" if it can.
@@ -133,6 +133,8 @@ func _process(_delta: float) -> void:
 	_record.disabled = _rec.has("run_args") or not _unsupported.is_empty()
 	for job in _jobs.duplicate():
 		_read(job)
+	_analyse.text = _job_label("analyse", "Analyse", "Analysing")
+	_propose.text = _job_label("patch", "Propose fixes", "Proposing fixes")
 
 
 func _on_record() -> void:
@@ -238,6 +240,7 @@ func _run(command: String, args: Array = []) -> void:
 		_append("Could not run %s. Is bun installed?\n" % line[0])
 		return
 	job.command = command
+	job.started_ms = Time.get_ticks_msec()
 	job.opened = false
 	_jobs.append(job)
 	_update_buttons()
@@ -256,9 +259,19 @@ func _read(job: Dictionary) -> void:
 			job.opened = true
 			OS.shell_open(url.get_string())
 	if not running:
-		_append("[playtest %s exited with code %d]\n" % [job.command, OS.get_process_exit_code(job.pid)])
+		var code := OS.get_process_exit_code(job.pid)
+		_append("[playtest %s %s]\n" % [job.command, "finished" if code == 0 else "failed with code %d. The error is above." % code])
 		_jobs.erase(job)
 		_refresh(_selected_session().get("dir", ""))
+
+
+## `idle`, or while `command` runs, `busy` and how long it has been running, e.g. "Analysing… 1:05".
+func _job_label(command: String, idle: String, busy: String) -> String:
+	for job in _jobs:
+		if job.command == command:
+			var s: int = (Time.get_ticks_msec() - job.started_ms) / 1000
+			return "%s… %d:%02d" % [busy, s / 60, s % 60]
+	return idle
 
 
 func _append(text: String) -> void:

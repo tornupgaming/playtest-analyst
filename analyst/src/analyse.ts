@@ -43,24 +43,36 @@ async function transcribe(dir: string, work: string, duration: number): Promise<
 
 /** Intermediate files go next to `out`: in `analysis/` for report.json, `<name>.analysis/` for any
  * other name, so two reports written to one folder never share an upload or ASR chunks.
- * With `previous`, the findings are compared with the previous build's (TUG-109). */
-export async function analyse(dir: string, config: AnalysisConfig, out = join(dir, "report.json"), previous?: Previous): Promise<Report> {
-	if (!finalized(dir)) await finalize(dir);
+ * With `previous`, the findings are compared with the previous build's (TUG-109).
+ * `step` hears about each step as it starts, for a progress line. */
+export async function analyse(
+	dir: string,
+	config: AnalysisConfig,
+	out = join(dir, "report.json"),
+	previous?: Previous,
+	step: (doing: string) => void = () => {},
+): Promise<Report> {
+	if (!finalized(dir)) {
+		step("Lining up the video, mic and telemetry");
+		await finalize(dir);
+	}
 	const { meta, events } = await readSession(dir);
 	const work = join(dirname(out), basename(out) === "report.json" ? "analysis" : `${basename(out, ".json")}.analysis`);
 	mkdirSync(work, { recursive: true });
 	const prompt = await Bun.file(config.prompt).text();
 
 	// ASR before the upload, so the video goes up once: silent, or with its audio if ASR failed.
-	const transcript =
-		config.include_transcript && meta.capture.audio !== null
-			? await transcribe(dir, work, meta.duration).catch((err: Error) => {
+	const asr = config.include_transcript && meta.capture.audio !== null;
+	if (asr) step("Transcribing the think-aloud");
+	const transcript = asr
+		? await transcribe(dir, work, meta.duration).catch((err: Error) => {
 					console.error(`ASR failed, so the video goes with its audio track instead (DECISIONS.md §4): ${err.message}`);
 					return null;
 				})
 			: [];
 	// ASR failed: send the mic as the video's audio track. Speech timing is looser, but the words get through.
 	if (transcript === null) config = { ...config, include_transcript: false, video_audio: true };
+	step("Uploading the video");
 	const fileId = await uploadVideo(dir, work, config.video_audio);
 	const turns = transcript ?? [];
 
@@ -69,6 +81,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	let found: Omit<Finding, "id">[] | undefined;
 	let error: string | undefined;
 	for (let attempt = 1; attempt <= 2 && !found; attempt++) {
+		step(attempt === 1 ? "Muse Wonder is watching the session. This is the long step, often several minutes" : "Asking Muse Wonder again, with the error");
 		const body = modelRequest({ config, prompt, meta, fileId, turns, events, retryError: error, compare });
 		const response = await calls.respond(body, attempt, `analyse ${meta.id} ${config.name} attempt ${attempt}`);
 		try {
@@ -80,6 +93,7 @@ export async function analyse(dir: string, config: AnalysisConfig, out = join(di
 	}
 	if (!found) throw new Error(`The model's output was invalid twice. Last error:\n${error}`);
 
+	if (found.some((f) => f.highlight)) step("Outlining what each finding is about on its key frame, with SAM 3.1");
 	const report = await annotate(dir, {
 		schema: 1,
 		session_id: meta.id,
