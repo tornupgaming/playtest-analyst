@@ -11,3 +11,4 @@ eval/sweeps/**/analysis/
 sessions/[0-9]*/
 # Obsidian vault state for browsing docs/.
 docs/.obsidian/
+CLAUDE.local.md
