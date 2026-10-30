@@ -73,3 +73,7 @@ Append-only. Newest at the bottom. Entry format: `## [YYYY-MM-DD] <ingest|lint> 
 ## [2026-10-28] lint | broken source links (retired v0 prompt and config moved to eval/sweeps/2026-10-26-synthetic/)
 - muse-wonder-video.md: repointed the v0 config and prompt links to their new place next to the sweep that ran them.
 - sam-3-1.md: the box-and-point row linked an overlay image that was never committed; it now links records.json, which holds the same mask sizes and confidences.
+
+## [2026-10-30] ingest | spikes/tug-94/real-run-2026-10-29/ (Phil's think-aloud run)
+- sam-3-1.md: added the first real-session result (3 of 3 requested highlights matched, judged correct by Phil).
+- index.md: updated the sam-3-1.md line.

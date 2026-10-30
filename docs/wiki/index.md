@@ -5,7 +5,7 @@ Facts established so far, each with a source. Rules: [CLAUDE.md](CLAUDE.md). His
 ## Meta Model API
 - [Meta Model API keys](meta-model-api.md): measured that `GET /v1/models` returns 200 for a good key and 401 for a bad one, without running a model.
 - [Muse Wonder video input](muse-wonder-video.md): formats, limits and price from the docs; measured timestamp accuracy, tokens per frame, cost and latency for a 10-minute clip at several fps, for a 40-second session through `playtest analyse`, and for the synthetic sessions through `playtest sweep`, with repeats.
-- [SAM 3.1 segmentation](sam-3-1.md): `sam-3.1` request and response shape, mask encoding, per-image price and limits from the docs; measured latency and which noun phrases matched on four level frames, and on key frames with several phrasings per finding (TUG-123).
+- [SAM 3.1 segmentation](sam-3-1.md): `sam-3.1` request and response shape, mask encoding, per-image price and limits from the docs; measured latency and which noun phrases matched on four level frames, and on key frames with several phrasings per finding (TUG-123), and on a real think-aloud session (TUG-94).
 - [Muse Spark text and code](muse-spark.md): Spark ids, standard vs contributor mode, prices, reasoning effort and strict `json_schema` rules from the docs; tokens, cost and latency of one `playtest patch` run on `muse-spark-1.3`.
 - [Meta ASR](meta-asr.md): `muse-voice-transcribe-1.0` limits (10 min, 32 MB, WAV), modes, request shape and measured timestamp accuracy.
 - [Hackathon API credits](hackathon-credits.md): the $150 Meta Model API credit terms (claim deadline, expiry, billing after credits run out, and where the rules and Credit Terms disagree on validity); partner credit offers for open-weights models.

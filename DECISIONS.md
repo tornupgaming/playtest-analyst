@@ -1,6 +1,6 @@
 # Decisions
 
-What we decided, why, and what we fall back to. The evidence lives in the [wiki](docs/wiki/index.md) and in [`spikes/`](spikes/), the small throwaway experiments behind the decisions. §5 (SAM 3.1) is still under evaluation.
+What we decided, why, and what we fall back to. The evidence lives in the [wiki](docs/wiki/index.md) and in [`spikes/`](spikes/), the small throwaway experiments behind the decisions.
 
 ## 1. Stack: one TypeScript CLI, a web viewer, Godot only records
 
@@ -46,6 +46,8 @@ sessions/<id>/
 
 **Why.** A capture test measured video within 0–45 ms of telemetry on this clock, with no drift ([wiki](docs/wiki/capture-sync.md)). Normalising once, at the boundary, keeps the pipeline, eval and viewer free of clock maths.
 
+**Fallback.** None needed; we own the format.
+
 ## 3. Capture
 
 - Video: external `ffmpeg -f x11grab -copyts` on the Godot window. Godot runs with `--display-driver x11` on Wayland.
@@ -69,13 +71,15 @@ One `POST /v1/responses` call to `muse-wonder-1.0` with:
 
 **Fallback.** If ASR fails, send the video with its audio track and accept loose speech timing.
 
-## 5. SAM 3.1 (under evaluation)
+## 5. SAM 3.1
+
+**Decided 30 Oct (Phil): keep SAM as it is.** No extra confidence filter beyond the 0.5 below. On Phil's own think-aloud run (29 Oct), 3 of 4 findings asked for a highlight. SAM matched all 3: the pillar, the beacon star and the mushroom. Phil judged every highlight correct and well timed ([wiki](docs/wiki/sam-3-1.md)).
 
 Muse Wonder's report names, for each finding, a key-frame time and one to three short noun phrases for the same element, best first (`highlight` in the report schema), so no extra call is needed to choose it. `sam-3.1` tries each phrasing on the frame at that time, then at 2 s before and after it, and stops at the first match with confidence ≥ 0.5: at most 9 calls, $0.0225, per finding. The finding records the phrasing and time that matched (`annotated_prompt`, `annotated_t`). We draw the top match by confidence: a yellow outline and light fill, with the rest of the frame dimmed outside a soft circle around it.
 
 A probe of SAM 3.1 on frames from our test level ([wiki](docs/wiki/sam-3-1.md)) matched distinct objects named by how they look ("the star", "the mushroom", "the arrow sign"). It missed names based on game role ("the beacon", "the enemy"), large flat surfaces (ledges, paths) and spatial phrases ("the gap between…"). So each phrasing in `highlight.prompts` must describe the element as a concrete object, by its appearance, and the time must show it unobstructed, before the player reaches it. One call is about 1 s and $0.0025.
 
-**Fallback.** Plain key frame, with no overlay, when SAM returns nothing. The final call on SAM is still under evaluation.
+**Fallback.** Plain key frame, with no overlay, when SAM returns nothing or the finding names no highlight.
 
 ## 6. Eval
 
@@ -83,9 +87,17 @@ Six planted friction points on a dedicated test level, with the answer key froze
 
 **Category is the cause; reaction is the feeling.** A finding's `category` names what the developer would change: `difficulty`, `pacing`, `ui` or `bug`. Eval scores it. Its `reaction` is how the player felt (`confused`, `frustrated`, `bored`, `surprised`, or null), which is reported but not scored. We used to have a `confusion` category, but one problem was often both confusing and a UI fault, so the model's label and the key's disagreed on defensible readings. Plants 3 (goal text) and 5 (EXIT sign) became `ui` before the key froze, because the change planted in each is information the game shows.
 
+**Why.** A score only means something when we know the right answer, so we plant the problems ourselves. Freezing the key before any analysis stops it being tuned to match what the model found.
+
+**Fallback.** None needed; the eval is our own code with no outside dependency.
+
 ## 7. Spend
 
-Every Meta API call goes through `analyst/src/meta.ts`, which appends its cost to a ledger at `$XDG_STATE_HOME/playtest-analyst/spend.jsonl` (shared by all worktrees) and refuses to call once `PLAYTEST_SPEND_CAP_USD` is reached.
+Every Meta API call goes through `analyst/src/meta.ts`, which appends its cost to a ledger at `$XDG_STATE_HOME/playtest-analyst/spend.jsonl` (shared by all worktrees) and refuses to call once `PLAYTEST_SPEND_CAP_USD` is reached (default $20).
+
+**Why.** One choke point means a runaway sweep or retry loop can't spend the event credits.
+
+**Fallback.** None needed; raise the cap for a run that needs more.
 
 ## 8. Patches
 
