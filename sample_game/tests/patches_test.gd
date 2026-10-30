@@ -3,7 +3,7 @@ extends Node
 ## holds the planted tuning, which the TUG-107 fixture patches were made against.
 
 const PATCHES := preload("res://addons/playtest_analyst/patches.gd")
-const FIXTURE := "res://spikes/tug-107/fixture-patches.json"
+const FIXTURE := "res://tests/fixture-patches.json"
 const ALLOW := "{ \"patch_allow\": [\"level/tuning.tres\", \"level/*.gd\"] }\n"
 const PLANTED := """[gd_resource type="Resource" script_class="LevelTuning" format=3]
 

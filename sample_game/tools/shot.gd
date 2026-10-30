@@ -56,7 +56,7 @@ func _run() -> void:
 	root.add_child(viewport)
 	var level := (load(LEVEL) as PackedScene).instantiate() as Node3D
 	if _args.has("profile"):
-		level.set(&"tuning", load("res://eval/tuning_%s.tres" % _args.profile))
+		level.set(&"tuning", load("res://profiles/tuning_%s.tres" % _args.profile))
 	viewport.add_child(level)
 	var player := level.get_node("Player") as Player
 	await physics_frame

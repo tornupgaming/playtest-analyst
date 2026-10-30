@@ -15,8 +15,8 @@ The editor plugin (`addons/playtest_analyst/`) records a playtest into a session
 Run this from the repo root first. It takes a few seconds:
 
 ```sh
-tools/preflight.sh            # planted profile: the test level with problems built in on purpose
-tools/preflight.sh clean      # clean profile: the same level with those problems fixed
+sample_game/tools/preflight.sh            # planted profile: the test level with problems built in on purpose
+sample_game/tools/preflight.sh clean      # clean profile: the same level with those problems fixed
 ```
 
 It prints one PASS or FAIL line per check, each FAIL with what to do, and exits non-zero if anything failed. It checks:
@@ -25,7 +25,7 @@ It prints one PASS or FAIL line per check, each FAIL with what to do, and exits 
 - the default mic hears sound: it reads 2 s from it and fails on silence, which is what a muted mic gives (nothing is saved);
 - `META_MODEL_API_KEY` is set and the Meta API accepts it. It lists the models, which runs no model ([wiki](wiki/meta-model-api.md));
 - the spend left under `PLAYTEST_SPEND_CAP_USD` covers three analyses at $0.50 each;
-- `level/tuning.tres` is the profile you asked for. Copying a profile in changes a tracked file, so commit it (on a playtest branch) before the next check will pass;
+- `sample_game/level/tuning.tres` is the profile you asked for. Copying a profile in changes a tracked file, so commit it (on a playtest branch) before the next check will pass;
 - no tracked file has uncommitted changes, so **Apply** will work later;
 - 10 GB free on disk for an hour of recording.
 
@@ -33,8 +33,8 @@ Measured on 28 Oct 2026 (CachyOS, PipeWire, laptop analog mic), from an agent sh
 
 | Run | Result |
 |---|---|
-| `tools/preflight.sh clean`, tree on the clean profile | 9 PASS, exit 0, 3.1 s. Mic peak −31 dB. |
-| `tools/preflight.sh`, planted profile copied in and committed | 9 PASS, exit 0, 2.8 s |
+| `sample_game/tools/preflight.sh clean`, tree on the clean profile | 9 PASS, exit 0, 3.1 s. Mic peak −31 dB. |
+| `sample_game/tools/preflight.sh`, planted profile copied in and committed | 9 PASS, exit 0, 2.8 s |
 | Default (`planted`) on that tree, key unset, `PULSE_SOURCE` set to a null sink's monitor (stands in for a muted mic), one tracked file edited | FAIL lines for the mic (peak −91 dB), the key, the profile and the uncommitted change; exit 1 |
 | `META_MODEL_API_KEY=bogus` | `GET /v1/models` returned 401; FAIL, exit 1. With the real key it returned 200. |
 | `PULSE_SERVER` pointed at nothing | FAIL "Couldn't record from the default mic", exit 1 |
@@ -48,16 +48,16 @@ The spend ledger read $9.86 before and after all of these runs.
 1. In the **Playtest** dock, type the tester's name and click **Record session**. The dock plays the main scene with `--display-driver x11 -- --record --tester=<name>`. It sets those args for this one run only, then restores the project's run args.
 2. Play. The game window's title ends in `[REC]`.
 3. Stop the recording in any of these ways: **Stop recording** in the dock, **F9** in the game, or closing the game window. Don't use the editor's Stop button: it kills the game, so the bundle is left incomplete (see below).
-4. Pick the session in the list and click **Analyse**. The list shows each bundle in `sessions/` (a folder with `session.json` or `INCOMPLETE`), newest first, then bundles one folder down, such as `synthetic/planted-voice`. This runs `bun analyst/src/cli.ts analyse <dir>` and streams its output into the dock.
-5. Click **Open report**, enabled once the bundle has `report.json`. This runs `bun analyst/src/cli.ts serve <dir>` and opens the first URL it prints. Only one server runs at a time, and it is stopped when the editor closes.
-6. Click **Propose fixes**. This runs `bun analyst/src/cli.ts patch <dir> --project <project root>` (DECISIONS.md §8), which writes `patches.json` into the bundle. The dock lists its patches; pick one to see its finding, rationale and diff.
+4. Pick the session in the list and click **Analyse**. The list shows each bundle in `sessions/` (a folder with `session.json` or `INCOMPLETE`), newest first, then bundles one folder down, such as `synthetic/planted-voice`. This runs `bun <cli> analyse <dir>`, where `<cli>` is the `playtest_analyst/cli` project setting (see [Adding it to your game](#adding-it-to-your-game)), and streams its output into the dock.
+5. Click **Open report**, enabled once the bundle has `report.json`. This runs `bun <cli> serve <dir>` and opens the first URL it prints. Only one server runs at a time, and it is stopped when the editor closes.
+6. Click **Propose fixes**. This runs `bun <cli> patch <dir> --project <project root>` (DECISIONS.md §8), which writes `patches.json` into the bundle. The dock lists its patches; pick one to see its finding, rationale and diff.
 7. Click **Apply**. The dock runs `git apply -C0 --index` and commits only that file as `playtest-fix: <summary>`. The body holds the rationale and `Finding:`, `Patch:` and `Session:` lines, which is how the list knows the patch is applied. The editor then rescans the filesystem, so it reloads the changed resource. **Revert** commits the reverse as `Revert "playtest-fix: <summary>"`, in `git revert`'s message format. It doesn't use `git revert` itself, because that conflicts when a neighbouring line has since been patched ([wiki](wiki/git-apply.md)).
 
    Both refuse while any tracked file has uncommitted changes, and Apply refuses a patch whose diff touches anything but its own file or whose file isn't in `playtest.json`'s `patch_allow`. Refusals and git errors appear under the buttons. Opening the project in the editor can itself rewrite `.import` files; commit those first.
 
 The dock, and the recorder's background `finalize`, run the CLI through your login shell (`$SHELL -lc 'exec "$@"'`, with the arguments passed separately), so it sees variables exported only in shell startup files, such as `META_MODEL_API_KEY` in `~/.zshenv`, even when the editor was started from a desktop launcher. With `SHELL` unset, bun runs directly.
 
-You can also record without the editor. Run `godot --path . --display-driver x11 -- --record`, or press F9 in any running build.
+You can also record without the editor. Run `godot --path sample_game --display-driver x11 -- --record`, or press F9 in any running build.
 
 Sessions go in `<project>/sessions/<id>/` when the game runs from the editor or a source checkout, and in `user://sessions/<id>/` in an exported game. `<id>` is the UTC start time, e.g. `2026-10-26T23-24-13`. The recorder puts a `.gdignore` in `sessions/` so Godot doesn't import the media.
 
@@ -112,8 +112,8 @@ The dock lists these sessions as `(incomplete)` and disables Analyse for them.
 ## Checking it without a person
 
 ```sh
-tools/record_check.sh [SECONDS]          # default 30
-tools/record_check.sh --real [SECONDS]   # default mic and speakers instead of the loopback
+sample_game/tools/record_check.sh [SECONDS]          # default 30
+sample_game/tools/record_check.sh --real [SECONDS]   # default mic and speakers instead of the loopback
 ```
 
 This records the real game with `--record`. A PipeWire null sink stands in for the mic, and a 1 kHz beep is played into it every 3 s. The script then closes the window through the window manager. It prints:
@@ -130,9 +130,9 @@ CachyOS (Wayland with XWayland, PipeWire), Godot 4.7.2, ffmpeg 9.0.2, 26 Oct 202
 
 | Check | Result |
 |---|---|
-| `tools/record_check.sh 60`, loopback mic | Clean stop on window close. 19 of 19 beeps heard, lag 20–25 ms, no trend over 60 s. `readSession` OK. |
+| `sample_game/tools/record_check.sh 60`, loopback mic | Clean stop on window close. 19 of 19 beeps heard, lag 20–25 ms, no trend over 60 s. `readSession` OK. |
 | Same, 30 s run (by hand, same method) | 9 of 9 beeps, 13–24 ms |
-| `tools/record_check.sh --real 120`, run by Phil on 27 Oct: laptop speakers into the laptop's analog mic (`alsa_input.pci-0000_80_1f.3.analog-stereo`) | Clean stop. 39 of 39 beeps heard, lag 14–21 ms, drift −0.8 ms/min. `readSession` OK. |
+| `sample_game/tools/record_check.sh --real 120`, run by Phil on 27 Oct: laptop speakers into the laptop's analog mic (`alsa_input.pci-0000_80_1f.3.analog-stereo`) | Clean stop. 39 of 39 beeps heard, lag 14–21 ms, drift −0.8 ms/min. `readSession` OK. |
 | `screen.mkv` stream start times, three runs | Audio `start_time` 52, 58 and 39 ms after video |
 | F9 twice, then close | Two complete bundles |
 | `kill -9` on Godot while recording | `INCOMPLETE` kept, no `session.json`. Without the watchdog, ffmpeg kept recording after Godot died. With it, ffmpeg exits and `screen.mkv` has a duration. |

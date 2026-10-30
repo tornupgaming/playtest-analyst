@@ -92,7 +92,7 @@ func _run() -> void:
 	root.add_child(_viewport)
 
 	var level := (load(LEVEL) as PackedScene).instantiate() as Node3D
-	level.set(&"tuning", load("res://eval/tuning_planted.tres"))
+	level.set(&"tuning", load("res://profiles/tuning_planted.tres"))
 	_viewport.add_child(level)
 	var player := level.get_node("Player") as Node3D
 	player.hide()

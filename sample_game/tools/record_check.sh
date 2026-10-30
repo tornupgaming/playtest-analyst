@@ -47,8 +47,8 @@ grep -E '^PlaytestRecorder|ERROR' "$tmp/godot.log" || true
 ls "$dir"
 [[ -e $dir/INCOMPLETE ]] && { echo "FAIL: $(cat "$dir/INCOMPLETE")"; exit 1; }
 python3 -I tools/record_check.py beeps "$dir/screen.mkv" "$tmp/beeps.txt"
-(cd analyst && bun -e "
+(cd ../analyst && bun -e "
 	import { readSession } from './src/bundle.ts';
-	const s = await readSession('../$dir');
+	const s = await readSession('../sample_game/$dir');
 	console.log('readSession OK:', s.meta.id, 'duration', s.meta.duration, 's,', s.events.length, 'events');
 ")

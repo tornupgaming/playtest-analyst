@@ -62,7 +62,7 @@ func _run() -> void:
 	_viewport.msaa_3d = Viewport.MSAA_2X
 	root.add_child(_viewport)
 	_level = (load(LEVEL) as PackedScene).instantiate() as Node3D
-	_level.set(&"tuning", load("res://eval/tuning_%s.tres" % _args.profile))
+	_level.set(&"tuning", load("res://profiles/tuning_%s.tres" % _args.profile))
 	_viewport.add_child(_level)
 	_player = _level.get_node("Player") as Player
 	_camera = _player.get_node("Target/Camera3D") as Camera3D

@@ -39,11 +39,11 @@ Lines are in the order they were written. `input_idle` is written when the idle 
 
 A `zone_enter` or `zone_exit` without `zone` is still written, with a warning in the Godot output, and isn't counted towards time in a zone.
 
-The test level (`level/level.gd`) writes `death`, `retry`, `zone_enter`, `zone_exit` and `objective_update`. It has no UI screens.
+The test level (`sample_game/level/level.gd`) writes `death`, `retry`, `zone_enter`, `zone_exit` and `objective_update`. It has no UI screens.
 
 ### Idle detection
 
-Any input event counts as input, except joypad axis motion under 0.2. Holding any key, button or action also counts, including actions pressed from code with `Input.action_press()`, which is how `tools/shot.gd` plays scripted input. After `idle_after` seconds (default 5) with none, the player is idle. When input resumes, or the session stops, one `input_idle` line is written for the whole period.
+Any input event counts as input, except joypad axis motion under 0.2. Holding any key, button or action also counts, including actions pressed from code with `Input.action_press()`, which is how `sample_game/tools/shot.gd` plays scripted input. After `idle_after` seconds (default 5) with none, the player is idle. When input resumes, or the session stops, one `input_idle` line is written for the whole period.
 
 ## The session clock
 
@@ -65,7 +65,7 @@ Pass these after `--`:
 [`telemetry-sample.jsonl`](telemetry-sample.jsonl) is a scripted run of the planted test level: the player starts in the drop zone, is killed by the enemy, respawns at the start, and stands still for 7 s before walking on.
 
 ```sh
-godot --path . --fixed-fps 60 --resolution 480x270 -s res://tools/shot.gd -- --out /tmp/sample/end.png \
+godot --path sample_game --fixed-fps 60 --resolution 480x270 -s res://tools/shot.gd -- --out /tmp/sample/end.png \
 	--profile planted --view drop --play "move_forward:1,:7,move_forward:3" \
 	--telemetry-dir=/tmp/sample --telemetry-game-clock
 ```
@@ -73,7 +73,7 @@ godot --path . --fixed-fps 60 --resolution 480x270 -s res://tools/shot.gd -- --o
 ## Tests
 
 ```sh
-tools/test.sh
+sample_game/tools/test.sh
 ```
 
-`tests/telemetry_test.gd` drives the autoload through `event()`, `start()`, `stop()` and real input events, and checks the lines it writes. It covers zone dwell, player position, and idle detection.
+`sample_game/tests/telemetry_test.gd` drives the autoload through `event()`, `start()`, `stop()` and real input events, and checks the lines it writes. It covers zone dwell, player position, and idle detection.

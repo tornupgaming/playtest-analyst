@@ -27,7 +27,7 @@ The demo is what judges see. Every feature below earns its place by appearing in
 
 Totals: 180s / 120s.
 
-**Ready-made shots.** Shots 2, 3, 8 (the pins and the list, without ticks) and 12 need no players. `tools/footage.sh` renders them from the planted level as 1080p 30 fps video and PNG stills; the files are in the [`demo-footage` release](https://github.com/tornupgaming/playtest-analyst/releases/tag/demo-footage), and [`demo-footage.jpg`](demo-footage.jpg) shows stills from each. The flythrough ends on the view shot 8 uses, so the pins "return" in the same place. Add the ✓ and ✗ for shot 8 in the edit. Re-render after any change to the level; the camera path, pin positions and card text are at the top of `tools/footage.gd`.
+**Ready-made shots.** Shots 2, 3, 8 (the pins and the list, without ticks) and 12 need no players. `sample_game/tools/footage.sh` renders them from the planted level as 1080p 30 fps video and PNG stills; the files are in the [`demo-footage` release](https://github.com/tornupgaming/playtest-analyst/releases/tag/demo-footage), and [`demo-footage.jpg`](demo-footage.jpg) shows stills from each. The flythrough ends on the view shot 8 uses, so the pins "return" in the same place. Add the ✓ and ✗ for shot 8 in the edit. Re-render after any change to the level; the camera path, pin positions and card text are at the top of `sample_game/tools/footage.gd`.
 
 **Swap-in if cross-build memory ships (TUG-109):** in shot 11, replace the table header with the viewer's comparison banner, "[4] resolved · [1] new · [1] persisting". This adds no time. If TUG-109 doesn't ship, nothing changes.
 
@@ -46,7 +46,7 @@ Patch:
 Round 2 (patched build):
 - [ ] The same two moments as round 1: the ledge and the quest marker (shot 10)
 - [ ] Deaths, retries and time to complete for both rounds, same metric definitions (shot 11)
-- [x] Flythrough of the level with pins (shot 3): `tools/footage.sh`, no players needed
+- [x] Flythrough of the level with pins (shot 3): `sample_game/tools/footage.sh`, no players needed
 
 ## Cut list
 

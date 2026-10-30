@@ -145,6 +145,10 @@ common/physics_ticks_per_second=120
 3d/default_gravity=22.0
 common/physics_interpolation=true
 
+[playtest_analyst]
+
+cli="../analyst/src/cli.ts"
+
 [rendering]
 
 textures/vram_compression/import_s3tc_bptc=true

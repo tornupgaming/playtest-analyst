@@ -1,5 +1,5 @@
 extends SceneTree
-## Headless test runner. Run through tools/test.sh.
+## Headless test runner. Run through sample_game/tools/test.sh.
 ## Runs every `test_*` method of each suite in SUITES. A test returns "" when it
 ## passes, or a message saying what differed. Quits with 1 if any test failed.
 

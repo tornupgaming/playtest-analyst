@@ -13,6 +13,7 @@ extends Node
 ##   --record          start recording at launch
 ##   --tester=NAME     session.json `tester`, URI-encoded (the editor splits run args on spaces)
 ## Project setting playtest_analyst/profile, if set, becomes session.json `profile`.
+## Project setting playtest_analyst/cli is where the analyst CLI is (cli_path()).
 ##
 ## A bundle that ends early keeps the file INCOMPLETE, which says why, and has no
 ## session.json. Nothing is deleted: the footage up to a crash is still playable.
@@ -20,7 +21,6 @@ extends Node
 const FPS := 30
 const INCOMPLETE := "INCOMPLETE"
 const VIDEO := "screen.mkv"
-const CLI := "res://analyst/src/cli.ts"
 ## Debugger message prefix shared with the editor dock.
 const CHANNEL := "playtest_analyst"
 ## Runs ffmpeg with our stdin, so "q" reaches it, and SIGTERMs it if Godot dies
@@ -55,7 +55,14 @@ static func sessions_root() -> String:
 	return ProjectSettings.globalize_path("user://sessions")
 
 
-## The command line for `playtest <command> <dir>` (analyst/src/cli.ts) through bun, run by
+## The analyst CLI, analyst/src/cli.ts in a playtest-analyst checkout: the project setting
+## playtest_analyst/cli, absolute or relative to the project folder.
+static func cli_path() -> String:
+	var path: String = ProjectSettings.get_setting("playtest_analyst/cli", "")
+	return ProjectSettings.globalize_path("res://").path_join(path).simplify_path() if path.is_relative_path() else path
+
+
+## The command line for `playtest <command> <dir>` (cli_path()) through bun, run by
 ## the user's login shell: an editor started from a desktop launcher lacks what is exported
 ## only in shell startup files, such as META_MODEL_API_KEY in ~/.zshenv. The arguments reach
 ## bun through "$@", never the script text. Runs bun directly when SHELL is unset or isn't
@@ -65,7 +72,7 @@ static func analyst(command: String, dir: String) -> PackedStringArray:
 	var home_bun := OS.get_environment("HOME").path_join(".bun/bin/bun")
 	if FileAccess.file_exists(home_bun):
 		bun = home_bun  # the editor may be launched without ~/.bun/bin on PATH
-	var line := PackedStringArray([bun, ProjectSettings.globalize_path(CLI), command, dir])
+	var line := PackedStringArray([bun, cli_path(), command, dir])
 	var shell := OS.get_environment("SHELL")
 	if not shell.get_file() in ["sh", "bash", "zsh", "dash", "ksh"]:
 		return line
@@ -239,8 +246,8 @@ func _mark_incomplete(reason: String) -> void:
 ## the game; a missing bun or analyst is not an error.
 func _finalize() -> void:
 	var command := analyst("finalize", _dir)
-	if not FileAccess.file_exists(ProjectSettings.globalize_path(CLI)) or OS.create_process(command[0], command.slice(1)) == -1:
-		print("PlaytestRecorder: skipped `playtest finalize` (no bun or %s)" % CLI)
+	if not FileAccess.file_exists(cli_path()) or OS.create_process(command[0], command.slice(1)) == -1:
+		print("PlaytestRecorder: skipped `playtest finalize` (no bun, or no analyst CLI at %s: set playtest_analyst/cli)" % cli_path())
 
 
 ## The git short SHA of a source checkout, else null.

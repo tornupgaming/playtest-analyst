@@ -1,6 +1,6 @@
 # TUG-108: measurements behind the patch dock
 
-27 Oct 2026, git 2.56.0, Godot 4.7.2, CachyOS. Each run used a scratch repo with `eval/tuning_planted.tres` committed as `level/tuning.tres` and the five patches of [`../tug-107/fixture-patches.json`](../tug-107/fixture-patches.json).
+27 Oct 2026, git 2.56.0, Godot 4.7.2, CachyOS. Each run used a scratch repo with `eval/tuning_planted.tres` committed as `level/tuning.tres` and the five patches of [`fixture-patches.json`](../../sample_game/tests/fixture-patches.json).
 
 **`git revert` of a patch whose neighbour is applied.** p1…p5 applied in order with `git apply -C0 --index` and committed one by one, then `git revert --no-edit` of p2's commit (it changes lines 9–10; p3 changed line 11): exit 1, "CONFLICT (content): Merge conflict in level/tuning.tres". The same revert done as `git diff <c>^ <c>` piped to `git apply -R -C0 --index` applies (`tests/patches_test.gd`, `test_revert_restores_the_original_lines_between_applied_neighbours`).
 

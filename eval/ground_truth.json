@@ -2,8 +2,8 @@
   "level": "res://level/level.tscn",
   "tuning_file": "res://level/tuning.tres",
   "profiles": {
-    "planted": "eval/tuning_planted.tres",
-    "clean": "eval/tuning_clean.tres"
+    "planted": "sample_game/profiles/tuning_planted.tres",
+    "clean": "sample_game/profiles/tuning_clean.tres"
   },
   "frozen_at": null,
   "baseline_cold_test": null,

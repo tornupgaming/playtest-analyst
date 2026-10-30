@@ -1,6 +1,6 @@
 # TUG-107: first real `playtest patch` run
 
-**Run (26 Oct 2026).** `level/tuning.tres` replaced by `eval/tuning_planted.tres` (uncommitted), then `bun analyst/src/cli.ts patch analyst/fixtures/session-mini --project .` with `playtest.json` = `{"patch_allow": ["level/tuning.tres", "level/*.gd"]}`. The model got the six findings of `analyst/fixtures/session-mini/report.json`, `level/level.gd`, `level/tuning.gd` and `level/tuning.tres`. Output: [`fixture-patches.json`](fixture-patches.json).
+**Run (26 Oct 2026).** `level/tuning.tres` replaced by `eval/tuning_planted.tres` (uncommitted), then `bun analyst/src/cli.ts patch analyst/fixtures/session-mini --project .` with `playtest.json` = `{"patch_allow": ["level/tuning.tres", "level/*.gd"]}`. The model got the six findings of `analyst/fixtures/session-mini/report.json`, `level/level.gd`, `level/tuning.gd` and `level/tuning.tres`. Output: [`fixture-patches.json`](../../sample_game/tests/fixture-patches.json) (now in `sample_game/tests/`, where the plugin tests read it).
 
 | | |
 |---|---|

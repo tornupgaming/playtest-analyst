@@ -2,7 +2,7 @@
 
 An AI UX researcher for solo game developers, built for the **Meta Global AI Developer Hackathon** (Cerebral Valley, Indie developer track).
 
-A Godot 4.7 plugin that records a playtest (screen, think-aloud and telemetry), sends it to Muse Wonder for analysis, and proposes fixes. See `README.md` for the layout.
+A Godot 4.7 plugin that records a playtest (screen, think-aloud and telemetry), sends it to Muse Wonder for analysis, and proposes fixes. The plugin is `addons/playtest_analyst/`; the Godot project that hosts it is `sample_game/`, whose `addons/playtest_analyst` is a symlink to it. Run Godot with `--path sample_game`. See `README.md` for the layout.
 
 ## The event
 

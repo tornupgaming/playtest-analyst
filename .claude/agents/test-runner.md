@@ -13,10 +13,10 @@ Run from the directory you're given (the repo root or a worktree of it). The she
 |---|---|
 | TS tests | `(cd analyst && bun run test) > /tmp/tr-bun.log 2>&1; echo "EXIT=$?"` |
 | Typecheck | `(cd analyst && bunx tsc --noEmit) > /tmp/tr-tsc.log 2>&1; echo "EXIT=$?"` |
-| Level build | `tools/check.sh > /tmp/tr-check.log 2>&1; echo "EXIT=$?"` (it must print `OK`) |
-| Godot tests | `tools/test.sh > /tmp/tr-gd.log 2>&1; echo "EXIT=$?"` (skip it if the file doesn't exist) |
+| Level build | `sample_game/tools/check.sh > /tmp/tr-check.log 2>&1; echo "EXIT=$?"` (it must print `OK`) |
+| Godot tests | `sample_game/tools/test.sh > /tmp/tr-gd.log 2>&1; echo "EXIT=$?"` (skip it if the file doesn't exist) |
 
-A fresh worktree has no `.godot` cache. If the Godot checks fail with missing-resource or import errors, run `godot --headless --path . --import > /dev/null 2>&1` once and re-run them. Report that you did.
+A fresh worktree has no `.godot` cache. If the Godot checks fail with missing-resource or import errors, run `godot --headless --path sample_game --import > /dev/null 2>&1` once and re-run them. Report that you did.
 
 If `analyst/node_modules` is missing, run `(cd analyst && bun install)` first.
 

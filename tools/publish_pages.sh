@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Publish one analysed session as the live sample report on GitHub Pages.
-#   tools/publish_pages.sh sessions/synthetic/planted-voice
+#   tools/publish_pages.sh sample_game/sessions/synthetic/planted-voice
 # Exports the static viewer and force-pushes it as the only commit on the gh-pages branch,
 # so the video never enters main's history and old videos don't pile up.
 set -euo pipefail

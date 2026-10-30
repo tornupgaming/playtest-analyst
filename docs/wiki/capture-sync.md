@@ -10,7 +10,7 @@ sources:
   - spikes/tug-99/results/finalize-alignment.txt
   - spikes/tug-99/results/adelay.txt
   - docs/recorder.md
-  - tools/record_check.sh
+  - sample_game/tools/record_check.sh
 ---
 
 # Screen, mic and telemetry capture sync
@@ -42,9 +42,9 @@ Stream minus event time: [README](../../spikes/tug-95/README.md#results)
 
 | Run | Beeps heard | Lag |
 |---|---|---|
-| Loopback, 60 s (`tools/record_check.sh 60`) | 19 / 19 | 20 – 25 ms, no trend |
+| Loopback, 60 s (`sample_game/tools/record_check.sh 60`) | 19 / 19 | 20 – 25 ms, no trend |
 | Loopback, 30 s | 9 / 9 | 13 – 24 ms |
-| Real mic, 120 s (`tools/record_check.sh --real 120`, 2026-10-27) | 39 / 39 | 14 – 21 ms, drift −0.8 ms/min |
+| Real mic, 120 s (`sample_game/tools/record_check.sh --real 120`, 2026-10-27) | 39 / 39 | 14 – 21 ms, drift −0.8 ms/min |
 
 - In the muxed file the audio stream's `start_time` was 39–58 ms after the video's in three runs. Each stream carries its own wall-clock pts. [measured](../recorder.md#measured)
 
