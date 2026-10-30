@@ -1,10 +1,11 @@
 ---
 title: SAM 3.1 segmentation
-updated: 2026-10-27
+updated: 2026-10-30
 sources:
   - spikes/tug-94/FINDINGS.md
   - spikes/tug-94/probe.ts
   - spikes/tug-94/results/
+  - spikes/tug-94/real-run-2026-10-29/
   - spikes/tug-104/check.sh
   - spikes/tug-104/results/run.txt
   - spikes/tug-123/planted-voice.report.json
@@ -94,6 +95,17 @@ The run made 23 SAM calls ($0.0575). The model call cost $0.405.
 | plaza 33 s | "the text", "the white text" | No match. |
 | ledge 12 s | "the floating platform" | No match. |
 | ledge 12 s | "the small green block" | 1 match (c 0.50), a 42×45 px grass tuft. |
+
+### A real think-aloud session (TUG-94)
+
+**Conditions:** 2026-10-29, Phil playing the test level (build 7cecb39) for 145 s through the Playtest dock, thinking aloud. One `playtest analyse` run (config v2, `muse-wonder-1.0`; model call $0.50, 270 s). Each highlight had 3 phrasings, tried as in TUG-123. Phil reviewed the annotated frames in the viewer. ([report](../../spikes/tug-94/real-run-2026-10-29/report.json), frames [f1](../../spikes/tug-94/real-run-2026-10-29/f1.png), [f2](../../spikes/tug-94/real-run-2026-10-29/f2.png), [f3](../../spikes/tug-94/real-run-2026-10-29/f3.png))
+
+| Finding | Matched phrasing (of 3) | Result |
+|---|---|---|
+| f1 plaza pillars, t 12.5 | "tall brown pillar green top" (1st) | Matched at t 12.5. Phil judged it correct. |
+| f2 beacon, t 72.5 | "bright yellow star beacon" (2nd) | Matched at t 72.5. Phil judged it correct. |
+| f3 enemy, t 104.5 | "red mushroom with white spots" (1st) | Matched at t 104.5. Phil judged it correct. |
+| f4 corridor | none | Muse Wonder gave no highlight, so SAM was not called. |
 
 ## Open questions
 

@@ -69,13 +69,15 @@ One `POST /v1/responses` call to `muse-wonder-1.0` with:
 
 **Fallback.** If ASR fails, send the video with its audio track and accept loose speech timing.
 
-## 5. SAM 3.1 (under evaluation)
+## 5. SAM 3.1
+
+**Decided 30 Oct (Phil): keep SAM as it is.** No extra confidence filter beyond the 0.5 below. On Phil's own think-aloud run (29 Oct), 3 of 4 findings asked for a highlight. SAM matched all 3: the pillar, the beacon star and the mushroom. Phil judged every highlight correct and well timed ([wiki](docs/wiki/sam-3-1.md)).
 
 Muse Wonder's report names, for each finding, a key-frame time and one to three short noun phrases for the same element, best first (`highlight` in the report schema), so no extra call is needed to choose it. `sam-3.1` tries each phrasing on the frame at that time, then at 2 s before and after it, and stops at the first match with confidence ≥ 0.5: at most 9 calls, $0.0225, per finding. The finding records the phrasing and time that matched (`annotated_prompt`, `annotated_t`). We draw the top match by confidence: a yellow outline and light fill, with the rest of the frame dimmed outside a soft circle around it.
 
 A probe of SAM 3.1 on frames from our test level ([wiki](docs/wiki/sam-3-1.md)) matched distinct objects named by how they look ("the star", "the mushroom", "the arrow sign"). It missed names based on game role ("the beacon", "the enemy"), large flat surfaces (ledges, paths) and spatial phrases ("the gap between…"). So each phrasing in `highlight.prompts` must describe the element as a concrete object, by its appearance, and the time must show it unobstructed, before the player reaches it. One call is about 1 s and $0.0025.
 
-**Fallback.** Plain key frame, with no overlay, when SAM returns nothing. The final call on SAM is still under evaluation.
+**Fallback.** Plain key frame, with no overlay, when SAM returns nothing or the finding names no highlight.
 
 ## 6. Eval
 
