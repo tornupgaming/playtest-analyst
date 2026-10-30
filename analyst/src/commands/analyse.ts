@@ -23,7 +23,12 @@ export async function run(argv: string[]) {
 	apiKey();
 	const started = performance.now();
 	const previous = values.previous ? await loadPrevious(values.previous, values.patches) : undefined;
-	const { findings, usage: u, comparison: c } = await analyse(dir, await loadConfig(values.config), out, previous);
+	const elapsed = () => {
+		const s = Math.floor((performance.now() - started) / 1000);
+		return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+	};
+	const step = (doing: string) => console.error(`[${elapsed()}] ${doing}…`);
+	const { findings, usage: u, comparison: c } = await analyse(dir, await loadConfig(values.config), out, previous, step);
 	const total = ((performance.now() - started) / 1000).toFixed(1);
 	console.log(`${findings.length} findings → ${out}`);
 	if (c) console.log(`vs ${c.previous_session}: ${c.counts.resolved} resolved · ${c.counts.new} new · ${c.counts.persisting} persisting`);
