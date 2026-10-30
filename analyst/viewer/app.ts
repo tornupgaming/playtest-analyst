@@ -101,9 +101,11 @@ $("#prev").append(icon("prev"));
 $("#prev").onclick = () => step(-1);
 $("#next").append(icon("next"));
 $("#next").onclick = () => step(1);
+// A mouse click leaves no focus behind, so Space and the arrows stay playback keys. A button
+// focused from the keyboard keeps Space, as buttons do.
+document.addEventListener("click", (e) => e.detail > 0 && (e.target as HTMLElement).closest<HTMLElement>("button, summary")?.blur());
 document.addEventListener("keydown", (e) => {
-	if ((e.target as HTMLElement).closest("button, summary")) return;
-	if (e.key === " ") (e.preventDefault(), toggle());
+	if (e.key === " " && !(e.target as HTMLElement).closest("button, summary")) (e.preventDefault(), toggle());
 	if (e.key === "ArrowLeft") seek(video.currentTime - 5, !video.paused);
 	if (e.key === "ArrowRight") seek(video.currentTime + 5, !video.paused);
 });
