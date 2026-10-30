@@ -381,9 +381,9 @@ Key: green = done; amber = built, in review; red dashed = not started.
 
 | Area | Today | End state | Where the change would go |
 |---|---|---|---|
-| Evidence | Synthetic bot sessions only. The voice lines were written from the answer key. | Real round 1 and round 2 playtests, scored by `eval` | `sessions/`, `eval/sweeps/` |
+| Evidence | Synthetic bot sessions, whose voice lines were written from the answer key, plus one think-aloud run by the developer. | Real round 1 and round 2 playtests, scored by `eval` | `sessions/`, `eval/sweeps/` |
 | Ground truth | `frozen_at` not set yet | Frozen after the cold test, before any real analysis | `eval/ground_truth.json` |
-| Annotation | 3 of 5 highlights matched on planted-voice, one of them on the wrong platform | Final call on the SAM fallback (under evaluation) | `annotate.ts`, prompt `highlight` guidance |
+| Annotation | Decided: keep SAM, with a plain frame when nothing matches. On the developer's own think-aloud run, all 3 highlights asked for landed on the right object. On synthetic planted-voice, 3 of 5 matched, one of them on the wrong platform | Done | `annotate.ts`, prompt `highlight` guidance |
 | Remember | CLI flag only (`analyse --previous … --patches …`); the viewer shows the banner and chips | The demo video uses the comparison banner, if it ships | `dock.gd` would need a "compare with" picker |
 | Metrics | `playtest metrics` is CLI only | Before/after table for the demo video | Captured from the CLI; no dock work needed |
 | Platform | Linux + X11/XWayland only | Same for the hackathon (DECISIONS §3 limit) | `recorder.gd → _ffmpeg_args()` for other OSes |
