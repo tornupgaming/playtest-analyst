@@ -157,6 +157,7 @@ flowchart TB
   SJ & EV & MP4 & WAV --> A(["analyse"]) --> REP & AN
   REP --> P(["patch"]) --> PJ
   SJ & EV & REP & MP4 & AN --> S(["serve / viewer"])
+  PJ --> S
   PJ --> D(["dock: Apply / Revert"])
   REP & EV & SJ --> E(["eval · metrics"])
 ```
@@ -213,7 +214,7 @@ flowchart LR
   annotate --> meta
   patch --> meta
   input & compare & eval & patch & bundle & analyse --> schema
-  viewer -.types.-> schema
+  viewer -.types.-> schema & cS
 ```
 
 How to read it:

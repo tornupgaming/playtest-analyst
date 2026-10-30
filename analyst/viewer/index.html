@@ -7,35 +7,45 @@
 		<link rel="stylesheet" href="./style.css" />
 	</head>
 	<body>
-		<header>
-			<div class="brand"><span class="logo"></span>Playtest Analyst</div>
-			<div id="session" class="session"></div>
-			<div id="compare" class="compare" hidden></div>
-			<dl id="usage" class="usage"></dl>
-		</header>
-		<main>
+		<img id="ambient" class="ambient" alt="" />
+		<div class="app">
+			<header class="glass top">
+				<div class="brand"><span class="logo"><i></i><i></i><i></i><i></i></span>Playtest Analyst</div>
+				<span class="sep"></span>
+				<div id="session" class="session"></div>
+				<details id="compare" class="compare" hidden>
+					<summary></summary>
+					<div class="glass resolved-list"></div>
+				</details>
+				<dl id="usage" class="usage"></dl>
+			</header>
 			<section class="stage">
-				<div class="player">
-					<video id="video" preload="auto"></video>
+				<div class="screen">
+					<video id="video" preload="auto" playsinline></video>
 					<p id="no-video" class="no-video" hidden>
 						This session has no video. To make one from the recording, run <code>playtest finalize &lt;session folder&gt;</code>, then reload this page.
 					</p>
 				</div>
-				<div class="timeline-panel">
+				<div class="glass timeline-panel">
 					<div class="transport">
 						<button id="play" class="play" aria-label="Play"></button>
+						<button id="mute" class="round" aria-label="Mute"></button>
 						<span id="clock" class="clock"></span>
-						<button id="mute" class="mute" aria-label="Mute"></button>
-						<div id="legend" class="legend"></div>
+						<span id="now" class="now"></span>
+						<span id="position" class="position"></span>
+						<button id="prev" class="round" aria-label="Previous finding"></button>
+						<button id="next" class="round" aria-label="Next finding"></button>
 					</div>
 					<div id="timeline" class="timeline"></div>
+					<div id="legend" class="legend"></div>
 				</div>
 			</section>
-			<aside class="findings-panel">
-				<h2>Findings <span id="count"></span></h2>
-				<ol id="findings" class="findings"></ol>
+			<aside class="glass inspector">
+				<h2>Finding <span id="count"></span></h2>
+				<div id="detail" class="detail"></div>
 			</aside>
-		</main>
+		</div>
+		<div id="tip" class="tip"></div>
 		<script type="module" src="./app.ts"></script>
 	</body>
 </html>

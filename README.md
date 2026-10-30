@@ -7,7 +7,7 @@
 
 An AI UX researcher for solo game developers. A Godot plugin records a playtest (the screen, the player thinking aloud, and gameplay telemetry), Meta's models analyse it, and you get a timestamped report of where the player got confused, stuck or bored. Each finding comes with an annotated key frame and a one-click fix.
 
-[![The report viewer on the bot-played sample session. The selected finding says the EXIT sign at the fork points into a dead end; its key frame has the sign outlined by SAM 3.1, with the player's quotes, the gameplay log and a suggested fix underneath.](docs/images/sample-report.jpg)](https://tornupgaming.github.io/playtest-analyst/)
+[![The report viewer on the bot-played sample session. The selected finding says the EXIT sign at the fork points into a dead end; its key frame has the sign outlined by SAM 3.1, followed by the suggested fix with its code change and the player's quotes. The timeline under the video shows every finding, death and think-aloud line.](docs/images/sample-report.jpg)](https://tornupgaming.github.io/playtest-analyst/)
 
 <sub>A **bot-played sample session**, not a real player: a scripted bot plays the test level, which has problems planted in it, and a computer voice reads the think-aloud lines. The selected finding: the EXIT sign points into a dead end, and SAM 3.1 has outlined the sign on the key frame.</sub>
 
@@ -217,4 +217,5 @@ Views are defined in `VIEWS` in `tools/shot.gd`: the player stands at an offset 
 - **Godot platformer demo.** The player's movement code, the enemy's charge logic and the sounds in `demo/` come from [godotengine/godot-demo-projects `3d/platformer`](https://github.com/godotengine/godot-demo-projects/tree/master/3d/platformer) (commit `b761b4c`), © the Godot Engine contributors, MIT licence (`demo/LICENSE.md`). We replaced its models, camera, shooting and sky. The level handles respawns, and the enemy waits to be triggered, charges, kills on contact, and dies when stomped.
 - **Kenney.** Models in `art/kenney/` come from the [Platformer Kit](https://kenney.nl/assets/platformer-kit) by Kenney (www.kenney.nl), CC0 (`art/kenney/License.txt`).
 - **Fredoka.** The HUD font, © The Fredoka Project Authors, SIL Open Font License 1.1 (`art/fonts/OFL.txt`).
+- **Inter.** The report viewer's text font, © The Inter Project Authors, SIL Open Font License 1.1 (`analyst/viewer/fonts/Inter-OFL.txt`).
 - The enemy model and the block shader are our own.

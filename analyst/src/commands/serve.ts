@@ -1,10 +1,12 @@
 // `playtest serve`: the report viewer for one session on localhost, cutting key frames on request.
+import { existsSync } from "node:fs";
 import { join, resolve, sep } from "node:path";
 import { parseArgs } from "node:util";
+import { z } from "zod";
 import viewer from "../../viewer/index.html";
 import { readJson, UserError } from "../boundary.ts";
 import { readSession } from "../bundle.ts";
-import { Report } from "../schema.ts";
+import { Patches, Report, TranscriptTurn } from "../schema.ts";
 
 export const description = "Serve the report viewer for a session bundle";
 
@@ -26,8 +28,7 @@ export async function run(argv: string[]) {
 		console.error(`No report.json in ${dir}; run \`playtest analyse\` first.`);
 		return 1;
 	}
-	const { meta, events } = await readSession(dir);
-	const report = await readJson(join(dir, "report.json"), Report);
+	const session = await viewerSession(dir);
 	const video = join(dir, "video.mp4");
 	if (!(await Bun.file(video).exists())) console.warn(`No video.mp4 in ${dir}, so the report will have no video. For a fresh recording, run \`playtest finalize\` first.`);
 
@@ -41,7 +42,7 @@ export async function run(argv: string[]) {
 		// The viewer fetches these by relative URL, so `export` can write the same paths as files.
 		routes: {
 			"/": viewer,
-			"/session.json": Response.json({ meta, events, report }),
+			"/session.json": Response.json(session),
 			// A file response: Bun answers Range requests, so the player can seek.
 			"/video.mp4": new Response(Bun.file(video)),
 			"/files/*": (req) => file(dir, new URL(req.url).pathname.slice("/files/".length)),
@@ -51,6 +52,18 @@ export async function run(argv: string[]) {
 	console.log(`Viewer: ${server.url}`);
 	return new Promise<never>(() => {});
 }
+
+/** What the viewer fetches as session.json. The proposed fixes (`playtest patch`) and the
+ * think-aloud transcript (`playtest analyse`) are optional: a session may have neither. */
+export async function viewerSession(dir: string) {
+	const { meta, events } = await readSession(dir);
+	const report = await readJson(join(dir, "report.json"), Report);
+	const optional = <T>(path: string, schema: z.ZodType<T>) => (existsSync(path) ? readJson(path, schema) : undefined);
+	const patches = await optional(join(dir, "patches.json"), Patches);
+	const transcript = await optional(join(dir, "analysis", "transcript.json"), z.array(TranscriptTurn));
+	return { meta, events, report, patches: patches?.patches ?? [], transcript: transcript ?? [] };
+}
+export type ViewerSession = Awaited<ReturnType<typeof viewerSession>>;
 
 /** A file inside the bundle, such as an annotated frame. (`{ dir }` routes need `development: true` in Bun 1.4.) */
 async function file(dir: string, encoded: string): Promise<Response> {

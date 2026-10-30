@@ -2,10 +2,8 @@
 import { copyFile, mkdir, readdir } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { readJson, UserError } from "../boundary.ts";
-import { readSession } from "../bundle.ts";
-import { Report } from "../schema.ts";
-import { extract } from "./serve.ts";
+import { UserError } from "../boundary.ts";
+import { extract, viewerSession } from "./serve.ts";
 
 export const description = "Write the report viewer for a session as a static website";
 
@@ -19,8 +17,8 @@ export async function run(argv: string[]) {
 		return 2;
 	}
 	const [dir, out] = positionals.map((p) => resolve(p)) as [string, string];
-	const { meta, events } = await readSession(dir);
-	const report = await readJson(join(dir, "report.json"), Report);
+	const session = await viewerSession(dir);
+	const { report } = session;
 	const video = join(dir, "video.mp4");
 	if (!(await Bun.file(video).exists())) throw new UserError(`No video.mp4 in ${dir}; run \`playtest finalize\` first.`);
 
@@ -28,7 +26,7 @@ export async function run(argv: string[]) {
 	if ((await readdir(out).catch(() => [])).length > 0) throw new UserError(`${out} is not empty; pick a new folder.`);
 	const build = await Bun.build({ entrypoints: [join(import.meta.dir, "../../viewer/index.html")], outdir: out, minify: true });
 	if (!build.success) throw new AggregateError(build.logs, "viewer build failed");
-	await Bun.write(join(out, "session.json"), JSON.stringify({ meta, events, report }));
+	await Bun.write(join(out, "session.json"), JSON.stringify(session));
 
 	for (const f of report.findings) {
 		if (f.annotated_frame) {
