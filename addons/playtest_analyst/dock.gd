@@ -99,11 +99,13 @@ func _init() -> void:
 	for control in [_patch_list, _rationale, _diff, patch_actions, _patch_status]:
 		patches.add_child(control)
 	_log.editable = false
-	_log.custom_minimum_size.y = 120
+	_log.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	_log.custom_minimum_size.y = 200
+	# The log goes right under the buttons that start the jobs writing to it.
 	var split := VSplitContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	split.add_child(patches)
 	split.add_child(_log)
+	split.add_child(patches)
 	for control in [_tester, _record, _status, _sessions, actions, split]:
 		box.add_child(control)
 	debugger.message.connect(_on_game_message)
