@@ -1,14 +1,14 @@
 .godot/
 node_modules/
 # Session media is large; bundles keep session.json, events.jsonl and report.json in git.
-sessions/**/*.mkv
-sessions/**/*.mp4
-sessions/**/*.wav
-sessions/**/analysis/
+sample_game/sessions/**/*.mkv
+sample_game/sessions/**/*.mp4
+sample_game/sessions/**/*.wav
+sample_game/sessions/**/analysis/
 # Sweep intermediates hold the uploaded video and ASR audio.
 eval/sweeps/**/analysis/
-# Local recordings (tools/record_check.sh, ad-hoc playtests); force-add one to keep it.
-sessions/[0-9]*/
+# Local recordings (sample_game/tools/record_check.sh, ad-hoc playtests); force-add one to keep it.
+sample_game/sessions/[0-9]*/
 # Obsidian vault state for browsing docs/.
 docs/.obsidian/
 CLAUDE.local.md

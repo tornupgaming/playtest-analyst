@@ -15,7 +15,7 @@ func _initialize() -> void:
 func _run() -> void:
 	for profile in ["clean", "planted"]:
 		var level := (load(LEVEL) as PackedScene).instantiate() as Node3D
-		level.set(&"tuning", load("res://eval/tuning_%s.tres" % profile))
+		level.set(&"tuning", load("res://profiles/tuning_%s.tres" % profile))
 		root.add_child(level)
 		for i in 240:
 			await physics_frame

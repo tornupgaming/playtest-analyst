@@ -46,5 +46,5 @@ jobs:
           echo "$GODOT_SHA512  $RUNNER_TEMP/$zip" | sha512sum -c -
           unzip -q "$RUNNER_TEMP/$zip" -d "$RUNNER_TEMP/godot"
           echo "GODOT=$RUNNER_TEMP/godot/Godot_v${GODOT_VERSION}_linux.x86_64" >> "$GITHUB_ENV"
-      - run: tools/test.sh
-      - run: tools/check.sh
+      - run: sample_game/tools/test.sh
+      - run: sample_game/tools/check.sh

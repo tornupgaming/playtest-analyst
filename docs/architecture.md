@@ -15,7 +15,7 @@ Two rules shape everything:
 flowchart LR
   subgraph Godot["Godot 4.7 project"]
     direction TB
-    Game["Your game<br/>level/level.gd calls<br/>PlaytestTelemetry.event()"]
+    Game["Your game<br/>sample_game/level/level.gd calls<br/>PlaytestTelemetry.event()"]
     Tel["PlaytestTelemetry autoload<br/>telemetry.gd"]
     Rec["PlaytestRecorder autoload<br/>recorder.gd"]
     Dock["Playtest dock (editor)<br/>dock.gd + patches.gd + diff_view.gd"]
@@ -23,7 +23,7 @@ flowchart LR
   end
 
   FF["ffmpeg<br/>x11grab + pulse<br/>one process"]
-  Bundle[("sessions/&lt;id&gt;/<br/>the bundle")]
+  Bundle[("&lt;project&gt;/sessions/&lt;id&gt;/<br/>the bundle")]
 
   subgraph CLI["analyst/ — Bun + TypeScript CLI"]
     direction TB
@@ -282,13 +282,13 @@ flowchart TB
   subgraph GameProc["Game process"]
     rec["recorder.gd — PlaytestRecorder<br/>--record or F9 → start()<br/>F9 / window close / dock → stop()"]
     tel["telemetry.gd — PlaytestTelemetry<br/>event(type, data) → one JSONL line<br/>adds zone_exit.dwell, input_idle"]
-    level["level/level.gd<br/>reads level/tuning.tres at _ready()<br/>emits deaths, zones, objectives"]
+    level["sample_game/level/level.gd<br/>reads level/tuning.tres at _ready()<br/>emits deaths, zones, objectives"]
     level --> tel
     rec -->|"start(dir, t0)"| tel
   end
 
   dock <-->|"EditorDebuggerPlugin<br/>start / stop / started / stopped"| rec
-  dock -.->|"OS.execute_with_pipe<br/>via login shell"| cli["bun analyst/src/cli.ts"]
+  dock -.->|"OS.execute_with_pipe<br/>via login shell"| cli["bun analyst/src/cli.ts<br/>(project setting playtest_analyst/cli)"]
   rec -.->|"finalize on stop"| cli
   patches -->|"git apply -C0 · git commit"| git[("project git")]
   cfg["playtest.json<br/>patch_allow globs"] --> patches
@@ -321,11 +321,11 @@ This loop isn't part of the product. It's how prompts and configs get tuned agai
 
 ```mermaid
 flowchart LR
-  tun["eval/tuning_planted.tres<br/>eval/tuning_clean.tres"] -->|cp| live["level/tuning.tres"]
+  tun["sample_game/profiles/<br/>tuning_planted.tres, tuning_clean.tres"] -->|cp| live["sample_game/level/tuning.tres"]
   live --> level["test level"]
-  bot["tools/make_synthetic.sh<br/>synth.gd bot + Piper TTS"] --> level
+  bot["sample_game/tools/make_synthetic.sh<br/>synth.gd bot + Piper TTS"] --> level
   human["real playtester"] --> level
-  level --> bundles[("sessions/…")]
+  level --> bundles[("sample_game/sessions/…")]
   bundles --> sweep["playtest sweep<br/>configs × sessions"]
   cfgs["analyst/configs/*.json<br/>analyst/prompts/*.md"] --> sweep
   sweep --> reports["report.json per run"]
@@ -334,7 +334,7 @@ flowchart LR
   eval --> readme["eval/sweeps/&lt;date&gt;/README.md<br/>recall · precision · cost"]
 ```
 
-`eval/` has a `.gdignore`, so Godot never imports the answer key, and the key can't end up in a recording.
+`eval/` is outside the Godot project (`sample_game/`), so Godot never imports the answer key, and the key can't end up in a recording.
 
 ---
 
@@ -382,7 +382,7 @@ Key: green = done; amber = built, in review; red dashed = not started.
 
 | Area | Today | End state | Where the change would go |
 |---|---|---|---|
-| Evidence | Synthetic bot sessions, whose voice lines were written from the answer key, plus one think-aloud run by the developer. | Real round 1 and round 2 playtests, scored by `eval` | `sessions/`, `eval/sweeps/` |
+| Evidence | Synthetic bot sessions, whose voice lines were written from the answer key, plus one think-aloud run by the developer. | Real round 1 and round 2 playtests, scored by `eval` | `sample_game/sessions/`, `eval/sweeps/` |
 | Ground truth | `frozen_at` not set yet | Frozen after the cold test, before any real analysis | `eval/ground_truth.json` |
 | Annotation | Decided: keep SAM, with a plain frame when nothing matches. On the developer's own think-aloud run, all 3 highlights asked for landed on the right object. On synthetic planted-voice, 3 of 5 matched, one of them on the wrong platform | Done | `annotate.ts`, prompt `highlight` guidance |
 | Remember | CLI flag only (`analyse --previous … --patches …`); the viewer shows the banner and chips | The demo video uses the comparison banner, if it ships | `dock.gd` would need a "compare with" picker |

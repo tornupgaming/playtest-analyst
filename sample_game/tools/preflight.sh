@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run before testers arrive: checks this machine can record and analyse a playtest.
 #
-#   tools/preflight.sh [planted|clean]    # the level profile you mean to test; default planted
+#   sample_game/tools/preflight.sh [planted|clean]    # the level profile you mean to test; default planted
 #
 # Prints one PASS or FAIL line per check, each FAIL with what to do, and exits 1 if
 # any check failed. Spends nothing: the key is checked by listing models, which is free.
@@ -11,7 +11,7 @@ cd "$(dirname "$0")/.."
 GODOT=${GODOT:-godot}  # override with GODOT=/path/to/godot
 
 profile=${1:-planted}
-[[ -f eval/tuning_$profile.tres ]] || { echo "Unknown profile '$profile': use planted or clean."; exit 2; }
+[[ -f profiles/tuning_$profile.tres ]] || { echo "Unknown profile '$profile': use planted or clean."; exit 2; }
 
 # About the most one analysis has cost (README: $0.30–0.50 for a 10-minute session).
 ANALYSIS_USD=0.50
@@ -31,7 +31,7 @@ fi
 
 if ! command -v bun >/dev/null; then
 	fail "Bun not found on PATH. Install it from https://bun.sh."
-elif [[ ! -d analyst/node_modules ]]; then
+elif [[ ! -d ../analyst/node_modules ]]; then
 	fail "The analyst's packages aren't installed. Run: (cd analyst && bun install)"
 else
 	pass "Bun, with the analyst's packages installed"
@@ -71,7 +71,7 @@ else
 fi
 
 # `playtest spend` prints "$<spent> of $<cap>".
-read -r spent cap < <(bun analyst/src/cli.ts spend 2>/dev/null | sed -n 's/^\$\([0-9.]*\) of \$\([0-9.]*\)$/\1 \2/p')
+read -r spent cap < <(bun ../analyst/src/cli.ts spend 2>/dev/null | sed -n 's/^\$\([0-9.]*\) of \$\([0-9.]*\)$/\1 \2/p')
 need=$(awk "BEGIN { printf \"%.2f\", 3 * $ANALYSIS_USD }")
 if [[ -z ${spent:-} ]]; then
 	fail "Couldn't read the spend ledger. Run: bun analyst/src/cli.ts spend"
@@ -81,10 +81,10 @@ else
 	fail "Spend: \$$spent of \$$cap used, less than the \$$need three analyses need. Raise PLAYTEST_SPEND_CAP_USD."
 fi
 
-if cmp -s level/tuning.tres "eval/tuning_$profile.tres"; then
-	pass "level/tuning.tres is the $profile profile"
+if cmp -s level/tuning.tres "profiles/tuning_$profile.tres"; then
+	pass "sample_game/level/tuning.tres is the $profile profile"
 else
-	fail "level/tuning.tres isn't the $profile profile. Run: cp eval/tuning_$profile.tres level/tuning.tres, then commit it."
+	fail "sample_game/level/tuning.tres isn't the $profile profile. Run: cp sample_game/profiles/tuning_$profile.tres sample_game/level/tuning.tres, then commit it."
 fi
 
 # Apply and Revert in the dock refuse while a tracked file has uncommitted changes.
