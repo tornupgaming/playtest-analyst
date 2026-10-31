@@ -316,11 +316,13 @@ func _run(command: String, args: Array = []) -> void:
 	_append("$ playtest %s %s\n" % [command, dir.get_file()])
 	if job.is_empty():
 		_append("Could not run %s. Is bun installed?\n" % line[0])
+		_log_box.folded = false
 		return
 	job.command = command
 	job.started_ms = Time.get_ticks_msec()
 	job.opened = false
 	job.steps = []
+	job.dir = dir
 	_jobs.append(job)
 	_update_buttons()
 
@@ -341,7 +343,7 @@ func _read(job: Dictionary) -> void:
 			job.opened = true
 			OS.shell_open(url.get_string())
 	var code := 0 if running else OS.get_process_exit_code(job.pid)
-	if _steps.has(job.command):
+	if _steps.has(job.command) and job.dir == _selected_session().get("dir"):  # the session it runs on
 		_steps[job.command].text = _progress(job.steps, running, code)
 		_steps[job.command].visible = not _steps[job.command].text.is_empty()
 	if not running:
