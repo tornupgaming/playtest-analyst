@@ -19,7 +19,12 @@ export async function run(argv: string[]) {
 	}
 	apiKey();
 	const started = performance.now();
-	const { patches, usage: u } = await patch(dir, values.report ?? join(dir, "report.json"), values.project);
+	const elapsed = () => {
+		const s = Math.floor((performance.now() - started) / 1000);
+		return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+	};
+	const step = (doing: string) => console.error(`[${elapsed()}] ${doing}…`);
+	const { patches, usage: u } = await patch(dir, values.report ?? join(dir, "report.json"), values.project, step);
 	const total = ((performance.now() - started) / 1000).toFixed(1);
 	for (const p of patches) console.log(`${p.id} ${p.finding_id} ${p.file}: ${p.summary}`);
 	console.log(`${patches.length} patches → ${join(dir, "patches.json")}`);

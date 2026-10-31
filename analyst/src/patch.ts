@@ -55,10 +55,12 @@ function parsePatches(response: Responded["response"], schema: z.ZodType<{ patch
 	return outputJson(response, schema).patches.map((p) => ({ ...p, diff: p.diff.endsWith("\n") ? p.diff : `${p.diff}\n` }));
 }
 
-export async function patch(dir: string, reportPath: string, root: string): Promise<Patches> {
+/** `step` hears about each step as it starts, for a progress line. */
+export async function patch(dir: string, reportPath: string, root: string, step: (doing: string) => void = () => {}): Promise<Patches> {
 	const report = await readJson(reportPath, Report);
 	const files = await projectFiles(root);
 	const editable = files.filter((f) => f.editable).map((f) => f.path);
+	step(`Read ${report.findings.length} findings and ${editable.length} files the fixes may change`);
 	const calls = attempts(join(dir, "analysis/patch-"));
 	const accepted: ModelPatch[] = [];
 
@@ -85,6 +87,7 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 				// Spark reasons at length: a 6-finding report ran past 16000 (TUG-124 e2e).
 				max_output_tokens: 32000,
 			};
+			step(retry ? "Asking Muse Spark again, with what was wrong" : "Muse Spark is writing the fixes. This is the long step, often a minute or two");
 			const response = await calls.respond(body, attempt, `patch ${report.session_id} attempt ${attempt}`);
 			let proposed: ModelPatch[];
 			try {
@@ -98,6 +101,7 @@ export async function patch(dir: string, reportPath: string, root: string): Prom
 				continue;
 			}
 			const allowed = retry?.findings;
+			step("Checking each fix applies to the project");
 			const rejected: { patch: ModelPatch; error: string }[] = [];
 			for (const p of proposed.filter((p) => !allowed || allowed.has(p.finding_id))) {
 				// One patch per finding: a second one for the same finding would fail once the first is applied.
